@@ -121,8 +121,7 @@ checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: applicat
 checkGuards peter   2
 
 print "peter gets deep document"
-checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i '${BASE_URL}/document/%22deeper/and/deeper/README.txt%22' 
-
+checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22deeper/and/deeper/README.txt%22"
 
 print "create user francis"
 checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}' 
