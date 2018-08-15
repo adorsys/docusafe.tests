@@ -71,6 +71,8 @@ echo filesystem $filesystem
 
 ./dorest.sh $filesystem
 echo "warte nun 60 sekunden"
+echo "server still running"
+echo sleep 100
 ./streamTest.sh
 ./streamByteTest.sh
 

@@ -220,6 +220,8 @@ checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: applicat
 
 print "EVERYTHING WENT FINE so FAR"
 
+checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/affe
+
 # print "delete user"
 # checkCurl -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"peter", "readKeyPassword":"rkp"}'
 # checkCurl -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}'
