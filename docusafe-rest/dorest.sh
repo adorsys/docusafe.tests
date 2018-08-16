@@ -208,7 +208,7 @@ function basicTest() {
 	checkGuards francis 1
 
 	print "peter gets README.txt of home dir"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22README.txt%22" >> curl.logh
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22README.txt%22" >> curl.log
 
 	print "peter gets README.txt as a stream of home dir"
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream/%22README.txt%22" >> curl.log
@@ -231,7 +231,16 @@ function basicTest() {
 }
 
 function performancetest() {
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/affe
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "DOCUSAFE_BASE",     \
+      "cacheType": "NO_CACHE",              \
+      "userid": "peter01",                  \
+      "numberOfThreads": 1,                 \
+      "sizeOfDocument": 300000,             \
+      "documentsPerDirectory": 3            \
+    }"
 }
 
 filesystem=1
@@ -245,13 +254,12 @@ then
 	filesystem=$2
 fi
 
-set -x
-if [[ $1 -eq "basictest" ]]
+if [[ $1 == basictest ]]
 then
 	basicTest
 fi
 
-if [[ $1 -eq "performancetest" ]]
+if [[ $1 == performancetest ]]
 then
 	performancetest
 fi
