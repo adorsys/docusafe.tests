@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 trap error ERR INT
 
 function error () {
@@ -69,10 +70,8 @@ testParams $*
 
 echo filesystem $filesystem
 
-./dorest.sh $filesystem
-echo "warte nun 60 sekunden"
-echo "server still running"
-echo sleep 100
+./dorest.sh basictest $filesystem
+./dorest.sh performancetest $filesystem
 ./streamTest.sh
 ./streamByteTest.sh
 
