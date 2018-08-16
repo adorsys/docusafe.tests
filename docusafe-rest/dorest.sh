@@ -237,9 +237,31 @@ function performancetest() {
       "docusafeLayer": "DOCUSAFE_BASE",     \
       "cacheType": "NO_CACHE",              \
       "userid": "peter01",                  \
-      "numberOfThreads": 1,                 \
       "sizeOfDocument": 300000,             \
-      "documentsPerDirectory": 3            \
+      "documentsPerDirectory": 3,           \
+      "numberOfDocuments": 10               \
+    }"
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "DOCUSAFE_BASE",     \
+      "cacheType": "HASH_MAP",              \
+      "userid": "peter02",                  \
+      "sizeOfDocument": 300000,             \
+      "documentsPerDirectory": 3,           \
+      "numberOfDocuments": 10               \
+    }"
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "DOCUSAFE_BASE",     \
+      "cacheType": "GUAVA",              \
+      "userid": "peter03",                  \
+      "sizeOfDocument": 300000,             \
+      "documentsPerDirectory": 3,           \
+      "numberOfDocuments": 10               \
     }"
 }
 

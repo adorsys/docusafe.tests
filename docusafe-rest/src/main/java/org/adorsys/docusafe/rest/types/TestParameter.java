@@ -10,7 +10,6 @@ public class TestParameter {
     public DocusafeLayer docusafeLayer;
     public CacheType cacheType;
     public UserID userid;
-    public Integer threadsPerUser;
     public Integer numberOfThreads;
     public Integer numberOfDocuments;
     public Integer sizeOfDocument;
@@ -18,15 +17,15 @@ public class TestParameter {
 
     @Override
     public String toString() {
-        return "TestParameter{" +
-                "testcase=" + testcase +
-                ", docusafeLayer=" + docusafeLayer +
-                ", cacheType=" + cacheType +
-                ", userid=" + userid +
-                ", threadsPerUser=" + threadsPerUser +
-                ", numberOfThreads=" + numberOfThreads +
-                ", sizeOfDocument=" + sizeOfDocument +
-                ", documentsPerDirectory=" + documentsPerDirectory +
-                '}';
+        return "TestParameter{" +  "\n" +
+                "testcase=" + testcase + "\n" +
+                "docusafeLayer=" + docusafeLayer + "\n" +
+                "cacheType=" + cacheType + "\n" +
+                "userid=" + userid + "\n" +
+                "numberOfThreads=" + numberOfThreads + "\n" +
+                "numberOfDocuments=" + numberOfDocuments + "\n" +
+                "sizeOfDocument=" + sizeOfDocument + "\n" +
+                "documentsPerDirectory=" + documentsPerDirectory + "\n" +
+                "}" +  "\n";
     }
 }
