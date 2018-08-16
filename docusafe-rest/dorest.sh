@@ -1,5 +1,6 @@
 #@IgnoreInspection BashAddShebang
 
+# BASE_URL=http://docusafeserver-psp-docusafe-performancetest.cloud.adorsys.de/
 BASE_URL=http://localhost:9999
 
 trap error ERR
@@ -231,6 +232,8 @@ function basicTest() {
 }
 
 function performancetest() {
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/deleteDBAndCaches
+
 	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
     {                                       \
       "testcase": "CREATE_DOCUMENTS",       \
@@ -263,6 +266,10 @@ function performancetest() {
       "documentsPerDirectory": 3,           \
       "numberOfDocuments": 10               \
     }"
+
+    echo "ERGEBNIS: ########################################################"
+    sed "s/\\\n/AFFE/g" curl.log | awk '{gsub("AFFE","\n"); print}'
+
 }
 
 filesystem=1

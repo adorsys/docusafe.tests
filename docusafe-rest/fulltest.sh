@@ -70,7 +70,7 @@ testParams $*
 
 echo filesystem $filesystem
 
-# ./dorest.sh basictest $filesystem
+./dorest.sh basictest $filesystem
 ./dorest.sh performancetest $filesystem
 # ./streamTest.sh
 # ./streamByteTest.sh

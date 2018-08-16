@@ -16,6 +16,7 @@ import org.adorsys.docusafe.rest.types.TestCase;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.encobject.domain.ReadKeyPassword;
+import org.adorsys.encobject.service.api.ExtendedStoreConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -39,17 +40,19 @@ public class TestConcroller {
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
     private DocumentSafeService[] documentSafeService = null;
+    private ExtendedStoreConnection extendedStoreConnection = null;
 
     public TestConcroller() {
         counter++;
         if (counter > 1) {
             throw new BaseException("did not expect to get more than one controller");
         }
+        extendedStoreConnection = ExtendedStoreConnectionFactory.get();
         documentSafeService = new DocumentSafeService[3];
 
-        documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, ExtendedStoreConnectionFactory.get());
-        documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, ExtendedStoreConnectionFactory.get());
-        documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, ExtendedStoreConnectionFactory.get());
+        documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, extendedStoreConnection);
+        documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, extendedStoreConnection);
+        documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, extendedStoreConnection);
     }
 
     @RequestMapping(
@@ -78,6 +81,8 @@ public class TestConcroller {
         UserIDAuth userIDAuth = new UserIDAuth(testParameter.userid, new ReadKeyPassword("password for " + testParameter.userid.getValue()));
         StopWatch stopWatch = new StopWatch();
         StringBuilder resultString = new StringBuilder();
+        resultString.append(extendedStoreConnection.getClass().getName());
+        resultString.append("\n");
         resultString.append(testParameter.toString());
         resultString.append("\n");
         switch (testParameter.testcase) {
@@ -111,23 +116,27 @@ public class TestConcroller {
     }
 
     @RequestMapping(
-            value = "/affe",
+            value = "/deleteDB",
             method = {RequestMethod.GET},
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
-    public
-    @ResponseBody
-    ResponseEntity<TestParameter> affe() {
-        LOGGER.debug("affe");
-        TestParameter tp = new TestParameter();
-        tp.cacheType = CacheType.NO_CACHE;
-        tp.documentsPerDirectory = new Integer(3);
-        tp.docusafeLayer = DocusafeLayer.DOCUSAFE_BASE;
-        tp.numberOfThreads = new Integer(1);
-        tp.sizeOfDocument = new Integer(300000);
-        tp.testcase = TestCase.CREATE_DOCUMENTS;
-        tp.userid = new UserID("peter01");
-        return new ResponseEntity<>(tp, HttpStatus.OK);
+    public void deleteDB() {
+        LOGGER.info("all buckets will be deleted - but caches not");
+        extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
+    }
+    @RequestMapping(
+            value = "/deleteDBAndCaches",
+            method = {RequestMethod.GET},
+            consumes = {APPLICATION_JSON},
+            produces = {APPLICATION_JSON}
+    )
+    public void  deleteDBAndCaches() {
+        LOGGER.info("all buckets will be deleted");
+        extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
+        LOGGER.info("all caches will be deleted");
+        documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, extendedStoreConnection);
+        documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, extendedStoreConnection);
+        documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, extendedStoreConnection);
     }
 }
