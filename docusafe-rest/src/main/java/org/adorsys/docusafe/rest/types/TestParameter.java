@@ -12,6 +12,7 @@ public class TestParameter {
     public UserID userid;
     public Integer threadsPerUser;
     public Integer numberOfThreads;
+    public Integer numberOfDocuments;
     public Integer sizeOfDocument;
     public Integer documentsPerDirectory;
 
