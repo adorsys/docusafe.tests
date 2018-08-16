@@ -5,16 +5,21 @@ import org.adorsys.cryptoutils.storeconnectionfactory.ExtendedStoreConnectionFac
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
 import org.adorsys.docusafe.business.impl.WithCache;
-import org.adorsys.docusafe.business.types.UserID;
 import org.adorsys.docusafe.business.types.complex.DSDocument;
 import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
-import org.adorsys.docusafe.rest.types.CacheType;
-import org.adorsys.docusafe.rest.types.DocusafeLayer;
-import org.adorsys.docusafe.rest.types.TestCase;
+import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
+import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
+import org.adorsys.docusafe.rest.impl.SimpleRequestMemoryContextImpl;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.service.types.DocumentContent;
+import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
+import org.adorsys.docusafe.transactional.RequestMemoryContext;
+import org.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
+import org.adorsys.docusafe.transactional.impl.NonTransactionalDocumentSafeServiceImpl;
+import org.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceImpl;
+import org.adorsys.docusafe.transactional.types.TxID;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
 import org.slf4j.Logger;
@@ -40,6 +45,11 @@ public class TestConcroller {
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
     private DocumentSafeService[] documentSafeService = null;
+    private NonTransactionalDocumentSafeService[] nonTransactionalDocumentSafeServices = null;
+    private TransactionalDocumentSafeService[] transactionalDocumentSafeServices = null;
+    private CachedTransactionalDocumentSafeService[] cachedTransactionalDocumentSafeServices = null;
+    private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
+
     private ExtendedStoreConnection extendedStoreConnection = null;
 
     public TestConcroller() {
@@ -48,11 +58,13 @@ public class TestConcroller {
             throw new BaseException("did not expect to get more than one controller");
         }
         extendedStoreConnection = ExtendedStoreConnectionFactory.get();
-        documentSafeService = new DocumentSafeService[3];
 
-        documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, extendedStoreConnection);
-        documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, extendedStoreConnection);
-        documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, extendedStoreConnection);
+        documentSafeService = new DocumentSafeService[3];
+        nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeService[3];
+        transactionalDocumentSafeServices = new TransactionalDocumentSafeService[3];
+        cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeService[3];
+
+        initServices();
     }
 
     @RequestMapping(
@@ -85,31 +97,62 @@ public class TestConcroller {
         resultString.append("\n");
         resultString.append(testParameter.toString());
         resultString.append("\n");
+        TxID txID = null;
         switch (testParameter.testcase) {
             case CREATE_DOCUMENTS: {
                 switch (testParameter.docusafeLayer) {
-                    case DOCUSAFE_BASE: {
+                    case DOCUSAFE_BASE:
                         documentSafeService[index].createUser(userIDAuth);
-                        int folderIndex = 1;
-                        for (int i = 1; i <= testParameter.numberOfDocuments; i++) {
-                            DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex));
-                            DocumentFQN documentFQN = folder.addName("file-" + String.format("%03d", i));
-                            if (i % testParameter.documentsPerDirectory == 0) {
-                                folderIndex++;
-                            }
-                            StringBuilder sb = new StringBuilder();
-                            Formatter formatter = new Formatter(sb, Locale.GERMAN);
-                            formatter.format("%1$" + testParameter.sizeOfDocument + "s", documentFQN.getValue());
-                            DSDocument dsDocument = new DSDocument(documentFQN, new DocumentContent(sb.toString().getBytes()), null);
-                            LOGGER.info("create document " + documentFQN.getValue());
-                            stopWatch.start();
-                            documentSafeService[index].storeDocument(userIDAuth, dsDocument);
-                            stopWatch.stop();
-                        }
+                        break;
+                    case NON_TRANSACTIONAL:
+                        nonTransactionalDocumentSafeServices[index].createUser(userIDAuth);
+                        break;
+                    case TRANSACTIONAL:
+                        transactionalDocumentSafeServices[index].createUser(userIDAuth);
+                        txID = transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        break;
+                    case CACHED_TRANSACTIONAL:
+                        cachedTransactionalDocumentSafeServices[index].createUser(userIDAuth);
+                        txID = transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        break;
+                    default:
+                        throw new BaseException("missing switch");
+                }
+
+                int folderIndex = 1;
+                for (int i = 1; i <= testParameter.numberOfDocuments; i++) {
+                    DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex));
+                    DocumentFQN documentFQN = folder.addName("file-" + String.format("%03d", i));
+                    if (i % testParameter.documentsPerDirectory == 0) {
+                        folderIndex++;
                     }
+                    StringBuilder sb = new StringBuilder();
+                    Formatter formatter = new Formatter(sb, Locale.GERMAN);
+                    formatter.format("%1$" + testParameter.sizeOfDocument + "s", documentFQN.getValue());
+                    DSDocument dsDocument = new DSDocument(documentFQN, new DocumentContent(sb.toString().getBytes()), null);
+                    stopWatch.start("create document " + documentFQN.getValue());
+                    switch (testParameter.docusafeLayer) {
+                        case DOCUSAFE_BASE:
+                            documentSafeService[index].storeDocument(userIDAuth, dsDocument);
+                            break;
+                        case NON_TRANSACTIONAL:
+                            nonTransactionalDocumentSafeServices[index].nonTxStoreDocument(userIDAuth, dsDocument);
+                            break;
+                        case TRANSACTIONAL:
+                            transactionalDocumentSafeServices[index].txStoreDocument(txID, userIDAuth, dsDocument);
+                            break;
+                        case CACHED_TRANSACTIONAL:
+                            cachedTransactionalDocumentSafeServices[index].txStoreDocument(txID, userIDAuth, dsDocument);
+                            break;
+                        default:
+                            throw new BaseException("missing switch");
+                    }
+                    stopWatch.stop();
                 }
             }
             resultString.append(stopWatch.prettyPrint());
+            resultString.append("Total Time:" + stopWatch.getTotalTimeMillis());
+            resultString.append("\n");
         }
         LOGGER.info(resultString.toString());
         return new ResponseEntity<>(resultString.toString(), HttpStatus.OK);
@@ -125,18 +168,37 @@ public class TestConcroller {
         LOGGER.info("all buckets will be deleted - but caches not");
         extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
     }
+
     @RequestMapping(
             value = "/deleteDBAndCaches",
             method = {RequestMethod.GET},
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
-    public void  deleteDBAndCaches() {
+    public void deleteDBAndCaches() {
         LOGGER.info("all buckets will be deleted");
         extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
         LOGGER.info("all caches will be deleted");
+        initServices();
+    }
+
+    private void initServices() {
         documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, extendedStoreConnection);
         documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, extendedStoreConnection);
         documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, extendedStoreConnection);
+
+        nonTransactionalDocumentSafeServices[0] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[0]);
+        nonTransactionalDocumentSafeServices[1] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[1]);
+        nonTransactionalDocumentSafeServices[2] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[2]);
+
+        transactionalDocumentSafeServices[0] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[0]);
+        transactionalDocumentSafeServices[1] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[1]);
+        transactionalDocumentSafeServices[2] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[2]);
+
+        cachedTransactionalDocumentSafeServices[0] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[0]);
+        cachedTransactionalDocumentSafeServices[1] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[1]);
+        cachedTransactionalDocumentSafeServices[2] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[2]);
     }
+
+
 }

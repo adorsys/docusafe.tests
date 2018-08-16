@@ -70,6 +70,18 @@
         </dependency>
 
         <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>docusafe-transactional</artifactId>
+            <version>${docusafe.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>docusafe-cached-transactional</artifactId>
+            <version>${docusafe.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.9.5</version>

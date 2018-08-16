@@ -267,8 +267,41 @@ function performancetest() {
       "numberOfDocuments": 10               \
     }"
 
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "NON_TRANSACTIONAL", \
+      "cacheType": "GUAVA",                 \
+      "userid": "peter04",                  \
+      "sizeOfDocument": 300000,             \
+      "documentsPerDirectory": 3,           \
+      "numberOfDocuments": 10               \
+    }"
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "TRANSACTIONAL", \
+      "cacheType": "GUAVA",                 \
+      "userid": "peter05",                  \
+      "sizeOfDocument": 300000,             \
+      "documentsPerDirectory": 3,           \
+      "numberOfDocuments": 10               \
+    }"
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "CACHED_TRANSACTIONAL", \
+      "cacheType": "GUAVA",                 \
+      "userid": "peter06",                  \
+      "sizeOfDocument": 300000,             \
+      "documentsPerDirectory": 3,           \
+      "numberOfDocuments": 10               \
+    }"
+
     echo "ERGEBNIS: ########################################################"
-    sed "s/\\\n/AFFE/g" curl.log | awk '{gsub("AFFE","\n"); print}'
+    sed "s/\\\n/AFFE/g" curl.log | awk '{gsub("AFFE","\n"); print}' | sed "s/\\\u003d/: /g"
 
 }
 

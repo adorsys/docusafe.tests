@@ -10,7 +10,6 @@ public class TestParameter {
     public DocusafeLayer docusafeLayer;
     public CacheType cacheType;
     public UserID userid;
-    public Integer numberOfThreads;
     public Integer numberOfDocuments;
     public Integer sizeOfDocument;
     public Integer documentsPerDirectory;
@@ -21,8 +20,7 @@ public class TestParameter {
                 "testcase=" + testcase + "\n" +
                 "docusafeLayer=" + docusafeLayer + "\n" +
                 "cacheType=" + cacheType + "\n" +
-                "userid=" + userid + "\n" +
-                "numberOfThreads=" + numberOfThreads + "\n" +
+                "userid=" + userid.getValue() + "\n" +
                 "numberOfDocuments=" + numberOfDocuments + "\n" +
                 "sizeOfDocument=" + sizeOfDocument + "\n" +
                 "documentsPerDirectory=" + documentsPerDirectory + "\n" +
