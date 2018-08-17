@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * Created by peter on 15.08.18 at 15:57.
@@ -134,9 +135,8 @@ public class TestConcroller {
                         folderIndex++;
                     }
                     StringBuilder sb = new StringBuilder();
-                    Formatter formatter = new Formatter(sb, Locale.GERMAN);
-                    formatter.format("%1$" + testParameter.sizeOfDocument + "s", documentFQN.getValue());
-                    DSDocument dsDocument = new DSDocument(documentFQN, new DocumentContent(sb.toString().getBytes()), null);
+
+                    DSDocument dsDocument = new DSDocument(documentFQN, createDocumentContent(testParameter.sizeOfDocument, documentFQN), null);
                     stopWatch.start("create document " + documentFQN.getValue());
                     switch (testParameter.docusafeLayer) {
                         case DOCUSAFE_BASE:
@@ -177,6 +177,12 @@ public class TestConcroller {
         return new ResponseEntity<>(resultString.toString(), HttpStatus.OK);
     }
 
+    private DocumentContent createDocumentContent(Integer sizeOfDocument, DocumentFQN documentFQN) {
+        byte[] bytes = new byte[sizeOfDocument];
+        new Random().nextBytes(bytes);
+        return new DocumentContent(bytes);
+    }
+
     @RequestMapping(
             value = "/deleteDB",
             method = {RequestMethod.GET},
@@ -207,7 +213,9 @@ public class TestConcroller {
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
-    public @ResponseBody ResponseEntity<String> testContext() {
+    public
+    @ResponseBody
+    ResponseEntity<String> testContext() {
         LOGGER.info("testContext");
         String value = (String) requestMemoryContext.get("affe");
         LOGGER.info("value for affe is " + value);

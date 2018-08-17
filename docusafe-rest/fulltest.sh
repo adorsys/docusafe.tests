@@ -71,7 +71,8 @@ testParams $*
 echo filesystem $filesystem
 
 # ./dorest.sh basictest $filesystem
-./dorest.sh performancetest $filesystem
+# ./dorest.sh performancetest $filesystem
+./dorest.sh writeMuch
 # ./streamTest.sh
 # ./streamByteTest.sh
 

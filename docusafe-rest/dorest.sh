@@ -307,6 +307,26 @@ function performancetest() {
 
 }
 
+function writeMuch {
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/deleteDBAndCaches
+
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "DOCUSAFE_BASE",     \
+      "cacheType": "NO_CACHE",              \
+      "userid": "peter01",                  \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 100,         \
+      "numberOfDocuments": 100              \
+    }"
+
+    echo "ERGEBNIS: ########################################################"
+    sed "s/\\\n/AFFE/g" curl.log | awk '{gsub("AFFE","\n"); print}' | sed "s/\\\u003d/: /g"
+}
+
+
 filesystem=1
 if [[ $# -eq 0 ]]
 then
@@ -318,12 +338,4 @@ then
 	filesystem=$2
 fi
 
-if [[ $1 == basictest ]]
-then
-	basicTest
-fi
-
-if [[ $1 == performancetest ]]
-then
-	performancetest
-fi
+$1
