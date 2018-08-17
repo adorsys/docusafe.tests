@@ -1,40 +1,41 @@
 package org.adorsys.docusafe.rest.impl;
 
+import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * Created by peter on 09.07.18 at 14:06.
  */
 public class SimpleRequestMemoryContextImpl implements RequestMemoryContext {
-    private Map<String, TransactionalContext> pseudoUserMap = new HashMap<>();
-    TransactionalContext current = null;
 
     @Override
     public void put(Object key, Object value) {
-        current.put(key, value);
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            throw new BaseException("requestAttributes are null");
+        }
+        if (key instanceof  String) {
+            String aKey = (String) key;
+            requestAttributes.setAttribute(aKey, value, 1);
+            return;
+        }
+        throw new BaseException("key is not of Stringtype but " + key.getClass().getName());
     }
 
     @Override
     public Object get(Object key) {
-        return current.get(key);
-    }
-
-    public SimpleRequestMemoryContextImpl() {
-        switchToUser(1);
-    }
-
-    public void switchToUser(int i) {
-        String key = "" + i;
-        if (!pseudoUserMap.containsKey(key)) {
-            pseudoUserMap.put(key, new TransactionalContext());
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            throw new BaseException("requestAttributes are null");
         }
-        current = pseudoUserMap.get(key);
+        if (key instanceof  String) {
+            String aKey = (String) key;
+            return requestAttributes.getAttribute(aKey, 1);
+        }
+        throw new BaseException("key is not of Stringtype but " + key.getClass().getName());
     }
 
-    public static class TransactionalContext extends HashMap<Object, Object> {
-    }
 
 }

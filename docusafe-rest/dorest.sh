@@ -234,14 +234,15 @@ function basicTest() {
 function performancetest() {
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/deleteDBAndCaches
 
+
 	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
     {                                       \
       "testcase": "CREATE_DOCUMENTS",       \
       "docusafeLayer": "DOCUSAFE_BASE",     \
       "cacheType": "NO_CACHE",              \
       "userid": "peter01",                  \
-      "sizeOfDocument": 300000,             \
-      "documentsPerDirectory": 3,           \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 7,           \
       "numberOfDocuments": 10               \
     }"
 
@@ -251,8 +252,8 @@ function performancetest() {
       "docusafeLayer": "DOCUSAFE_BASE",     \
       "cacheType": "HASH_MAP",              \
       "userid": "peter02",                  \
-      "sizeOfDocument": 300000,             \
-      "documentsPerDirectory": 3,           \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 7,           \
       "numberOfDocuments": 10               \
     }"
 
@@ -262,8 +263,8 @@ function performancetest() {
       "docusafeLayer": "DOCUSAFE_BASE",     \
       "cacheType": "GUAVA",              \
       "userid": "peter03",                  \
-      "sizeOfDocument": 300000,             \
-      "documentsPerDirectory": 3,           \
+      "sizeOfDocument": 700000,             \
+      "documentsPerDirectory": 7,           \
       "numberOfDocuments": 10               \
     }"
 
@@ -273,8 +274,8 @@ function performancetest() {
       "docusafeLayer": "NON_TRANSACTIONAL", \
       "cacheType": "GUAVA",                 \
       "userid": "peter04",                  \
-      "sizeOfDocument": 300000,             \
-      "documentsPerDirectory": 3,           \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 7,           \
       "numberOfDocuments": 10               \
     }"
 
@@ -284,8 +285,8 @@ function performancetest() {
       "docusafeLayer": "TRANSACTIONAL", \
       "cacheType": "GUAVA",                 \
       "userid": "peter05",                  \
-      "sizeOfDocument": 300000,             \
-      "documentsPerDirectory": 3,           \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 7,           \
       "numberOfDocuments": 10               \
     }"
 
@@ -295,13 +296,14 @@ function performancetest() {
       "docusafeLayer": "CACHED_TRANSACTIONAL", \
       "cacheType": "GUAVA",                 \
       "userid": "peter06",                  \
-      "sizeOfDocument": 300000,             \
-      "documentsPerDirectory": 3,           \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 7,           \
       "numberOfDocuments": 10               \
     }"
 
     echo "ERGEBNIS: ########################################################"
     sed "s/\\\n/AFFE/g" curl.log | awk '{gsub("AFFE","\n"); print}' | sed "s/\\\u003d/: /g"
+
 
 }
 

@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -41,6 +42,8 @@ import java.util.Locale;
  */
 @RestController
 public class TestConcroller {
+
+
     private final static Logger LOGGER = LoggerFactory.getLogger(TestConcroller.class);
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
@@ -109,11 +112,15 @@ public class TestConcroller {
                         break;
                     case TRANSACTIONAL:
                         transactionalDocumentSafeServices[index].createUser(userIDAuth);
+                        stopWatch.start("beginTransaction");
                         txID = transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        stopWatch.stop();
                         break;
                     case CACHED_TRANSACTIONAL:
                         cachedTransactionalDocumentSafeServices[index].createUser(userIDAuth);
-                        txID = transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        stopWatch.start("beginTransaction");
+                        txID = cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        stopWatch.stop();
                         break;
                     default:
                         throw new BaseException("missing switch");
@@ -150,6 +157,18 @@ public class TestConcroller {
                     stopWatch.stop();
                 }
             }
+            switch (testParameter.docusafeLayer) {
+                case TRANSACTIONAL:
+                    stopWatch.start("endTransaction");
+                    transactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
+                    stopWatch.stop();
+                    break;
+                case CACHED_TRANSACTIONAL:
+                    stopWatch.start("endTransaction");
+                    cachedTransactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
+                    stopWatch.stop();
+                    break;
+            }
             resultString.append(stopWatch.prettyPrint());
             resultString.append("Total Time:" + stopWatch.getTotalTimeMillis());
             resultString.append("\n");
@@ -180,6 +199,28 @@ public class TestConcroller {
         extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
         LOGGER.info("all caches will be deleted");
         initServices();
+    }
+
+    @RequestMapping(
+            value = "/testContext",
+            method = {RequestMethod.GET},
+            consumes = {APPLICATION_JSON},
+            produces = {APPLICATION_JSON}
+    )
+    public @ResponseBody ResponseEntity<String> testContext() {
+        LOGGER.info("testContext");
+        String value = (String) requestMemoryContext.get("affe");
+        LOGGER.info("value for affe is " + value);
+        if (value != null) {
+            return new ResponseEntity<String>("affe ist schon belegt mit !" + value, HttpStatus.OK);
+        }
+        requestMemoryContext.put("affe", new Date().toString());
+        value = (String) requestMemoryContext.get("affe");
+        LOGGER.info("value for affe is " + value);
+        if (value == null) {
+            return new ResponseEntity<String>("affe ist immer noch null", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<String>("affe ist " + value, HttpStatus.OK);
     }
 
     private void initServices() {
