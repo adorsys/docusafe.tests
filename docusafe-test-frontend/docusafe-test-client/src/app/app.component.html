@@ -3,59 +3,71 @@
     <h1>
         Welcome to {{ title }}!
     </h1>
-    <table class="testtable">
-        <tr>
-            <td>CacheTyp</td>
-            <td>
-                <select>
-                    <option *ngFor="let tc of testcases" value="{{tc}}">{{tc}}</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>DocusafeLayer</td>
-            <td>
-                <select>
-                    <option *ngFor="let dl of docusafelayer" value="{{dl}}">{{dl}}</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Cachetype</td>
-            <td>
-                <select>
-                    <option *ngFor="let ct of cachetypes" value="{{ct}}">{{ct}}</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>UserID</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td>Number of Documents</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td>Size of Documents</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td>Documents per directory</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <label ngbButtonLabel class="btn-primary" (click)="deleteDBAndCaches()">delete database and caches</label>
-                {{errormessage}}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <label ngbButtonLabel class="btn-primary" (click)="showFile()">show file</label>
-            </td>
-        </tr>
-    </table>
+    <div class="row">
+        <div>
+
+            <table class="testtable">
+                <tr>
+                    <td>CacheTyp</td>
+                    <td>
+                        <select>
+                            <option *ngFor="let tc of testcases" value="{{tc}}">{{tc}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>DocusafeLayer</td>
+                    <td>
+                        <select>
+                            <option *ngFor="let dl of docusafelayer" value="{{dl}}">{{dl}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Cachetype</td>
+                    <td>
+                        <select>
+                            <option *ngFor="let ct of cachetypes" value="{{ct}}">{{ct}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>UserID</td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>Number of Documents</td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>Size of Documents</td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>Documents per directory</td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label ngbButtonLabel class="btn-primary" (click)="deleteDBAndCaches()">delete database and
+                            caches</label>
+                        {{errormessage}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label ngbButtonLabel class="btn-primary" (click)="showFile()">show file</label>
+                    </td>
+                    <td><input type="text" value="{{file}}"></td>
+                    <app-dnd></app-dnd>
+                </tr>
+            </table>
+        </div>
+        <div>
+            {{contentOfFile}}
+        </div>
+    </div>
+
 </div>
 
 

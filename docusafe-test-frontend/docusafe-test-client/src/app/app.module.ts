@@ -6,10 +6,14 @@ import {HttpClientModule} from "@angular/common/http";
 import {TestService} from "../service/test.service";
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {DndComponent} from '../dnd/dnd.component';
+import {DndDirective} from '../dnd/dnd.directive';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        DndComponent,
+        DndDirective
     ],
     imports: [
         BrowserModule,

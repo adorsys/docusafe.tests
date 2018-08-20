@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { TestService } from "../service/test.service";
-import { default as data_json } from '../../../testdata.json';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +12,7 @@ export class AppComponent {
   docusafelayer: string[] = [ "CACHED_TRANSACTIONAL", "TRANSACTIONAL", "NON_TRANSACTIONAL", "DOCUSAFE_BASE"];
   cachetypes: string[] = ["NO_CACHE", "GUAVA", "HASH_MAP"];
   errormessage: string = "";
+  contentOfFile="";
 
   constructor(private testService: TestService) {}
   requestError(errormessage: string) : void {
@@ -24,12 +24,8 @@ export class AppComponent {
     this.errormessage = "";
     this.testService.deleteDBAndCaches(this, this.requestError);
   }
-
-  showFile(): void {
-
-    console.log(data_json)
+  setContentOfFile(content: string) {
+    this.contentOfFile = content;
   }
-
-
 
 }
