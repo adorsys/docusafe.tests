@@ -310,22 +310,64 @@ function performancetest() {
 function writeMuch {
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/deleteDBAndCaches
 
-
 	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
     {                                       \
       "testcase": "CREATE_DOCUMENTS",       \
-      "docusafeLayer": "DOCUSAFE_BASE",     \
-      "cacheType": "NO_CACHE",              \
+      "docusafeLayer": "NON_TRANSACTIONAL",     \
+      "cacheType": "GUAVA",              \
       "userid": "peter01",                  \
       "sizeOfDocument": 500000,             \
       "documentsPerDirectory": 100,         \
       "numberOfDocuments": 100              \
     }"
 
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "CACHED_TRANSACTIONAL",     \
+	"cacheType": "GUAVA",              \
+      "userid": "peter02",                  \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 100,         \
+      "numberOfDocuments": 100              \
+    }"
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "NON_TRANSACTIONAL",     \
+      "cacheType": "GUAVA",              \
+      "userid": "peter03",                  \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 100,         \
+      "numberOfDocuments": 100              \
+    }"
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "CACHED_TRANSACTIONAL",     \
+	"cacheType": "GUAVA",              \
+      "userid": "peter04",                  \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 100,         \
+      "numberOfDocuments": 1              \
+    }"
+
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json'  -i ${BASE_URL}/test --data "\
+    {                                       \
+      "testcase": "CREATE_DOCUMENTS",       \
+      "docusafeLayer": "NON_TRANSACTIONAL",     \
+      "cacheType": "GUAVA",              \
+      "userid": "peter05",                  \
+      "sizeOfDocument": 500000,             \
+      "documentsPerDirectory": 100,         \
+      "numberOfDocuments": 1              \
+    }"
+
     echo "ERGEBNIS: ########################################################"
     sed "s/\\\n/AFFE/g" curl.log | awk '{gsub("AFFE","\n"); print}' | sed "s/\\\u003d/: /g"
 }
-
 
 filesystem=1
 if [[ $# -eq 0 ]]

@@ -1,0 +1,52 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+    <h1>
+        Welcome to {{ title }}!
+    </h1>
+    <table>
+        <tr>
+            <td>CacheTyp</td>
+            <td>
+                <select>
+                    <option *ngFor="let tc of testcases" value="{{tc}}">{{tc}}</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>DocusafeLayer</td>
+            <td>
+                <select>
+                    <option *ngFor="let dl of docusafelayer" value="{{dl}}">{{dl}}</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Cachetype</td>
+            <td>
+                <select>
+                    <option *ngFor="let ct of cachetypes" value="{{ct}}">{{ct}}</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>UserID</td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td>Number of Documents</td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td>Size of Documents</td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td>Documents per directory</td>
+            <td><input type="text"></td>
+        </tr>
+    </table>
+    <button class="btn btn-primary btn-block" type="button" (click)="deleteDBAndCaches()">delete database and caches</button>
+
+</div>
+
+
