@@ -1,4 +1,4 @@
-import {Directive, HostListener, HostBinding} from '@angular/core';
+import {Directive, HostListener, HostBinding, Output, EventEmitter} from '@angular/core';
 
 @Directive({
   selector: '[appDnd]'
@@ -6,6 +6,7 @@ import {Directive, HostListener, HostBinding} from '@angular/core';
 export class DndDirective {
 
   @HostBinding('style.background') private background = '#eee';
+  @Output() private filesChangeEmiter : EventEmitter<FileList> = new EventEmitter();
 
   constructor() { }
 
@@ -26,17 +27,7 @@ export class DndDirective {
     evt.stopPropagation();
     this.background = '#eee';
     let files = evt.dataTransfer.files;
-    for (var i = 0; i< files.length; i++) {
-      console.log("droped file " + files[i].name + " -> " + files[i].size)
-
-      var reader = new FileReader();
-      reader.onload = (function(theFile) {
-        return function(e) {
-          console.log("result: " + e.target.result);
-        };
-      })(files[i]);
-      reader.readAsText(files[i]);
-    }
+    this.filesChangeEmiter.emit(files);
   }
 
 }
