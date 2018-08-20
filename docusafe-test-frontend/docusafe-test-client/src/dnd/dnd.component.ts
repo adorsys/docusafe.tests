@@ -19,11 +19,12 @@ export class DndComponent implements OnInit {
       this.message=files[i].name;
 
       var reader = new FileReader();
-      reader.onload = (function(e) {
+      reader.onload = (function(affe, o, m) {
         return function(e) {
           console.log("result: " + e.target.result);
+            m.call(o, e.target.result);
         };
-      })(files[i]);
+      })(files[i], this, this.setMessage);
       reader.readAsText(files[i]);
     }
   }
