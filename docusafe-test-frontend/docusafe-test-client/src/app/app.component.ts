@@ -11,14 +11,17 @@ export class AppComponent {
   testcases: string[] = ["CREATE_DOCUMENTS","READ_DOCUMENTS"];
   docusafelayer: string[] = [ "CACHED_TRANSACTIONAL", "TRANSACTIONAL", "NON_TRANSACTIONAL", "DOCUSAFE_BASE"];
   cachetypes: string[] = ["NO_CACHE", "GUAVA", "HASH_MAP"];
+  errormessage: string = "";
 
   constructor(private testService: TestService) {}
-  deleteDBAndCachesFinished() : void {
-    console.log("deleteDBAndCaches finished confirmation from server");
+  requestError(errormessage: string) : void {
+    this.errormessage = errormessage;
+    console.error("an error occured: " + errormessage);
   }
   deleteDBAndCaches() : void {
     console.log("button pressed deleteDBAndCaches");
-    this.testService.deleteDBAndCaches(this, this.deleteDBAndCachesFinished);
+    this.errormessage = "";
+    this.testService.deleteDBAndCaches(this, this.requestError);
   }
 
 
