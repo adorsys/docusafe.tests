@@ -1,0 +1,6 @@
+.testtable {
+    margin-left:50px;
+}
+.testtable, td {
+    text-align: left;
+}

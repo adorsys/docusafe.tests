@@ -3,7 +3,7 @@
     <h1>
         Welcome to {{ title }}!
     </h1>
-    <table>
+    <table class="testtable">
         <tr>
             <td>CacheTyp</td>
             <td>
@@ -44,9 +44,13 @@
             <td>Documents per directory</td>
             <td><input type="text"></td>
         </tr>
+        <tr>
+            <td colspan="2">
+                <label ngbButtonLabel class="btn-primary" (click)="deleteDBAndCaches()">delete database and caches</label>
+                {{errormessage}}
+            </td>
+        </tr>
     </table>
-    <button class="btn btn-primary btn-block" type="button" (click)="deleteDBAndCaches()">delete database and caches</button>
-    {{errormessage}}
 </div>
 
 
