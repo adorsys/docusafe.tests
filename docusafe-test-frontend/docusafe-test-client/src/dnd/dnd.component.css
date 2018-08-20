@@ -1,20 +1,14 @@
 .dropzone {
-  min-height: 100px;
   min-width: 40px;
+  width:90%;
   display: table;
-  width: 100%;
   background-color: #eee;
   border: dotted 1px #aaa;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
-.text-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.centered {
-  font-family: sans-serif;
-  font-size: 1.3em;
-  font-weight: bold;
-  text-align:center;
+textarea {
+  font-size: 12px;
+  width:100%
 }

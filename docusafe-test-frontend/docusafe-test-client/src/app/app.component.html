@@ -4,8 +4,7 @@
         Welcome to {{ title }}!
     </h1>
     <div class="row">
-        <div>
-
+        <div class="col1">
             <table class="testtable">
                 <tr>
                     <td>CacheTyp</td>
@@ -47,27 +46,19 @@
                     <td>Documents per directory</td>
                     <td><input type="text"></td>
                 </tr>
-                <tr>
-                    <td colspan="2">
-                        <label ngbButtonLabel class="btn-primary" (click)="deleteDBAndCaches()">delete database and
-                            caches</label>
-                        {{errormessage}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label ngbButtonLabel class="btn-primary" (click)="showFile()">show file</label>
-                    </td>
-                    <td><input type="text" value="{{file}}"></td>
-                    <app-dnd></app-dnd>
-                </tr>
             </table>
         </div>
-        <div>
-            {{contentOfFile}}
+        <div class="col2">
+            <app-dnd></app-dnd>
+        </div>
+        <div class="col3">
+            <label ngbButtonLabel class="btn-primary full" (click)="deleteDBAndCaches()">
+                delete database andcaches
+                {{errormessage}}
+            </label>
+            <label ngbButtonLabel class="btn-primary full" (click)="showFile()">show file</label>
+            <input class="full" type="text" value="{{file}}">
+
         </div>
     </div>
-
 </div>
-
-

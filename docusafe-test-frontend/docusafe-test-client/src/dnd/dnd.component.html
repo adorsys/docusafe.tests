@@ -1,5 +1,9 @@
-<div class="dropzone" appDnd (filesChangeEmiter)="onFilesChange($event)">
-  <div class="text-wrapper">
-    <div class="centered">{{message}}</div>
-  </div>
+<div class="dropzone form-group" >
+  <textarea class="main"
+          class="form-control rounded-0"
+          id="exampleFormControlTextarea1"
+          rows="12"
+          appDnd (filesChangeEmiter)="onFilesChange($event)">
+    {{message}}
+  </textarea>
 </div>
