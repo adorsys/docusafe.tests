@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "testcase": "CREATE_DOCUMENTS",
+      "docusafeLayer": "NON_TRANSACTIONAL",
+      "cacheType": "GUAVA",
+      "userid": "peter05",
+      "sizeOfDocument": 500000,
+      "documentsPerDirectory": 100,
+      "numberOfDocuments": 1
+    },
+    {
+      "testcase": "CREATE_DOCUMENTS",
+      "docusafeLayer": "NON_TRANSACTIONAL",
+      "cacheType": "HASH_MAP",
+      "userid": "peter05",
+      "sizeOfDocument": 500000,
+      "documentsPerDirectory": 100,
+      "numberOfDocuments": 1
+    }
+  ]
+}

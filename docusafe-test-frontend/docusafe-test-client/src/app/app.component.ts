@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TestService } from "../service/test.service";
+import { default as data_json } from '../../../testdata.json';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,11 @@ export class AppComponent {
     console.log("button pressed deleteDBAndCaches");
     this.errormessage = "";
     this.testService.deleteDBAndCaches(this, this.requestError);
+  }
+
+  showFile(): void {
+
+    console.log(data_json)
   }
 
 
