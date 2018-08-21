@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
 import {TestService} from "../service/test.service";
-import {TestCaseTYPE, TestCasesTYPE} from "../types/test.cases.type";
+import {TestCasesTYPE} from "../types/test.cases.type";
 import {TestCaseOwner} from "./test.case.owner";
 import {FileContentHolder} from "../dnd/file.content.holder";
 
-var defaultTests:TestCasesTYPE =
+var defaultTests: TestCasesTYPE =
 {
     "tests": [
         {
@@ -26,7 +26,12 @@ var defaultTests:TestCasesTYPE =
 })
 export class AppComponent implements TestCaseOwner {
     title = 'docusafe-test-client';
-    fileContentHolder : FileContentHolder = null;
+    fileContentHolder: FileContentHolder = null;
+    destinationUrls: any[] = [
+        {"name": "http://docusafeserver-psp-docusafe-performancetest.cloud.adorsys.de", "selected": true },
+        {"name": "http://localhost:9999",                                               "selected": false }
+    ];
+    destinationUrl: string = this.destinationUrls[0].name;
     testcases: any[] = [
         {"name": "CREATE_DOCUMENTS", "selected": false},
         {"name": "READ_DOCUMENTS", "selected": true}
@@ -61,7 +66,7 @@ export class AppComponent implements TestCaseOwner {
     deleteDBAndCaches(): void {
         console.log("button pressed deleteDBAndCaches");
         this.errormessage = "";
-        this.testService.deleteDBAndCaches(this, this.requestError);
+        this.testService.deleteDBAndCaches(this.destinationUrl, this, this.requestError);
     }
 
     setTestCases(content: TestCasesTYPE): void {
@@ -76,6 +81,7 @@ export class AppComponent implements TestCaseOwner {
 
     show() {
         console.log(this.tests.tests[this.currentTestIndex]);
+        console.log(this.destinationUrl);
     }
 
     fromFileToModel() {
@@ -98,18 +104,18 @@ export class AppComponent implements TestCaseOwner {
         this.fromModelToFile();
     }
 
-    registerFileContentHolder(fch:FileContentHolder) : void {
+    registerFileContentHolder(fch: FileContentHolder): void {
         this.fileContentHolder = fch;
     }
 
-    previousTestcase() : void {
+    previousTestcase(): void {
         if (this.currentTestIndex > 0) {
             this.currentTestIndex--;
         }
     }
 
-    nextTestcase() : void {
-        if (this.currentTestIndex < this.tests.tests.length - 1 ) {
+    nextTestcase(): void {
+        if (this.currentTestIndex < this.tests.tests.length - 1) {
             this.currentTestIndex++;
         }
     }

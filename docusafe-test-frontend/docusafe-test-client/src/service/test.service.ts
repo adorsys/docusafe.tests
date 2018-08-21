@@ -1,5 +1,4 @@
 import {Injectable} from "@angular/core"
-import {Consts} from "../environments/consts"
 import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
 
 const httpOptions = {
@@ -14,8 +13,8 @@ export class TestService {
     constructor(private httpClient: HttpClient) {
     }
 
-    deleteDBAndCaches(obj: any, finished: (errormessage: string) => void): void {
-        var url = Consts.INSTANCE.URL_PREFIX + "/deleteDBAndCaches";
+    deleteDBAndCaches(urlPrefix: string, obj: any, finished: (errormessage: string) => void): void {
+        var url = urlPrefix + "/deleteDBAndCaches";
         this.httpClient.get(url, httpOptions).subscribe(
             data => console.log("get done"),
             error => finished.call(obj, this.getErrorMessage(error))

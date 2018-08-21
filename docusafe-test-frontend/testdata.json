@@ -1,21 +1,58 @@
 {
-  "tests": [
-    {
-      "testcase": "CREATE_DOCUMENTS",
-      "docusafeLayer": "NON_TRANSACTIONAL",
-      "cacheType": "GUAVA",
-      "userid": "peter05",
-      "sizeOfDocument": 500000,
-      "documentsPerDirectory": 100,
-      "numberOfDocuments": 1
+	"tests" : [   
+    {                                       
+      "testcase": "CREATE_DOCUMENTS",       
+      "docusafeLayer": "DOCUSAFE_BASE",     
+      "cacheType": "NO_CACHE",              
+      "userid": "peter01",                  
+      "sizeOfDocument": 500000,             
+      "documentsPerDirectory": 7,           
+      "numberOfDocuments": 10               
     },
-    {
-      "testcase": "CREATE_DOCUMENTS",
-      "docusafeLayer": "NON_TRANSACTIONAL",
-      "cacheType": "HASH_MAP",
-      "userid": "peter07",
-      "sizeOfDocument": 500000,
-      "documentsPerDirectory": 100,
-      "numberOfDocuments": 1
-    }]
+    {                                       
+      "testcase": "CREATE_DOCUMENTS",       
+      "docusafeLayer": "DOCUSAFE_BASE",     
+      "cacheType": "HASH_MAP",              
+      "userid": "peter02",                  
+      "sizeOfDocument": 500000,             
+      "documentsPerDirectory": 7,           
+      "numberOfDocuments": 10               
+    },
+    {                                       
+      "testcase": "CREATE_DOCUMENTS",       
+      "docusafeLayer": "DOCUSAFE_BASE",     
+      "cacheType": "GUAVA",              
+      "userid": "peter03",                  
+      "sizeOfDocument": 700000,             
+      "documentsPerDirectory": 7,           
+      "numberOfDocuments": 10               
+    },
+    {                                       
+      "testcase": "CREATE_DOCUMENTS",       
+      "docusafeLayer": "NON_TRANSACTIONAL", 
+      "cacheType": "GUAVA",                 
+      "userid": "peter04",                  
+      "sizeOfDocument": 500000,             
+      "documentsPerDirectory": 7,           
+      "numberOfDocuments": 10               
+    },
+    {                                       
+      "testcase": "CREATE_DOCUMENTS",       
+      "docusafeLayer": "TRANSACTIONAL", 
+      "cacheType": "GUAVA",                 
+      "userid": "peter05",                  
+      "sizeOfDocument": 500000,             
+      "documentsPerDirectory": 7,           
+      "numberOfDocuments": 10               
+    },
+    {                                       
+      "testcase": "CREATE_DOCUMENTS",       
+      "docusafeLayer": "CACHED_TRANSACTIONAL", 
+      "cacheType": "GUAVA",                 
+      "userid": "peter06",                  
+      "sizeOfDocument": 500000,             
+      "documentsPerDirectory": 7,           
+      "numberOfDocuments": 10               
+    }
+]
 }
