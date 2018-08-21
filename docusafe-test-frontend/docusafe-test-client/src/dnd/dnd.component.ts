@@ -33,13 +33,14 @@ export class DndComponent implements OnInit, FileContentHolder {
                 return function (e) {
                     m.call(o, e.target.result);
                 };
-            })(files[i], this, this.setMessageAndPropagate);
+            })(files[i], this, this.setMessage);
             reader.readAsText(files[i]);
         }
     }
 
-    setMessageAndPropagate(m: string) {
-        this.setMessage(m);
+    setMessage(m: string) : void {
+        this.message = m;
+        console.log("setMessage mit neuem Wert:" + m);
         try {
             var testCases: TestCasesTYPE = JSON.parse(m);
             this.testCaseOwner.setTestCases(testCases);
@@ -47,11 +48,6 @@ export class DndComponent implements OnInit, FileContentHolder {
             console.log("Fehler:" + e.message);
             this.fehler = e.message;
         }
-    }
-
-    setMessage(m: string) : void {
-        this.message = m;
-        console.log("setMessage mit neuem Wert:" + m);
     }
 
     getMessage() : string {

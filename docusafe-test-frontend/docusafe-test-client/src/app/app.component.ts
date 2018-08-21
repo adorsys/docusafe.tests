@@ -102,4 +102,16 @@ export class AppComponent implements TestCaseOwner {
         this.fileContentHolder = fch;
     }
 
+    previousTestcase() : void {
+        if (this.currentTestIndex > 0) {
+            this.currentTestIndex--;
+        }
+    }
+
+    nextTestcase() : void {
+        if (this.currentTestIndex < this.tests.tests.length - 1 ) {
+            this.currentTestIndex++;
+        }
+    }
+
 }
