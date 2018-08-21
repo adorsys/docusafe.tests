@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
 import {TestService} from "../service/test.service";
-import {TestCasesTYPE} from "../types/test.cases.type";
+import {TestCaseTYPE, TestCasesTYPE} from "../types/test.cases.type";
 import {TestCaseOwner} from "./test.case.owner";
+import {FileContentHolder} from "../dnd/file.content.holder";
 
 var defaultTests:TestCasesTYPE =
 {
@@ -25,6 +26,7 @@ var defaultTests:TestCasesTYPE =
 })
 export class AppComponent implements TestCaseOwner {
     title = 'docusafe-test-client';
+    fileContentHolder : FileContentHolder = null;
     testcases: any[] = [
         {"name": "CREATE_DOCUMENTS", "selected": false},
         {"name": "READ_DOCUMENTS", "selected": true}
@@ -75,4 +77,29 @@ export class AppComponent implements TestCaseOwner {
     show() {
         console.log(this.tests.tests[this.currentTestIndex]);
     }
+
+    fromFileToModel() {
+        var filecontent: string = this.fileContentHolder.getMessage();
+        var testCases: TestCasesTYPE = JSON.parse(filecontent);
+        this.setTestCases(testCases);
+    }
+
+    fromModelToFile() {
+        var newfilecontent: string = JSON.stringify(this.tests);
+        this.fileContentHolder.setMessage(newfilecontent);
+        this.currentTestIndex = 0;
+    }
+
+    appendToFile() {
+        var filecontent: string = this.fileContentHolder.getMessage();
+        var fileTestCases: TestCasesTYPE = JSON.parse(filecontent);
+        fileTestCases.tests.push(this.tests.tests[this.currentTestIndex]);
+        this.tests = fileTestCases;
+        this.fromModelToFile();
+    }
+
+    registerFileContentHolder(fch:FileContentHolder) : void {
+        this.fileContentHolder = fch;
+    }
+
 }

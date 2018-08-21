@@ -1,3 +1,17 @@
+.col15 {
+    height:220px;
+}
+
+.firstarrow {
+    vertical-align: middle;
+    margin:10px;
+    margin-top:40px;
+}
+.arrow {
+    vertical-align: middle;
+    margin:10px;
+}
+
 .col2 {
     width:400px;
 }
