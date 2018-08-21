@@ -8,6 +8,7 @@ import {TestService} from "../service/test.service";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DndComponent} from '../dnd/dnd.component';
 import {DndDirective} from '../dnd/dnd.directive';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import {DndDirective} from '../dnd/dnd.directive';
     imports: [
         BrowserModule,
         HttpClientModule,
-        NgbModule
+        NgbModule,
+        FormsModule
     ],
     providers: [TestService],
     bootstrap: [AppComponent]

@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "testcase": "CREATE_DOCUMENTS",
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "cacheType": "NO_CACHE",
+      "userid": "dummy01",
+      "sizeOfDocument": 50,
+      "documentsPerDirectory": 1,
+      "numberOfDocuments": 1
+    }
+  ]
+}
