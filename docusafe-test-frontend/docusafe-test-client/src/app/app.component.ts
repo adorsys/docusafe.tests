@@ -2,8 +2,21 @@ import {Component} from '@angular/core';
 import {TestService} from "../service/test.service";
 import {TestCasesTYPE} from "../types/test.cases.type";
 import {TestCaseOwner} from "./test.case.owner";
-import {default as tests_json} from "./tests.json";
 
+var defaultTests:TestCasesTYPE =
+{
+    "tests": [
+        {
+            "testcase": "CREATE_DOCUMENTS",
+            "docusafeLayer": "DOCUSAFE_BASE",
+            "cacheType": "NO_CACHE",
+            "userid": "dummy01",
+            "sizeOfDocument": 50,
+            "documentsPerDirectory": 1,
+            "numberOfDocuments": 1
+        }
+    ]
+};
 
 @Component({
     selector: 'app-root',
@@ -35,7 +48,7 @@ export class AppComponent implements TestCaseOwner {
     numberOfTests: number = 0;
 
     constructor(private testService: TestService) {
-        this.setTestCases(tests_json);
+        this.setTestCases(defaultTests);
     }
 
     requestError(errormessage: string): void {
