@@ -7,7 +7,7 @@
         <div class="col1">
             <table class="testtable">
                 <tr>
-                    <td>CacheTyp</td>
+                    <td>Test Case</td>
                     <td>
                         <select>
                             <option *ngFor="let tc of testcases" value="{{tc}}">{{tc}}</option>
@@ -15,7 +15,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>DocusafeLayer</td>
+                    <td>Docusafe Layer</td>
                     <td>
                         <select>
                             <option *ngFor="let dl of docusafelayer" value="{{dl}}">{{dl}}</option>
@@ -23,7 +23,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Cachetype</td>
+                    <td>Cache Type</td>
                     <td>
                         <select>
                             <option *ngFor="let ct of cachetypes" value="{{ct}}">{{ct}}</option>
@@ -49,7 +49,7 @@
             </table>
         </div>
         <div class="col2">
-            <app-dnd></app-dnd>
+            <app-dnd [testCaseOwner]="me"></app-dnd>
         </div>
         <div class="col3">
             <label ngbButtonLabel class="btn-primary full" (click)="deleteDBAndCaches()">
