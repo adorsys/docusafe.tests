@@ -9,6 +9,7 @@ import {TestCasesTYPE} from "../types/test.cases.type";
 })
 export class DndComponent implements OnInit {
     message: string = "Drop your file here!";
+    fehler: string = "";
 
     @Input()
     private testCaseOwner: TestCaseOwner;
@@ -20,6 +21,7 @@ export class DndComponent implements OnInit {
     }
 
     onFilesChange(files: FileList) {
+        this.fehler = "";
         for (var i = 0; i < files.length; i++) {
             console.log("droped file " + files[i].name + " -> " + files[i].size);
             this.message = files[i].name;
@@ -27,7 +29,6 @@ export class DndComponent implements OnInit {
             var reader = new FileReader();
             reader.onload = (function (affe, o, m) {
                 return function (e) {
-                    console.log("result: " + e.target.result);
                     m.call(o, e.target.result);
                 };
             })(files[i], this, this.setMessage);
@@ -37,8 +38,13 @@ export class DndComponent implements OnInit {
 
     setMessage(m: string) {
         this.message = m;
-        var testCases: TestCasesTYPE = JSON.parse(m);
-        this.testCaseOwner.setTestCases(testCases);
+        try {
+            var testCases: TestCasesTYPE = JSON.parse(m);
+            this.testCaseOwner.setTestCases(testCases);
+        } catch (e ) {
+            console.log("Fehler:" + e.message);
+            this.fehler = e.message;
+        }
     }
 
 }
