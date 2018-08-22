@@ -16,9 +16,11 @@ export class DndComponent implements OnInit, FileContentHolder {
     private testCaseOwner: TestCaseOwner;
 
     constructor() {
+        console.log("dnd constructor");
     }
 
     ngOnInit() {
+        console.log("ngOnInit dnd")
         this.testCaseOwner.registerFileContentHolder(this);
     }
 

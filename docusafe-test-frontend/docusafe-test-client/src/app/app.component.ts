@@ -159,4 +159,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         console.error("an error occured: " + errormessage);
     }
 
+    getCurrentTest() : string {
+        return JSON.stringify(this.tests.tests[this.currentTestIndex]);
+    }
 }
