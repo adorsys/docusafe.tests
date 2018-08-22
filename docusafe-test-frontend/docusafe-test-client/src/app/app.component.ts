@@ -29,11 +29,12 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     title = 'docusafe-test-client';
     fileContentHolder: FileContentHolder = null;
     busy: boolean = false;
+    doContinue: boolean = false;
     destinationUrls: string[] = [
         "http://docusafeserver-psp-docusafe-performancetest.cloud.adorsys.de",
         "http://localhost:9999"
     ];
-    destinationUrl: string = this.destinationUrls[0];
+    destinationUrl: string = this.destinationUrls[1];
     testcases: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",
@@ -114,10 +115,11 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         }
     }
 
-    doCleanDatabase() : void {
+    doCleanDatabase(): void {
         this.busy = true;
         this.errormessage = "";
-        var deleteTestCase: TestCaseTYPE  = new TestCaseTYPE();
+        // var deleteTestCase: TestCaseTYPE  = new TestCaseTYPE();
+        var deleteTestCase: TestCaseTYPE = defaultTests.tests[0];
         deleteTestCase.testcase = "DELETE_DATABASE_AND_CACHES";
         this.testService.test(this.destinationUrl, deleteTestCase, this);
     }
@@ -128,29 +130,30 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.testService.test(this.destinationUrl, this.tests.tests[this.currentTestIndex], this);
     }
 
-    doRemainingTests() : void {
-        do {
-            var indexBefore = this.currentTestIndex;
-            this.doCurrentTest();
-            var indexAfter = this.currentTestIndex;
-        } while (indexBefore != indexAfter);
+    doRemainingTests(): void {
+        this.doContinue = true;
+        this.doCurrentTest();
     }
 
-    doAllTests() : void {
+    doAllTests(): void {
         this.currentTestIndex = 0;
         this.doRemainingTests();
     }
 
-    setRequestResult(TestResultTYPE) : void {
+    setRequestResult(TestResultTYPE): void {
         this.busy = false;
         console.log("test erfolgreich");
         this.currentTestIndex++;
         if (this.currentTestIndex == this.tests.tests.length) {
-            this.currentTestIndex = 0;
+            this.currentTestIndex--;
+        } else {
+            if (this.doContinue) {
+                this.doRemainingTests();
+            }
         }
     }
 
-    setRequestError(errormessage: string) : void {
+    setRequestError(errormessage: string): void {
         this.busy = false;
         this.errormessage = errormessage;
         console.error("an error occured: " + errormessage);
