@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
 import {TestService} from "../service/test.service";
-import {TestCasesTYPE} from "../types/test.cases.type";
+import {TestCaseTYPE, TestCasesTYPE} from "../types/test.cases.type";
 import {TestCaseOwner} from "./test.case.owner";
 import {FileContentHolder} from "../dnd/file.content.holder";
+import {RequestSender} from "./request.sender";
 
 var defaultTests: TestCasesTYPE =
 {
@@ -24,9 +25,10 @@ var defaultTests: TestCasesTYPE =
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements TestCaseOwner {
+export class AppComponent implements TestCaseOwner, RequestSender {
     title = 'docusafe-test-client';
     fileContentHolder: FileContentHolder = null;
+    busy: boolean = false;
     destinationUrls: string[] = [
         "http://docusafeserver-psp-docusafe-performancetest.cloud.adorsys.de",
         "http://localhost:9999"
@@ -34,7 +36,10 @@ export class AppComponent implements TestCaseOwner {
     destinationUrl: string = this.destinationUrls[0];
     testcases: string[] = [
         "CREATE_DOCUMENTS",
-        "READ_DOCUMENTS"
+        "READ_DOCUMENTS",
+        "DELETE_DATABASE",
+        "DELETE_DATABASE_AND_CACHES",
+        "DELETE_CACHES"
     ];
     docusafelayer: string[] = [
         "CACHED_TRANSACTIONAL",
@@ -56,17 +61,6 @@ export class AppComponent implements TestCaseOwner {
 
     constructor(private testService: TestService) {
         this.setTestCases(defaultTests);
-    }
-
-    requestError(errormessage: string): void {
-        this.errormessage = errormessage;
-        console.error("an error occured: " + errormessage);
-    }
-
-    deleteDBAndCaches(): void {
-        console.log("button pressed deleteDBAndCaches");
-        this.errormessage = "";
-        this.testService.deleteDBAndCaches(this.destinationUrl, this, this.requestError);
     }
 
     setTestCases(content: TestCasesTYPE): void {
@@ -118,6 +112,48 @@ export class AppComponent implements TestCaseOwner {
         if (this.currentTestIndex < this.tests.tests.length - 1) {
             this.currentTestIndex++;
         }
+    }
+
+    doCleanDatabase() : void {
+        this.busy = true;
+        this.errormessage = "";
+        var deleteTestCase: TestCaseTYPE  = new TestCaseTYPE();
+        deleteTestCase.testcase = "DELETE_DATABASE_AND_CACHES";
+        this.testService.test(this.destinationUrl, deleteTestCase, this);
+    }
+
+    doCurrentTest(): void {
+        this.busy = true;
+        this.errormessage = "";
+        this.testService.test(this.destinationUrl, this.tests.tests[this.currentTestIndex], this);
+    }
+
+    doRemainingTests() : void {
+        do {
+            var indexBefore = this.currentTestIndex;
+            this.doCurrentTest();
+            var indexAfter = this.currentTestIndex;
+        } while (indexBefore != indexAfter);
+    }
+
+    doAllTests() : void {
+        this.currentTestIndex = 0;
+        this.doRemainingTests();
+    }
+
+    setRequestResult(TestResultTYPE) : void {
+        this.busy = false;
+        console.log("test erfolgreich");
+        this.currentTestIndex++;
+        if (this.currentTestIndex == this.tests.tests.length) {
+            this.currentTestIndex = 0;
+        }
+    }
+
+    setRequestError(errormessage: string) : void {
+        this.busy = false;
+        this.errormessage = errormessage;
+        console.error("an error occured: " + errormessage);
     }
 
 }

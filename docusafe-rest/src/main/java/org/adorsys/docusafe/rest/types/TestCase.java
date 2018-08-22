@@ -6,5 +6,7 @@ package org.adorsys.docusafe.rest.types;
 public enum TestCase {
     CREATE_DOCUMENTS,
     READ_DOCUMENTS,
-    DELETE_DATABASE
+    DELETE_DATABASE,
+    DELETE_DATABASE_AND_CACHES,
+    DELETE_CACHES
 }

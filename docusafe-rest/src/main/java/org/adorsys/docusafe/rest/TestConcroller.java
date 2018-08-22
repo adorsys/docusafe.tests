@@ -13,6 +13,7 @@ import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafe
 import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
 import org.adorsys.docusafe.rest.impl.SimpleRequestMemoryContextImpl;
 import org.adorsys.docusafe.rest.types.TestParameter;
+import org.adorsys.docusafe.rest.types.TestsResult;
 import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
@@ -72,6 +73,7 @@ public class TestConcroller {
         initServices();
     }
 
+    @CrossOrigin
     @RequestMapping(
             value = "/test",
             method = {RequestMethod.PUT},
@@ -80,7 +82,24 @@ public class TestConcroller {
     )
     public
     @ResponseBody
-    ResponseEntity<String> test(@RequestBody TestParameter testParameter) {
+    ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
+        TestsResult testsResult = new TestsResult();
+        testsResult.request = testParameter;
+        testsResult.extendedStoreConnection = extendedStoreConnection.getClass().getName();
+        switch (testParameter.testcase) {
+            case READ_DOCUMENTS:
+            case CREATE_DOCUMENTS:
+                return regularTest(testParameter, testsResult);
+            case DELETE_DATABASE_AND_CACHES:
+            case DELETE_CACHES:
+            case DELETE_DATABASE:
+                return deleteDB(testParameter, testsResult);
+            default:
+                throw new BaseException("testCase not expected:" + testParameter.testcase);
+        }
+    }
+
+    private ResponseEntity<TestsResult> regularTest(TestParameter testParameter, TestsResult testsResult) {
         int index = 0;
         switch (testParameter.cacheType) {
             case NO_CACHE:
@@ -97,11 +116,6 @@ public class TestConcroller {
         }
         UserIDAuth userIDAuth = new UserIDAuth(testParameter.userid, new ReadKeyPassword("password for " + testParameter.userid.getValue()));
         StopWatch stopWatch = new StopWatch();
-        StringBuilder resultString = new StringBuilder();
-        resultString.append(extendedStoreConnection.getClass().getName());
-        resultString.append("\n");
-        resultString.append(testParameter.toString());
-        resultString.append("\n");
         TxID txID = null;
         switch (testParameter.testcase) {
             case CREATE_DOCUMENTS: {
@@ -170,43 +184,35 @@ public class TestConcroller {
                     stopWatch.stop();
                     break;
             }
-            resultString.append(stopWatch.prettyPrint());
-            resultString.append("Total Time:" + stopWatch.getTotalTimeMillis());
-            resultString.append("\n");
         }
-        LOGGER.info(resultString.toString());
-        return new ResponseEntity<>(resultString.toString(), HttpStatus.OK);
+        addStopWatchToTestsResult(stopWatch, testsResult);
+        return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
-    private DocumentContent createDocumentContent(Integer sizeOfDocument, DocumentFQN documentFQN) {
-        byte[] bytes = new byte[sizeOfDocument];
-        new Random().nextBytes(bytes);
-        return new DocumentContent(bytes);
-    }
-
-    @RequestMapping(
-            value = "/deleteDB",
-            method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}
-    )
-    public void deleteDB() {
-        LOGGER.info("all buckets will be deleted - but caches not");
-        extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
-    }
-
-    @CrossOrigin
-    @RequestMapping(
-            value = "/deleteDBAndCaches",
-            method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}
-    )
-    public void deleteDBAndCaches() {
-        LOGGER.info("all buckets will be deleted");
-        extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
-        LOGGER.info("all caches will be deleted");
-        initServices();
+    private ResponseEntity<TestsResult> deleteDB(TestParameter testParameter, TestsResult testsResult) {
+        StopWatch stopWatch = new StopWatch();
+        switch (testParameter.testcase) {
+            case DELETE_DATABASE:
+            case DELETE_DATABASE_AND_CACHES: {
+                LOGGER.info("delete database");
+                stopWatch.start("delete database");
+                extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
+                stopWatch.stop();
+                break;
+            }
+        }
+        switch (testParameter.testcase) {
+            case DELETE_CACHES:
+            case DELETE_DATABASE_AND_CACHES: {
+                LOGGER.info("delete caches");
+                stopWatch.start("delete caches");
+                initServices();
+                stopWatch.stop();
+                break;
+            }
+        }
+        addStopWatchToTestsResult(stopWatch, testsResult);
+        return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
     @RequestMapping(
@@ -250,6 +256,27 @@ public class TestConcroller {
         cachedTransactionalDocumentSafeServices[1] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[1]);
         cachedTransactionalDocumentSafeServices[2] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[2]);
     }
+
+
+    private void addStopWatchToTestsResult(StopWatch stopWatch, TestsResult testsResult) {
+        StopWatch.TaskInfo[] stopWatchTaskInfos = stopWatch.getTaskInfo();
+        testsResult.tasks = new TestsResult.TaskInfo[stopWatchTaskInfos.length];
+        for (int i = 0; i < stopWatchTaskInfos.length; i++) {
+            StopWatch.TaskInfo stopWatchTaskInfo = stopWatchTaskInfos[i];
+            testsResult.tasks[i] = new TestsResult.TaskInfo();
+            testsResult.tasks[i].name = stopWatchTaskInfo.getTaskName();
+            testsResult.tasks[i].time = stopWatchTaskInfo.getTimeMillis();
+        }
+        testsResult.totalTime = stopWatch.getTotalTimeMillis();
+        LOGGER.info(testsResult.toString());
+    }
+
+    private DocumentContent createDocumentContent(Integer sizeOfDocument, DocumentFQN documentFQN) {
+        byte[] bytes = new byte[sizeOfDocument];
+        new Random().nextBytes(bytes);
+        return new DocumentContent(bytes);
+    }
+
 
 
 }

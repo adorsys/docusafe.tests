@@ -92,13 +92,12 @@
             <app-dnd [testCaseOwner]="me"></app-dnd>
         </div>
         <div class="col3">
-            <label ngbButtonLabel class="btn-primary full" (click)="deleteDBAndCaches()">
-                delete database andcaches
-                {{errormessage}}
-            </label>
+            <label ngbButtonLabel class="btn-primary full" (click)="doCurrentTest()" [attr.disabled]="busy == true ? true : null">do current test</label>
+            <label ngbButtonLabel class="btn-primary full" (click)="doRemainingTests()">do remaining tests</label>
+            <label ngbButtonLabel class="btn-primary full" (click)="doAllTests()">do all tests</label>
+            <label ngbButtonLabel class="btn-warning full" (click)="doCleanDatabase()">clean database</label>
             <label ngbButtonLabel class="btn-primary full" (click)="show()">show</label>
-            <input class="full" type="text" value="{{file}}">
-
+            {{errormessage}}
         </div>
     </div>
 </div>

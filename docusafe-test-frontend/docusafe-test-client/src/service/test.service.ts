@@ -1,5 +1,7 @@
 import {Injectable} from "@angular/core"
 import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
+import {RequestSender} from "../app/request.sender";
+import {TestCaseTYPE} from "../types/test.cases.type";
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -13,11 +15,12 @@ export class TestService {
     constructor(private httpClient: HttpClient) {
     }
 
-    deleteDBAndCaches(urlPrefix: string, obj: any, finished: (errormessage: string) => void): void {
-        var url = urlPrefix + "/deleteDBAndCaches";
-        this.httpClient.get(url, httpOptions).subscribe(
-            data => console.log("get done"),
-            error => finished.call(obj, this.getErrorMessage(error))
+    test(urlPrefix: string, testCase: TestCaseTYPE, requestSender: RequestSender): void {
+        var url = urlPrefix + "/test";
+        this.httpClient.put(url, testCase, httpOptions).
+        subscribe(
+            data => requestSender.setRequestResult(data),
+            error => requestSender.setRequestError(this.getErrorMessage(error))
         );
         console.log("sent get to " + url);
     }
@@ -29,7 +32,7 @@ export class TestService {
         } else {
             // The backend returned an unsuccessful response code.
             // The response body may contain clues as to what went wrong,
-            return "Backend returned code " + error.status + " body was: " + error.error;
+            return "Backend returned code " + error.status + " message was: " + error.message;
         }
     }
 }

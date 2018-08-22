@@ -20,7 +20,7 @@ public class TestParameter {
                 "testcase=" + testcase + "\n" +
                 "docusafeLayer=" + docusafeLayer + "\n" +
                 "cacheType=" + cacheType + "\n" +
-                "userid=" + userid.getValue() + "\n" +
+                "userid=" + (userid != null ? userid.getValue() : "") + "\n" +
                 "numberOfDocuments=" + numberOfDocuments + "\n" +
                 "sizeOfDocument=" + sizeOfDocument + "\n" +
                 "documentsPerDirectory=" + documentsPerDirectory + "\n" +
