@@ -27,25 +27,25 @@ var defaultTests: TestCasesTYPE =
 export class AppComponent implements TestCaseOwner {
     title = 'docusafe-test-client';
     fileContentHolder: FileContentHolder = null;
-    destinationUrls: any[] = [
-        {"name": "http://docusafeserver-psp-docusafe-performancetest.cloud.adorsys.de", "selected": true },
-        {"name": "http://localhost:9999",                                               "selected": false }
+    destinationUrls: string[] = [
+        "http://docusafeserver-psp-docusafe-performancetest.cloud.adorsys.de",
+        "http://localhost:9999"
     ];
-    destinationUrl: string = this.destinationUrls[0].name;
-    testcases: any[] = [
-        {"name": "CREATE_DOCUMENTS", "selected": false},
-        {"name": "READ_DOCUMENTS", "selected": true}
+    destinationUrl: string = this.destinationUrls[0];
+    testcases: string[] = [
+        "CREATE_DOCUMENTS",
+        "READ_DOCUMENTS"
     ];
-    docusafelayer: any[] = [
-        {"name": "CACHED_TRANSACTIONAL", "selected": false},
-        {"name": "TRANSACTIONAL", "selected": false},
-        {"name": "NON_TRANSACTIONAL", "selected": false},
-        {"name": "DOCUSAFE_BASE", "selected": true}
+    docusafelayer: string[] = [
+        "CACHED_TRANSACTIONAL",
+        "TRANSACTIONAL",
+        "NON_TRANSACTIONAL",
+        "DOCUSAFE_BASE"
     ];
-    cachetypes: any[] = [
-        {"name": "NO_CACHE", "selected": false},
-        {"name": "GUAVA", "selected": false},
-        {"name": "HASH_MAP", "selected": true}
+    cachetypes: string[] = [
+        "NO_CACHE",
+        "GUAVA",
+        "HASH_MAP"
     ];
 
     errormessage: string = "";

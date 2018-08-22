@@ -7,7 +7,7 @@
         Destination
         <select [(ngModel)]="destinationUrl">
             <option *ngFor="let du of destinationUrls"
-                    [selected]="du.selected == true">{{du.name}}
+                    [selected]="destinationUrl == du">{{du}}
             </option>
         </select>
         <br>
@@ -31,7 +31,7 @@
                     <td>
                         <select [(ngModel)]="tests.tests[currentTestIndex].testcase">
                             <option *ngFor="let tc of testcases"
-                                    [selected]="tests.tests[currentTestIndex].testcase == tc.name">{{tc.name}}
+                                    [selected]="tests.tests[currentTestIndex].testcase == tc">{{tc}}
                             </option>
                         </select>
                     </td>
@@ -41,7 +41,7 @@
                     <td>
                         <select [(ngModel)]="tests.tests[currentTestIndex].docusafeLayer">
                             <option *ngFor="let dl of docusafelayer"
-                                    [selected]="tests.tests[currentTestIndex].docusafeLayer == dl.name">{{dl.name}}
+                                    [selected]="tests.tests[currentTestIndex].docusafeLayer == dl">{{dl}}
                             </option>
                         </select>
                     </td>
@@ -51,7 +51,7 @@
                     <td>
                         <select [(ngModel)]="tests.tests[currentTestIndex].cacheType">
                             <option *ngFor="let ct of cachetypes"
-                                    [selected]="tests.tests[currentTestIndex].cacheType == ct.name">{{ct.name}}
+                                    [selected]="tests.tests[currentTestIndex].cacheType == ct">{{ct}}
                             </option>
                         </select>
                     </td>
