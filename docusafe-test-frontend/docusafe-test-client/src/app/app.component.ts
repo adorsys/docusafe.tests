@@ -157,7 +157,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.specialTest = true;
         this.errormessage = "";
         // var deleteTestCase: TestCaseTYPE  = new TestCaseTYPE();
-        var deleteTestCase: TestCaseTYPE = defaultTests.tests[0];
+        var deleteTestCase: TestCaseTYPE = Object.assign({}, defaultTests.tests[0]);
         deleteTestCase.testcase = "DELETE_DATABASE_AND_CACHES";
         this.testService.test(this.destinationUrl, deleteTestCase, this);
     }

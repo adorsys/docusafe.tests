@@ -1,17 +1,44 @@
 <div>
+
     <div *ngIf="showTable">
         <label ngbButtonLabel class="btn-primary full" (click)="toggleView()">show as json</label>
-        <table border="1">
-
-            <tr *ngFor="let r of results.results.reverse()"
-                (click)="onSelect(r)">
-                <td class="badge">{{r.date}}</td>
-                <td>{{r.totalTime}}</td>
-                <ng-template ngFor let-t [ngForOf]="r.tasks">
-                    <td title="{{t.name}}">{{t.time}}</td>
-                </ng-template>
-
+        <table class="small-font">
+            <tr valign="top">
+                <td>testcase:</td>
+                <td>
+                    <pre>{{testcaseString}}</pre>
+                </td>
             </tr>
+            <tr valign="top">
+                <td>task</td>
+                <td>{{task}}</td>
+            </tr>
+        </table>
+
+        <table border="1" class="small-font">
+            <tr>
+                <td>date date</td>
+                <td>total time</td>
+                <td colspan=5>tasks</td>
+            </tr>
+
+            <ng-template ngFor let-r [ngForOf]="results.results.reverse()">
+                <tr
+                        (mouseover)="showTestcase(r)"
+                        (mouseout)="showTestcase(null)"
+                >
+                    <td>{{r.date}}</td>
+                    <td>{{r.totalTime}}</td>
+                    <ng-template ngFor let-t [ngForOf]="r.tasks">
+                        <td title="{{t.name}}"
+                            (mouseover)="showTask(t.name)"
+                            (mouseout)="showTask('')"
+                        >{{t.time}}
+                        </td>
+                    </ng-template>
+
+                </tr>
+            </ng-template>
         </table>
     </div>
     <div *ngIf="! showTable">
