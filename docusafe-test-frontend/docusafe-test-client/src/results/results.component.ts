@@ -10,6 +10,7 @@ import {TestCaseOwner} from "../app/test.case.owner";
 })
 export class ResultsComponent implements OnInit, TestResultOwner {
     results: TestResultsTYPE = new TestResultsTYPE();
+    showTable: boolean = true;
 
     @Input()
     private testCaseOwner: TestCaseOwner;
@@ -27,5 +28,9 @@ export class ResultsComponent implements OnInit, TestResultOwner {
 
     }
 
+    toggleView() : void {
+        this.showTable = (this.showTable == true ? false : true);
+        console.log("toggle view finished " + this.showTable);
+    }
 
 }

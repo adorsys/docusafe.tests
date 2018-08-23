@@ -1,10 +1,21 @@
 <div>
-  <ul>
-    <li *ngFor="let r of results.results.reverse()"
-        (click)="onSelect(r)">
-      <span class="badge">{{r.date}}</span> {{r.tasks.length}}
-    </li>
-  </ul>
-  <pre>{{results.results.reverse() | json}}</pre>
+    <div *ngIf="showTable">
+        <label ngbButtonLabel class="btn-primary full" (click)="toggleView()">show as json</label>
+        <table border="1">
 
+            <tr *ngFor="let r of results.results.reverse()"
+                (click)="onSelect(r)">
+                <td class="badge">{{r.date}}</td>
+                <td>{{r.totalTime}}</td>
+                <ng-template ngFor let-t [ngForOf]="r.tasks">
+                    <td title="{{t.name}}">{{t.time}}</td>
+                </ng-template>
+
+            </tr>
+        </table>
+    </div>
+    <div *ngIf="! showTable">
+        <label ngbButtonLabel class="btn-primary full" (click)="toggleView()">show as table</label>
+        <pre>{{results.results.reverse() | json}}</pre>
+    </div>
 </div>
