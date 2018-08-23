@@ -17,6 +17,7 @@ export class TestService {
 
     test(urlPrefix: string, testCase: TestCaseTYPE, requestSender: RequestSender): void {
         var url = urlPrefix + "/test";
+        console.log("PUT " + testCase + " TO " + url);
         this.httpClient.put(url, testCase, httpOptions).
         subscribe(
             data => requestSender.setRequestResult(data),

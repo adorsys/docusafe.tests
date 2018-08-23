@@ -7,7 +7,9 @@
         <h1>
             Test is {{currentTestIndex+1}}/{{numberOfTests}} running .....
         </h1>
-            {{getCurrentTest()}}
+        <div style="text-align: left">
+            <pre>{{tests.tests[currentTestIndex] | json}}</pre>
+        </div>
     </div>
     <div [hidden]="busy">
         <div>
