@@ -1,5 +1,11 @@
 import {TestCaseTYPE} from "./test.cases.type";
 
+
+export class TaskTYPE {
+    name: string;
+    time: number
+}
+
 export class TestResultTYPE {
     testRequest: TestCaseTYPE;
     serversExtendedStoreConnection: string;
@@ -7,7 +13,6 @@ export class TestResultTYPE {
     tasks: TaskTYPE[];
 }
 
-export class TaskTYPE {
-    name: string;
-    time: number
+export class TestResultsTYPE {
+    results: TestResultTYPE[];
 }

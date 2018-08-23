@@ -3,6 +3,8 @@ import {TestService} from "../service/test.service";
 import {TestCaseTYPE, TestCasesTYPE} from "../types/test.cases.type";
 import {TestCaseOwner} from "./test.case.owner";
 import {FileContentHolder} from "../dnd/file.content.holder";
+import {TestResultOwner} from "../results/test.result.owner";
+import {TestResultTYPE} from "../types/test.result.type";
 import {RequestSender} from "./request.sender";
 
 var defaultTests: TestCasesTYPE =
@@ -28,6 +30,7 @@ var defaultTests: TestCasesTYPE =
 export class AppComponent implements TestCaseOwner, RequestSender {
     title = 'docusafe-test-client';
     fileContentHolder: FileContentHolder = null;
+    testResultOwner: TestResultOwner = null;
     busy: boolean = false;
     doContinue: boolean = false;
     specialTest: boolean = false;
@@ -132,6 +135,11 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.fromModelToFile();
     }
 
+    registerResultsHolder(r:TestResultOwner) : void {
+        this.testResultOwner = r;
+    }
+
+
     previousTestcase(): void {
         if (this.currentTestIndex > 0) {
             this.currentTestIndex--;
@@ -170,7 +178,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.doRemainingTests();
     }
 
-    receiveRequestResult(TestResultTYPE): void {
+    receiveRequestResult(testResult: TestResultTYPE): void {
         this.busy = false;
         if (this.specialTest == true) {
             // do not increment counter
@@ -186,6 +194,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
             }
         }
         this.specialTest = false;
+        this.testResultOwner.add(testResult);
     }
 
     receiveRequestError(errormessage: string): void {
@@ -194,4 +203,5 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.errormessage = errormessage;
         console.error("an error occured: " + errormessage);
     }
+
 }

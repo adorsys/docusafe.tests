@@ -9,12 +9,14 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DndComponent} from '../dnd/dnd.component';
 import {DndDirective} from '../dnd/dnd.directive';
 import {FormsModule} from "@angular/forms";
+import { ResultsComponent } from '../results/results.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         DndComponent,
-        DndDirective
+        DndDirective,
+        ResultsComponent
     ],
     imports: [
         BrowserModule,
