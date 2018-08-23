@@ -1,5 +1,10 @@
 <div>
-  results works!
-  <pre>{{results | json}}</pre>
+  <ul>
+    <li *ngFor="let r of results.results.reverse()"
+        (click)="onSelect(r)">
+      <span class="badge">{{r.date}}</span> {{r.tasks.length}}
+    </li>
+  </ul>
+  <pre>{{results.results.reverse() | json}}</pre>
 
 </div>

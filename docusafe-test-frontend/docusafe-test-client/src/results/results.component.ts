@@ -24,6 +24,7 @@ export class ResultsComponent implements OnInit, TestResultOwner {
 
     add(result: TestResultTYPE): void {
         this.results.results.push(result);
+
     }
 
 
