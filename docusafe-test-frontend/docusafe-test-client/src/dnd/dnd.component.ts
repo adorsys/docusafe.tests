@@ -10,7 +10,7 @@ import {FileContentHolder} from "./file.content.holder";
 })
 export class DndComponent implements OnInit, FileContentHolder {
     message: string = "Drop your file here!";
-    fehler: string = "";
+    errorMessage: string = "";
 
     @Input()
     private testCaseOwner: TestCaseOwner;
@@ -25,7 +25,7 @@ export class DndComponent implements OnInit, FileContentHolder {
     }
 
     onFilesChange(files: FileList) {
-        this.fehler = "";
+        this.errorMessage = "";
         for (var i = 0; i < files.length; i++) {
             console.log("droped file " + files[i].name + " -> " + files[i].size);
             this.message = files[i].name;
@@ -42,11 +42,12 @@ export class DndComponent implements OnInit, FileContentHolder {
 
     setMessage(m: string) : void {
         this.message = m;
+        this.errorMessage = "";
         this.testCaseOwner.notifyForChanchedFileContent();
     }
 
     setErrorMessage(em: string) : void {
-        this.fehler = em;
+        this.errorMessage = em;
     }
 
     getMessage() : string {
