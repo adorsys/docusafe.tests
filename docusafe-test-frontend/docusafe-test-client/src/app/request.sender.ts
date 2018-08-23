@@ -1,4 +1,4 @@
 export interface RequestSender {
-    setRequestResult(TestResultTYPE) : void;
-    setRequestError(string) : void;
+    receiveRequestResult(TestResultTYPE) : void;
+    receiveRequestError(string) : void;
 }

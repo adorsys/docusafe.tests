@@ -42,14 +42,11 @@ export class DndComponent implements OnInit, FileContentHolder {
 
     setMessage(m: string) : void {
         this.message = m;
-        console.log("setMessage mit neuem Wert:" + m);
-        try {
-            var testCases: TestCasesTYPE = JSON.parse(m);
-            this.testCaseOwner.setTestCases(testCases);
-        } catch (e ) {
-            console.log("Fehler:" + e.message);
-            this.fehler = e.message;
-        }
+        this.testCaseOwner.notifyForChanchedFileContent();
+    }
+
+    setErrorMessage(em: string) : void {
+        this.fehler = em;
     }
 
     getMessage() : string {

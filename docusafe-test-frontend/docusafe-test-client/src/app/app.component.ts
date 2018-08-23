@@ -61,11 +61,20 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     numberOfTests: number = 0;
 
     constructor(private testService: TestService) {
-        this.setTestCases(defaultTests);
+        this.setTests(defaultTests);
     }
 
-    setTestCases(content: TestCasesTYPE): void {
-        this.tests = content;
+    notifyForChanchedFileContent(): void {
+        console.log("nfcfc 1");
+        var filecontent: string = this.fileContentHolder.getMessage();
+        console.log("nfcfc 2");
+        var testCases: TestCasesTYPE = JSON.parse(filecontent);
+        console.log("nfcfc 3");
+        this.setTests(testCases);
+    }
+
+    setTests(testCases:TestCasesTYPE) : void {
+        this.tests = testCases;
         console.log("received tests:");
         if (this.tests != null) {
             console.log("size is " + this.tests.tests.length);
@@ -80,27 +89,42 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     }
 
     fromFileToModel() {
+        console.log("ff2m 1");
         var filecontent: string = this.fileContentHolder.getMessage();
+        console.log("ff2m 2");
         var testCases: TestCasesTYPE = JSON.parse(filecontent);
-        this.setTestCases(testCases);
+        console.log("ff2m 3");
+        this.setTests(testCases);
+        console.log("ff2m 4");
     }
 
     fromModelToFile() {
+        console.log("fm2f 1");
         var newfilecontent: string = JSON.stringify(this.tests);
+        console.log("fm2f 2");
         this.fileContentHolder.setMessage(newfilecontent);
+        console.log("fm2f 3");
         this.currentTestIndex = 0;
+        console.log("fm2f 4");
     }
 
     appendToFile() {
+        console.log("am2f 1");
         var filecontent: string = this.fileContentHolder.getMessage();
+        console.log("am2f 2");
         var fileTestCases: TestCasesTYPE = JSON.parse(filecontent);
+        console.log("am2f 3");
         fileTestCases.tests.push(this.tests.tests[this.currentTestIndex]);
+        console.log("am2f 4");
         this.tests = fileTestCases;
+        console.log("am2f 5");
         this.fromModelToFile();
+        console.log("am2f 6");
     }
 
     registerFileContentHolder(fch: FileContentHolder): void {
         this.fileContentHolder = fch;
+        this.fromModelToFile();
     }
 
     previousTestcase(): void {
@@ -140,7 +164,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.doRemainingTests();
     }
 
-    setRequestResult(TestResultTYPE): void {
+    receiveRequestResult(TestResultTYPE): void {
         this.busy = false;
         console.log("test erfolgreich");
         this.currentTestIndex++;
@@ -153,13 +177,9 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         }
     }
 
-    setRequestError(errormessage: string): void {
+    receiveRequestError(errormessage: string): void {
         this.busy = false;
         this.errormessage = errormessage;
         console.error("an error occured: " + errormessage);
-    }
-
-    getCurrentTest() : string {
-        return JSON.stringify(this.tests.tests[this.currentTestIndex]);
     }
 }

@@ -20,8 +20,8 @@ export class TestService {
         console.log("PUT " + testCase + " TO " + url);
         this.httpClient.put(url, testCase, httpOptions).
         subscribe(
-            data => requestSender.setRequestResult(data),
-            error => requestSender.setRequestError(this.getErrorMessage(error))
+            data => requestSender.receiveRequestResult(data),
+            error => requestSender.receiveRequestError(this.getErrorMessage(error))
         );
         console.log("sent get to " + url);
     }
