@@ -35,10 +35,10 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     doContinue: boolean = false;
     specialTest: boolean = false;
     destinationUrls: string[] = [
-        "http://docusafeserver-psp-docusafe-performancetest.cloud.adorsys.de",
+        "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
         "http://localhost:9999"
     ];
-    destinationUrl: string = this.destinationUrls[1];
+    destinationUrl: string = this.destinationUrls[0];
     testcases: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",

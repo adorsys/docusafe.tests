@@ -18,7 +18,7 @@ echo "build standalone server"
 mvn -f ./pom.xml clean package -DskipTests  > /dev/null
 
 echo "start standalone server"
-java -jar ./target/docusafe-rest.jar -ERASE_DATABASE $* > documentsafe.console.out.log &
+java -jar ../docusafe-rest-server/target/docusafe-rest-server.jar -ERASE_DATABASE $* > documentsafe.console.out.log &
 pid=$!
 echo "pid ist $pid"
 
@@ -70,11 +70,9 @@ testParams $*
 
 echo filesystem $filesystem
 
-# ./dorest.sh basictest $filesystem
-# ./dorest.sh performancetest $filesystem
-./dorest.sh writeMuch
-# ./streamTest.sh
-# ./streamByteTest.sh
+./dorest.sh basictest $filesystem
+./streamTest.sh
+./streamByteTest.sh
 
 echo "kill standalone server with pid $pid"
 kill $pid

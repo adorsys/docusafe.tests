@@ -87,6 +87,11 @@ public class RestApplication {
                 }
         );
         LOGGER.debug("add bouncy castle provider");
+        LOGGER.info("************************");
+        LOGGER.info("*  Verdion             *");
+        LOGGER.info("*  0.1.0-SNAPSHOT      *");
+        LOGGER.info("************************");
+
         Security.addProvider(new BouncyCastleProvider());
         ShowProperties.log();
         try {

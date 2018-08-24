@@ -15,8 +15,8 @@ function print () {
 	} | tee -a curl.log
 }
 
-file=../docusafe-rest.client/target/dsc
-filetosave=target/largefile
+file=./target/dsc
+filetosave=./target/largefile
 rm -f $filetosave
 i="0"
 while (( i<150 ))
