@@ -5,6 +5,7 @@ import org.adorsys.cryptoutils.storeconnectionfactory.ExtendedStoreConnectionFac
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
 import org.adorsys.docusafe.business.impl.WithCache;
+import org.adorsys.docusafe.business.types.UserID;
 import org.adorsys.docusafe.business.types.complex.DSDocument;
 import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
@@ -39,6 +40,7 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Created by peter on 15.08.18 at 15:57.
@@ -100,6 +102,9 @@ public class TestConcroller {
     }
 
     private ResponseEntity<TestsResult> regularTest(TestParameter testParameter, TestsResult testsResult) {
+        if (testParameter.userid == null || testParameter.userid.getValue().length() == 0) {
+            testParameter.userid = new UserID(UUID.randomUUID().toString());
+        }
         int index = 0;
         switch (testParameter.cacheType) {
             case NO_CACHE:

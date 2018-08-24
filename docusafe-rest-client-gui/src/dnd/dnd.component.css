@@ -10,5 +10,10 @@
 
 textarea {
   font-size: 12px;
-  width:100%
+  width:100%;
+  background-image:url(../assets/dnd.png);
+}
+
+.main {
+  background-image:url(../assets/dnd.png);
 }

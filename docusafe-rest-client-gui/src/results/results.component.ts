@@ -46,8 +46,8 @@ export class ResultsComponent implements OnInit, TestResultOwner {
             this.testcase = null;
             this.testcaseString = "\n";
         } else {
-            this.testcase = t.testRequest;
-            this.testcaseString = JSON.stringify(t);
+            this.testcase = t.request;
+            this.testcaseString = JSON.stringify(t.request);
         }
     }
 }

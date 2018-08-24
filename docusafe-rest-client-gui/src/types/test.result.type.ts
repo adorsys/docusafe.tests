@@ -8,7 +8,7 @@ export class TaskTYPE {
 
 export class TestResultTYPE {
     date: string;
-    testRequest: TestCaseTYPE;
+    request: TestCaseTYPE;
     serversExtendedStoreConnection: string;
     totalTime: number;
     tasks: TaskTYPE[];
