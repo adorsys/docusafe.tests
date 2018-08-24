@@ -55,8 +55,8 @@
     </developers>
 
     <modules>
-        <module>docusafe-rest</module>
-        <module>docusafe-rest.client</module>
+        <module>docusafe-rest-server</module>
+        <module>docusafe-rest-client-batch</module>
     </modules>
 
     <dependencies>
