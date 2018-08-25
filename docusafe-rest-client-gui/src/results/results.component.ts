@@ -3,6 +3,7 @@ import {TestResultsTYPE, TestResultTYPE} from "../types/test.result.type";
 import {TestResultOwner} from "./test.result.owner";
 import {TestCaseOwner} from "../app/test.case.owner";
 import {TestCaseTYPE} from "../types/test.cases.type";
+import {TestResultAndResponseTYPE} from "../types/test.result.type";
 
 @Component({
     selector: 'results',
@@ -13,22 +14,21 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     results: TestResultsTYPE = new TestResultsTYPE();
     showTable: boolean = true;
     testcase : TestCaseTYPE = null;
-    testcaseString : string = "";
     task: string = "";
 
     @Input()
     private testCaseOwner: TestCaseOwner;
 
     constructor() {
-        this.results.results = new Array<TestResultTYPE>();
+        this.results.results = new Array<TestResultAndResponseTYPE>();
     }
 
     ngOnInit() {
         this.testCaseOwner.registerResultsHolder(this);
     }
 
-    add(result: TestResultTYPE): void {
-        this.results.results.push(result);
+    add(response: TestResultAndResponseTYPE): void {
+        this.results.results.push(response);
 
     }
 
@@ -41,13 +41,11 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         this.task = i;
     }
 
-    showTestcase(t:TestResultTYPE) : void {
+    showTestcase(t:TestCaseTYPE) : void {
         if (t == null) {
             this.testcase = null;
-            this.testcaseString = "\n";
         } else {
-            this.testcase = t.request;
-            this.testcaseString = JSON.stringify(t.request);
+            this.testcase = t;
         }
     }
 }

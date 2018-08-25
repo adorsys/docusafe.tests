@@ -1,9 +1,10 @@
-<div class="dropzone form-group" >
+<div class="dropzone form-group">
   <textarea class="form-control rounded-0 main"
-          id="exampleFormControlTextarea1"
-          rows="12"
-          appDnd (filesChangeEmiter)="onFilesChange($event)"
-            [(ngModel)]="message">
-  </textarea>
-  {{errorMessage}}
+            id="exampleFormControlTextarea1"
+            rows="12"
+            appDnd (filesChangeEmiter)="onFilesChange($event)"
+            style="background-image=''{{imageURL}}/dnd.png'"
+    [(ngModel)]="message">
+    </textarea>
+    {{errorMessage}}
 </div>

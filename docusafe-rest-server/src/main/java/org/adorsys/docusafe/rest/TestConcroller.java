@@ -86,7 +86,6 @@ public class TestConcroller {
     @ResponseBody
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
-        testsResult.request = testParameter;
         testsResult.extendedStoreConnection = extendedStoreConnection.getClass().getName();
         switch (testParameter.testcase) {
             case READ_DOCUMENTS:

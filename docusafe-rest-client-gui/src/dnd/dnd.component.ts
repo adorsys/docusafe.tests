@@ -2,6 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {TestCaseOwner} from "../app/test.case.owner";
 import {TestCasesTYPE} from "../types/test.cases.type";
 import {FileContentHolder} from "./file.content.holder";
+import {Consts} from "../environments/consts";
 
 @Component({
     selector: 'app-dnd',
@@ -11,6 +12,8 @@ import {FileContentHolder} from "./file.content.holder";
 export class DndComponent implements OnInit, FileContentHolder {
     message: string = "Drop your file here!";
     errorMessage: string = "";
+    private imageURL : string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
+
 
     @Input()
     private testCaseOwner: TestCaseOwner;

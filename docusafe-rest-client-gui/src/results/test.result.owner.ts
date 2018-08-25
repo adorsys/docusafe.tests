@@ -1,4 +1,4 @@
-import {TestResultTYPE} from "../types/test.result.type";
+import {TestResultAndResponseTYPE} from "../types/test.result.type";
 export interface TestResultOwner {
-    add(result: TestResultTYPE) : void;
+    add(response: TestResultAndResponseTYPE) : void;
 }

@@ -8,7 +8,6 @@ import java.util.Date;
  */
 public class TestsResult {
     public String date;
-    public TestParameter request;
     public String extendedStoreConnection;
     public long totalTime;
     public TaskInfo[] tasks;
@@ -34,7 +33,6 @@ public class TestsResult {
     @Override
     public String toString() {
         return "TestsResult{" +
-                "request=" + request +
                 ", extendedStoreConnection='" + extendedStoreConnection + '\'' +
                 ", totalTime=" + totalTime +
                 // ", tasks=" + Arrays.toString(tasks) +

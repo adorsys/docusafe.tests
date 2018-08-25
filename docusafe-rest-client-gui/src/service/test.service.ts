@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core"
 import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
 import {RequestSender} from "../app/request.sender";
 import {TestCaseTYPE} from "../types/test.cases.type";
+import {TestResultTYPE} from "../types/test.result.type";
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -18,10 +19,9 @@ export class TestService {
     test(urlPrefix: string, testCase: TestCaseTYPE, requestSender: RequestSender): void {
         var url = urlPrefix + "/test";
         console.log("PUT " + testCase + " TO " + url);
-        this.httpClient.put(url, testCase, httpOptions).
-        subscribe(
-            data => requestSender.receiveRequestResult(data),
-            error => requestSender.receiveRequestError(this.getErrorMessage(error))
+        this.httpClient.put<TestResultTYPE>(url, testCase, httpOptions).subscribe(
+            data => requestSender.receiveRequestResult(1, testCase, data),
+            error => requestSender.receiveRequestError(0, testCase, this.getErrorMessage(error))
         );
         console.log("sent get to " + url);
     }

@@ -6,6 +6,9 @@ import {FileContentHolder} from "../dnd/file.content.holder";
 import {TestResultOwner} from "../results/test.result.owner";
 import {TestResultTYPE} from "../types/test.result.type";
 import {RequestSender} from "./request.sender";
+import {Consts} from "../environments/consts";
+import {TestResultAndResponseTYPE} from "../types/test.result.type";
+import {formatDate} from '@angular/common';
 
 var defaultTests: TestCasesTYPE =
 {
@@ -34,6 +37,8 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     busy: boolean = false;
     doContinue: boolean = false;
     specialTest: boolean = false;
+    private imageURL : string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
+
     destinationUrls: string[] = [
         "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
         "http://localhost:9999"
@@ -178,7 +183,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.doRemainingTests();
     }
 
-    receiveRequestResult(testResult: TestResultTYPE): void {
+    receiveRequestResult(statusCode: number, testRequest: TestCaseTYPE, testResult: TestResultTYPE) : void {
         this.busy = false;
         if (this.specialTest == true) {
             // do not increment counter
@@ -194,14 +199,26 @@ export class AppComponent implements TestCaseOwner, RequestSender {
             }
         }
         this.specialTest = false;
-        this.testResultOwner.add(testResult);
+        var response : TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
+        response.result = testResult;
+        response.statusCode = statusCode;
+        response.request = testRequest;
+        response.date = testResult.date;
+        this.testResultOwner.add(response);
     }
 
-    receiveRequestError(errormessage: string): void {
+    receiveRequestError(statusCode: number, testRequest: TestCaseTYPE, errorMessage: string) : void  {
         this.busy = false;
         this.specialTest = false;
-        this.errormessage = errormessage;
-        console.error("an error occured: " + errormessage);
+        this.errormessage = errorMessage;
+        var response : TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
+        response.error = errorMessage;
+        response.statusCode = statusCode;
+        response.request = testRequest;
+        response.date = formatDate(new Date(), 'yyyy-MM-dd-hh:mm:SS', 'en');
+        console.error("an error occured: " + errorMessage);
+        this.testResultOwner.add(response);
     }
+
 
 }
