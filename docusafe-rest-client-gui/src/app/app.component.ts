@@ -213,6 +213,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.specialTest = false;
         this.errormessage = errorMessage;
         this.testsDone.tests.push(testRequest);
+        this.doContinue = false;
         var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
         response.error = errorMessage;
         response.statusCode = statusCode;
