@@ -10,7 +10,7 @@ import {Consts} from "../environments/consts";
     styleUrls: ['./dnd.component.css']
 })
 export class DndComponent implements OnInit, FileContentHolder {
-    message: string = "Drop your file here!";
+    message: string = "Drop your testcases in json format here!";
     errorMessage: string = "";
     private imageURL : string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 

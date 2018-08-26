@@ -30,85 +30,89 @@
             </div>
             <div class="row no-margin">
                 <div class="col1">
-                    <table class="testtable">
-                        <tr>
-                            <td>Number</td>
-                            <td>
-                                <img alt="arrow-left.png" height="20" (click)="previousTestcase()" src="{{imageURL}}/arrow-left.png">
-                    {{currentTestIndex+1}}/{{numberOfTests}}
-                                <img alt="arrow-right.png" height="20" (click)="nextTestcase()" src="{{imageURL}}/arrow-right.png">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Test Case</td>
-                            <td>
-                                <select [(ngModel)]="tests.tests[currentTestIndex].testcase">
-                                    <option *ngFor="let tc of testcases"
-                                            [selected]="tests.tests[currentTestIndex].testcase == tc">{{tc}}
-                                    </option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Docusafe Layer</td>
-                            <td>
-                                <select [(ngModel)]="tests.tests[currentTestIndex].docusafeLayer">
-                                    <option *ngFor="let dl of docusafelayer"
-                                            [selected]="tests.tests[currentTestIndex].docusafeLayer == dl">{{dl}}
-                                    </option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Cache Type</td>
-                            <td>
-                                <select [(ngModel)]="tests.tests[currentTestIndex].cacheType">
-                                    <option *ngFor="let ct of cachetypes"
-                                            [selected]="tests.tests[currentTestIndex].cacheType == ct">{{ct}}
-                                    </option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>UserID</td>
-                            <td><input [(ngModel)]="tests.tests[currentTestIndex].userid"></td>
-                        </tr>
-                        <tr>
-                            <td>Number of Documents</td>
-                            <td><input [(ngModel)]="tests.tests[currentTestIndex].numberOfDocuments"></td>
-                        </tr>
-                        <tr>
-                            <td>Size of Documents</td>
-                            <td><input [(ngModel)]="tests.tests[currentTestIndex].sizeOfDocument"></td>
-                        </tr>
-                        <tr>
-                            <td>Documents per directory</td>
-                            <td><input [(ngModel)]="tests.tests[currentTestIndex].documentsPerDirectory"></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col15">
-                    <div class="firstarrow">
-                        <img alt="arrow-left.png" height="30" (click)="fromFileToModel()" src="{{imageURL}}/arrow-left.png">
-                    </div>
-                    <div class="arrow">
-                        <img alt="arrow-right.png" height="30" (click)="fromModelToFile()" src="{{imageURL}}/arrow-right.png">
-                    </div>
-                    <div class="arrow">
-                        <img alt="arrow-insert.png" height="30" (click)="appendToFile()" src="{{imageURL}}/arrow-insert.png">
+                    <div class="headline">CURRENT TEST</div>
+                    <div class="content">
+                        <table class="testtable">
+                            <tr>
+                                <td>Number</td>
+                                <td>
+                                    <img alt="arrow-left.png" height="20" (click)="previousTestcase()"
+                                         src="{{imageURL}}/arrow-left.png">
+                                    {{currentTestIndex+1}}/{{numberOfTests}}
+                                    <img alt="arrow-right.png" height="20" (click)="nextTestcase()"
+                                         src="{{imageURL}}/arrow-right.png">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Test Case</td>
+                                <td>
+                                    <select [(ngModel)]="tests.tests[currentTestIndex].testcase">
+                                        <option *ngFor="let tc of testcases"
+                                                [selected]="tests.tests[currentTestIndex].testcase == tc">{{tc}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Docusafe Layer</td>
+                                <td>
+                                    <select [(ngModel)]="tests.tests[currentTestIndex].docusafeLayer">
+                                        <option *ngFor="let dl of docusafelayer"
+                                                [selected]="tests.tests[currentTestIndex].docusafeLayer == dl">{{dl}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Cache Type</td>
+                                <td>
+                                    <select [(ngModel)]="tests.tests[currentTestIndex].cacheType">
+                                        <option *ngFor="let ct of cachetypes"
+                                                [selected]="tests.tests[currentTestIndex].cacheType == ct">{{ct}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>UserID</td>
+                                <td><input [(ngModel)]="tests.tests[currentTestIndex].userid"></td>
+                            </tr>
+                            <tr>
+                                <td>Number of Documents</td>
+                                <td><input [(ngModel)]="tests.tests[currentTestIndex].numberOfDocuments"></td>
+                            </tr>
+                            <tr>
+                                <td>Size of Documents</td>
+                                <td><input [(ngModel)]="tests.tests[currentTestIndex].sizeOfDocument"></td>
+                            </tr>
+                            <tr>
+                                <td>Documents per directory</td>
+                                <td><input [(ngModel)]="tests.tests[currentTestIndex].documentsPerDirectory"></td>
+                            </tr>
+                            <app-dnd [testCaseOwner]="me"></app-dnd>
+
+                        </table>
                     </div>
                 </div>
                 <div class="col2">
-                    <app-dnd [testCaseOwner]="me"></app-dnd>
+                    <div class="headline">TESTS DONE</div>
+                    <div class="content">
+                        <textarea rows="12">{{testsDone | json}}</textarea>
+                    </div>
                 </div>
                 <div class="col3">
-                    <label ngbButtonLabel class="btn-primary full" (click)="doCurrentTest()"
-                           [attr.disabled]="busy == true ? true : null">do current test</label>
-                    <label ngbButtonLabel class="btn-primary full" (click)="doRemainingTests()">do remaining
-                        tests</label>
-                    <label ngbButtonLabel class="btn-primary full" (click)="doAllTests()">do all tests</label>
-                    <label ngbButtonLabel class="btn-warning full" (click)="doCleanDatabase()">clean database</label>
-                    {{errormessage}}
+                    <div class="headline">ACTIONS</div>
+                    <div class="content">
+                        <label ngbButtonLabel class="btn-primary full" (click)="doCurrentTest()"
+                               [attr.disabled]="busy == true ? true : null">do current test</label>
+                        <label ngbButtonLabel class="btn-primary full" (click)="doRemainingTests()">do remaining
+                            tests</label>
+                        <label ngbButtonLabel class="btn-primary full" (click)="doAllTests()">do all tests</label>
+                        <label ngbButtonLabel class="btn-warning full" (click)="doCleanDatabase()">clean
+                            database</label>
+                        <label ngbButtonLabel class="btn-primary full" (click)="removeLastTestFromDone()">remove last test from done</label>
+                        {{errormessage}}
+                    </div>
                 </div>
             </div>
         </div>

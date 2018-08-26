@@ -9,6 +9,7 @@ import {RequestSender} from "./request.sender";
 import {Consts} from "../environments/consts";
 import {TestResultAndResponseTYPE} from "../types/test.result.type";
 import {formatDate} from '@angular/common';
+import {isUndefined} from "util";
 
 var defaultTests: TestCasesTYPE =
 {
@@ -37,7 +38,15 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     busy: boolean = false;
     doContinue: boolean = false;
     specialTest: boolean = false;
-    private imageURL : string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
+    errormessage: string = "";
+    tests: TestCasesTYPE = null;
+    testsDone: TestCasesTYPE = new TestCasesTYPE();
+    me: TestCaseOwner = this;
+    currentTestIndex: number = -1;
+    numberOfTests: number = 0;
+
+
+    private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
     destinationUrls: string[] = [
         "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
@@ -63,23 +72,28 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         "HASH_MAP"
     ];
 
-    errormessage: string = "";
-    tests: TestCasesTYPE = null;
-    me: TestCaseOwner = this;
-    currentTestIndex: number = -1;
-    numberOfTests: number = 0;
-
     constructor(private testService: TestService) {
         this.setTests(defaultTests);
+        this.testsDone.tests = new Array<TestCaseTYPE>();
     }
 
     notifyForChanchedFileContent(): void {
-        console.log("nfcfc 1");
         var filecontent: string = this.fileContentHolder.getMessage();
-        console.log("nfcfc 2");
-        var testCases: TestCasesTYPE = JSON.parse(filecontent);
-        console.log("nfcfc 3");
-        this.setTests(testCases);
+        try {
+            console.log("parse tests");
+            var testCases: TestCasesTYPE = JSON.parse(filecontent);
+            if (isUndefined(testCases)) {
+                throw "dropped element are not json";
+            }
+            var length = testCases.tests.length;
+            console.log("anzahl der neu geladenen testfälle:" + length);
+            if (length == 0) {
+                throw "dropped element are not json testcases";
+            }
+            this.setTests(testCases);
+        } catch (e) {
+            this.fileContentHolder.setErrorMessage(e);
+        }
     }
 
     setTests(testCases: TestCasesTYPE): void {
@@ -97,28 +111,10 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         console.log(this.destinationUrl);
     }
 
-    fromFileToModel() {
-        console.log("ff2m 1");
-        var filecontent: string = this.fileContentHolder.getMessage();
-        console.log("ff2m 2");
-        try {
-            var testCases: TestCasesTYPE = JSON.parse(filecontent);
-            console.log("ff2m 3");
-            this.setTests(testCases);
-            console.log("ff2m 4");
-        } catch (e) {
-            this.fileContentHolder.setErrorMessage(e);
-        }
-    }
-
     fromModelToFile() {
-        console.log("fm2f 1");
         var newfilecontent: string = JSON.stringify(this.tests);
-        console.log("fm2f 2");
         this.fileContentHolder.setMessage(newfilecontent);
-        console.log("fm2f 3");
         this.currentTestIndex = 0;
-        console.log("fm2f 4");
     }
 
     appendToFile() {
@@ -140,7 +136,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.fromModelToFile();
     }
 
-    registerResultsHolder(r:TestResultOwner) : void {
+    registerResultsHolder(r: TestResultOwner): void {
         this.testResultOwner = r;
     }
 
@@ -183,8 +179,9 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.doRemainingTests();
     }
 
-    receiveRequestResult(statusCode: number, testRequest: TestCaseTYPE, testResult: TestResultTYPE) : void {
+    receiveRequestResult(statusCode: number, testRequest: TestCaseTYPE, testResult: TestResultTYPE): void {
         this.busy = false;
+        this.testsDone.tests.push(testRequest);
         if (this.specialTest == true) {
             // do not increment counter
         } else {
@@ -199,7 +196,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
             }
         }
         this.specialTest = false;
-        var response : TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
+        var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
         response.result = testResult;
         response.statusCode = statusCode;
         response.request = testRequest;
@@ -207,11 +204,16 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.testResultOwner.add(response);
     }
 
-    receiveRequestError(statusCode: number, testRequest: TestCaseTYPE, errorMessage: string) : void  {
+    removeLastTestFromDone() : void {
+        this.testsDone.tests.pop();
+    }
+
+    receiveRequestError(statusCode: number, testRequest: TestCaseTYPE, errorMessage: string): void {
         this.busy = false;
         this.specialTest = false;
         this.errormessage = errorMessage;
-        var response : TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
+        this.testsDone.tests.push(testRequest);
+        var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
         response.error = errorMessage;
         response.statusCode = statusCode;
         response.request = testRequest;

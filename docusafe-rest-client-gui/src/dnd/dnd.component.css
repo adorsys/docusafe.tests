@@ -1,14 +1,5 @@
 .dropzone {
-  min-width: 40px;
-  width:90%;
   display: table;
   background-color: #eee;
   border: dotted 1px #aaa;
-  margin-left: 5%;
-  margin-right: 5%;
-}
-
-textarea {
-  font-size: 12px;
-  width:100%;
 }

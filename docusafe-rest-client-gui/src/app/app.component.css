@@ -39,5 +39,19 @@
     text-align: left;
 }
 
+textarea {
+    width:100%
+}
 
+.headline {
+    background-color:grey;
+    margin-left:2%;
+    margin-right:2%;
+    margin-bottom: 5%;
+}
+
+.content {
+    margin-right:3%;
+    margin-left: 3%;
+}
 
