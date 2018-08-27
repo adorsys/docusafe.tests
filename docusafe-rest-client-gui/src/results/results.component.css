@@ -9,3 +9,11 @@
 .realline {
     border:1;
 }
+
+.errorline {
+    background-color: lightpink;
+}
+
+.okline {
+    background-color: lightgreen;
+}
