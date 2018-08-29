@@ -19,14 +19,12 @@
             <groupId>de.adorsys.cryptoutils</groupId>
             <artifactId>storeconnectionfactory</artifactId>
             <version>${crypt.version}</version>
-            <!--
-            <exclusions>
-            <exclusion>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongodb-driver</artifactId>
-            </exclusion>
-            </exclusions>
-            -->
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.cryptoutils</groupId>
+            <artifactId>encobject</artifactId>
+            <version>${crypt.version}</version>
         </dependency>
 
         <!-- Spring boot -->
@@ -67,6 +65,20 @@
             <groupId>de.adorsys</groupId>
             <artifactId>docusafe-business</artifactId>
             <version>${docusafe.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>de.adorsys.cryptoutils</groupId>
+                    <artifactId>encobject</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>de.adorsys.cryptoutils</groupId>
+                    <artifactId>basetypes</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>de.adorsys.cryptoutils</groupId>
+                    <artifactId>jkeyutils</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

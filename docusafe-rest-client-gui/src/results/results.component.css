@@ -17,3 +17,7 @@
 .okline {
     background-color: lightgreen;
 }
+
+.no-margin {
+    margin:0px;
+}

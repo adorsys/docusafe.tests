@@ -5,56 +5,55 @@
     </div>
     <div *ngIf="showTable">
         <label ngbButtonLabel class="btn-primary full" (click)="toggleView()">show as json</label>
-        <div class="row">
-            <div>
-                <table border="1" class="small-font">
-                    <tr>
-                        <td>date date</td>
-                        <td>testcase</td>
-                        <td>total time</td>
-                        <td colspan=5>tasks</td>
-                    </tr>
-
-                    <ng-template ngFor let-r [ngForOf]="results.results.reverse()">
-                        <tr *ngIf="r.error == null"
-                            class="okline"
-                            (mouseover)="showTestcase(r.request)"
-                        >
-                            <td>{{r.date}}</td>
-                            <td>{{r.request.testcase}}</td>
-                            <td>{{r.result.totalTime}}</td>
-                            <ng-template ngFor let-t [ngForOf]="r.result.tasks">
-                                <td title="{{t.name}}"
-                                    (mouseover)="showTask(t.name)"
-                                    (mouseout)="showTask('&nbsp;')"
-                                >{{t.time}}
-                                </td>
-                            </ng-template>
-
+            <div class="row no-margin">
+                <div>
+                    <table border="1" class="small-font">
+                        <tr>
+                            <td>date date</td>
+                            <td>testcase</td>
+                            <td>total time</td>
+                            <td colspan=5>tasks</td>
                         </tr>
-                        <tr *ngIf="r.error != null"
-                            class="errorline"
-                            (mouseover)="showTestcase(r.request)"
-                        >
-                            <td>{{r.date}}</td>
-                            <td
-                                    (mouseover)="showTask(r.error)"
-                                    (mouseout)="showTask('&nbsp;')">
+
+                        <ng-template ngFor let-r [ngForOf]="results.results.reverse()">
+                            <tr *ngIf="r.error == null"
+                                class="okline"
+                                (mouseover)="showTestcase(r.request)"
+                            >
+                                <td>{{r.date}}</td>
+                                <td>{{r.request.testcase}}</td>
+                                <td>{{r.result.totalTime}}</td>
+                                <ng-template ngFor let-t [ngForOf]="r.result.tasks">
+                                    <td title="{{t.name}}"
+                                        (mouseover)="showTask(t.name)"
+                                        (mouseout)="showTask('&nbsp;')"
+                                    >{{t.time}}
+                                    </td>
+                                </ng-template>
+
+                            </tr>
+                            <tr *ngIf="r.error != null"
+                                class="errorline"
+                                (mouseover)="showTestcase(r.request)"
+                            >
+                                <td>{{r.date}}</td>
+                                <td
+                                        (mouseover)="showTask(r.error)"
+                                        (mouseout)="showTask('&nbsp;')">
                                     {{r.request.testcase}}
-                            </td>
-                        </tr>
-                    </ng-template>
-                </table>
-            </div>
-            <div class="col-md-8 text-right">
-                <div>
-                    <pre *ngIf="testcase != null">{{testcase | json}}</pre>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </table>
                 </div>
-                <div>
-                    <pre>{{task}}</pre>
+                <div class="col-md-8 text-right">
+                    <div>
+                        <pre *ngIf="testcase != null">{{testcase | json}}</pre>
+                    </div>
+                    <div>
+                        <pre>{{task}}</pre>
+                    </div>
                 </div>
-            </div>
-
         </div>
     </div>
     <div *ngIf="! showTable">
