@@ -4,6 +4,7 @@ import {TestResultOwner} from "./test.result.owner";
 import {TestSuiteOwner} from "../app/test.case.owner";
 import {TestRequestTYPE} from "../types/test.cases.type";
 import {TestResultAndResponseTYPE} from "../types/test.result.type";
+import {TestSuiteTYPE} from "../types/test.cases.type";
 
 @Component({
     selector: 'results',
@@ -29,8 +30,21 @@ export class ResultsComponent implements OnInit, TestResultOwner {
 
     add(response: TestResultAndResponseTYPE): void {
         this.results.results.push(response);
-
     }
+
+    remove () : void {
+        this.results.results.pop();
+    }
+
+    getAll() : TestSuiteTYPE {
+        var testSuite : TestSuiteTYPE = new TestSuiteTYPE();
+        testSuite.testrequests = new Array<TestRequestTYPE>(this.results.results.length);
+        for (var i = 0; i<this.results.results.length; i++) {
+            testSuite.testrequests.push(this.results.results[i].request);
+        }
+        return testSuite;
+    }
+
 
     toggleView() : void {
         this.showTable = (this.showTable == true ? false : true);

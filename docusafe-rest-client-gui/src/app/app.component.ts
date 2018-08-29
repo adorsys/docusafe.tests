@@ -10,6 +10,7 @@ import {Consts} from "../environments/consts";
 import {TestResultAndResponseTYPE} from "../types/test.result.type";
 import {formatDate} from '@angular/common';
 import {isUndefined} from "util";
+import {ClipboardService} from "../clipboard/clipboard.service";
 
 var defaultTestSuite: TestSuiteTYPE =
 {
@@ -18,7 +19,7 @@ var defaultTestSuite: TestSuiteTYPE =
             "testAction": "CREATE_DOCUMENTS",
             "docusafeLayer": "DOCUSAFE_BASE",
             "cacheType": "NO_CACHE",
-            "userid": "dummy01",
+            "userid": "",
             "sizeOfDocument": 50,
             "documentsPerDirectory": 1,
             "numberOfDocuments": 1
@@ -44,7 +45,6 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     me: TestSuiteOwner = this;
     currentTestIndex: number = -1;
     numberOfTests: number = 0;
-
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
@@ -72,7 +72,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         "HASH_MAP"
     ];
 
-    constructor(private testService: TestService) {
+    constructor(private testService: TestService, private clipboardService: ClipboardService) {
         this.setTests(defaultTestSuite);
         this.testSuiteDone.testrequests = new Array<TestRequestTYPE>();
     }
@@ -205,7 +205,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     }
 
     removeLastTestFromDone() : void {
-        this.testSuiteDone.testrequests.pop();
+        this.testResultOwner.remove();
     }
 
     receiveRequestError(statusCode: number, testRequest: TestRequestTYPE, errorMessage: string): void {
@@ -223,5 +223,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.testResultOwner.add(response);
     }
 
-
+    copy() : void {
+        this.clipboardService.copy(JSON.stringify(this.testResultOwner.getAll()));
+    }
 }

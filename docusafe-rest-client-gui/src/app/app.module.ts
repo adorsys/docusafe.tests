@@ -8,6 +8,8 @@ import {TestService} from "../service/test.service";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DndComponent} from '../dnd/dnd.component';
 import {DndDirective} from '../dnd/dnd.directive';
+import {ClipboardDirective } from "../clipboard/clipboard.directive";
+import {ClipboardService } from "../clipboard/clipboard.service";
 import {FormsModule} from "@angular/forms";
 import { ResultsComponent } from '../results/results.component';
 
@@ -16,6 +18,7 @@ import { ResultsComponent } from '../results/results.component';
         AppComponent,
         DndComponent,
         DndDirective,
+        ClipboardDirective,
         ResultsComponent
     ],
     imports: [
@@ -24,7 +27,7 @@ import { ResultsComponent } from '../results/results.component';
         NgbModule,
         FormsModule
     ],
-    providers: [TestService],
+    providers: [TestService, ClipboardService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
