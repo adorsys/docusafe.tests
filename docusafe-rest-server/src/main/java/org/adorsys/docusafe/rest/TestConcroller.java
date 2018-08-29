@@ -37,8 +37,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.Formatter;
-import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 
@@ -87,7 +85,7 @@ public class TestConcroller {
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
         testsResult.extendedStoreConnection = extendedStoreConnection.getClass().getName();
-        switch (testParameter.testcase) {
+        switch (testParameter.testAction) {
             case READ_DOCUMENTS:
             case CREATE_DOCUMENTS:
                 return regularTest(testParameter, testsResult);
@@ -96,7 +94,7 @@ public class TestConcroller {
             case DELETE_DATABASE:
                 return deleteDB(testParameter, testsResult);
             default:
-                throw new BaseException("testCase not expected:" + testParameter.testcase);
+                throw new BaseException("testCase not expected:" + testParameter.testAction);
         }
     }
 
@@ -121,7 +119,7 @@ public class TestConcroller {
         UserIDAuth userIDAuth = new UserIDAuth(testParameter.userid, new ReadKeyPassword("password for " + testParameter.userid.getValue()));
         StopWatch stopWatch = new StopWatch();
         TxID txID = null;
-        switch (testParameter.testcase) {
+        switch (testParameter.testAction) {
             case CREATE_DOCUMENTS: {
                 switch (testParameter.docusafeLayer) {
                     case DOCUSAFE_BASE:
@@ -195,7 +193,7 @@ public class TestConcroller {
 
     private ResponseEntity<TestsResult> deleteDB(TestParameter testParameter, TestsResult testsResult) {
         StopWatch stopWatch = new StopWatch();
-        switch (testParameter.testcase) {
+        switch (testParameter.testAction) {
             case DELETE_DATABASE:
             case DELETE_DATABASE_AND_CACHES: {
                 LOGGER.info("delete database");
@@ -205,7 +203,7 @@ public class TestConcroller {
                 break;
             }
         }
-        switch (testParameter.testcase) {
+        switch (testParameter.testAction) {
             case DELETE_CACHES:
             case DELETE_DATABASE_AND_CACHES: {
                 LOGGER.info("delete caches");

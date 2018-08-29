@@ -6,7 +6,7 @@ import org.adorsys.docusafe.business.types.UserID;
  * Created by peter on 15.08.18 at 16:04.
  */
 public class TestParameter {
-    public TestCase testcase;
+    public TestAction testAction;
     public DocusafeLayer docusafeLayer;
     public CacheType cacheType;
     public UserID userid;
@@ -17,7 +17,7 @@ public class TestParameter {
     @Override
     public String toString() {
         return "TestParameter{" +  "\n" +
-                "testcase=" + testcase + "\n" +
+                "testAction=" + testAction + "\n" +
                 "docusafeLayer=" + docusafeLayer + "\n" +
                 "cacheType=" + cacheType + "\n" +
                 "userid=" + (userid != null ? userid.getValue() : "") + "\n" +

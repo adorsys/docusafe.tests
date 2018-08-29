@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core"
 import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
 import {RequestSender} from "../app/request.sender";
-import {TestCaseTYPE} from "../types/test.cases.type";
+import {TestRequestTYPE} from "../types/test.cases.type";
 import {TestResultTYPE} from "../types/test.result.type";
 
 const httpOptions = {
@@ -16,7 +16,7 @@ export class TestService {
     constructor(private httpClient: HttpClient) {
     }
 
-    test(urlPrefix: string, testCase: TestCaseTYPE, requestSender: RequestSender): void {
+    test(urlPrefix: string, testCase: TestRequestTYPE, requestSender: RequestSender): void {
         var url = urlPrefix + "/test";
         console.log("PUT " + testCase + " TO " + url);
         this.httpClient.put<TestResultTYPE>(url, testCase, httpOptions).subscribe(

@@ -1,5 +1,5 @@
-export class TestCaseTYPE {
-    testcase: string;
+export class TestRequestTYPE {
+    testAction: string;
     docusafeLayer: string;
     cacheType: string;
     userid: string;
@@ -8,6 +8,6 @@ export class TestCaseTYPE {
     numberOfDocuments: number
 };
 
-export class TestCasesTYPE {
-    tests: TestCaseTYPE[];
+export class TestSuiteTYPE {
+    testrequests: TestRequestTYPE[];
 };

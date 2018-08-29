@@ -1,4 +1,4 @@
-import {TestCaseTYPE} from "./test.cases.type";
+import {TestRequestTYPE} from "./test.cases.type";
 
 export class TaskTYPE {
     name: string;
@@ -14,7 +14,7 @@ export class TestResultTYPE {
 
 export class TestResultAndResponseTYPE {
     date: string;
-    request: TestCaseTYPE;
+    request: TestRequestTYPE;
     result: TestResultTYPE;
     statusCode: number;
     error: string;

@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {TestService} from "../service/test.service";
-import {TestCaseTYPE, TestCasesTYPE} from "../types/test.cases.type";
-import {TestCaseOwner} from "./test.case.owner";
+import {TestRequestTYPE, TestSuiteTYPE} from "../types/test.cases.type";
+import {TestSuiteOwner} from "./test.case.owner";
 import {FileContentHolder} from "../dnd/file.content.holder";
 import {TestResultOwner} from "../results/test.result.owner";
 import {TestResultTYPE} from "../types/test.result.type";
@@ -11,11 +11,11 @@ import {TestResultAndResponseTYPE} from "../types/test.result.type";
 import {formatDate} from '@angular/common';
 import {isUndefined} from "util";
 
-var defaultTests: TestCasesTYPE =
+var defaultTestSuite: TestSuiteTYPE =
 {
-    "tests": [
+    "testrequests": [
         {
-            "testcase": "CREATE_DOCUMENTS",
+            "testAction": "CREATE_DOCUMENTS",
             "docusafeLayer": "DOCUSAFE_BASE",
             "cacheType": "NO_CACHE",
             "userid": "dummy01",
@@ -31,7 +31,7 @@ var defaultTests: TestCasesTYPE =
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements TestCaseOwner, RequestSender {
+export class AppComponent implements TestSuiteOwner, RequestSender {
     title = 'docusafe-test-client';
     fileContentHolder: FileContentHolder = null;
     testResultOwner: TestResultOwner = null;
@@ -39,9 +39,9 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     doContinue: boolean = false;
     specialTest: boolean = false;
     errormessage: string = "";
-    tests: TestCasesTYPE = null;
-    testsDone: TestCasesTYPE = new TestCasesTYPE();
-    me: TestCaseOwner = this;
+    testSuite: TestSuiteTYPE = null;
+    testSuiteDone: TestSuiteTYPE = new TestSuiteTYPE();
+    me: TestSuiteOwner = this;
     currentTestIndex: number = -1;
     numberOfTests: number = 0;
 
@@ -53,7 +53,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         "http://localhost:9999"
     ];
     destinationUrl: string = this.destinationUrls[0];
-    testcases: string[] = [
+    testactions: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",
         "DELETE_DATABASE",
@@ -73,22 +73,22 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     ];
 
     constructor(private testService: TestService) {
-        this.setTests(defaultTests);
-        this.testsDone.tests = new Array<TestCaseTYPE>();
+        this.setTests(defaultTestSuite);
+        this.testSuiteDone.testrequests = new Array<TestRequestTYPE>();
     }
 
     notifyForChanchedFileContent(): void {
         var filecontent: string = this.fileContentHolder.getMessage();
         try {
-            console.log("parse tests");
-            var testCases: TestCasesTYPE = JSON.parse(filecontent);
+            console.log("parse testrequests");
+            var testCases: TestSuiteTYPE = JSON.parse(filecontent);
             if (isUndefined(testCases)) {
                 throw "dropped element are not json";
             }
-            var length = testCases.tests.length;
+            var length = testCases.testrequests.length;
             console.log("anzahl der neu geladenen testfälle:" + length);
             if (length == 0) {
-                throw "dropped element are not json testcases";
+                throw "dropped element are not json testactions";
             }
             this.setTests(testCases);
         } catch (e) {
@@ -96,23 +96,23 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         }
     }
 
-    setTests(testCases: TestCasesTYPE): void {
-        this.tests = testCases;
-        console.log("received tests:");
-        if (this.tests != null) {
-            console.log("size is " + this.tests.tests.length);
+    setTests(testSuite: TestSuiteTYPE): void {
+        this.testSuite = testSuite;
+        console.log("received testrequests:");
+        if (this.testSuite != null) {
+            console.log("size is " + this.testSuite.testrequests.length);
             this.currentTestIndex = 0;
-            this.numberOfTests = this.tests.tests.length;
+            this.numberOfTests = this.testSuite.testrequests.length;
         }
     }
 
     show() {
-        console.log(this.tests.tests[this.currentTestIndex]);
+        console.log(this.testSuite.testrequests[this.currentTestIndex]);
         console.log(this.destinationUrl);
     }
 
     fromModelToFile() {
-        var newfilecontent: string = JSON.stringify(this.tests);
+        var newfilecontent: string = JSON.stringify(this.testSuite);
         this.fileContentHolder.setMessage(newfilecontent);
         this.currentTestIndex = 0;
     }
@@ -121,11 +121,11 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         console.log("am2f 1");
         var filecontent: string = this.fileContentHolder.getMessage();
         console.log("am2f 2");
-        var fileTestCases: TestCasesTYPE = JSON.parse(filecontent);
+        var fileTestCases: TestSuiteTYPE = JSON.parse(filecontent);
         console.log("am2f 3");
-        fileTestCases.tests.push(this.tests.tests[this.currentTestIndex]);
+        fileTestCases.testrequests.push(this.testSuite.testrequests[this.currentTestIndex]);
         console.log("am2f 4");
-        this.tests = fileTestCases;
+        this.testSuite = fileTestCases;
         console.log("am2f 5");
         this.fromModelToFile();
         console.log("am2f 6");
@@ -148,7 +148,7 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     }
 
     nextTestcase(): void {
-        if (this.currentTestIndex < this.tests.tests.length - 1) {
+        if (this.currentTestIndex < this.testSuite.testrequests.length - 1) {
             this.currentTestIndex++;
         }
     }
@@ -157,16 +157,16 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.busy = true;
         this.specialTest = true;
         this.errormessage = "";
-        // var deleteTestCase: TestCaseTYPE  = new TestCaseTYPE();
-        var deleteTestCase: TestCaseTYPE = Object.assign({}, defaultTests.tests[0]);
-        deleteTestCase.testcase = "DELETE_DATABASE_AND_CACHES";
+        // var deleteTestCase: TestRequestTYPE  = new TestRequestTYPE();
+        var deleteTestCase: TestRequestTYPE = Object.assign({}, defaultTestSuite.testrequests[0]);
+        deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
         this.testService.test(this.destinationUrl, deleteTestCase, this);
     }
 
     doCurrentTest(): void {
         this.busy = true;
         this.errormessage = "";
-        this.testService.test(this.destinationUrl, this.tests.tests[this.currentTestIndex], this);
+        this.testService.test(this.destinationUrl, this.testSuite.testrequests[this.currentTestIndex], this);
     }
 
     doRemainingTests(): void {
@@ -179,15 +179,15 @@ export class AppComponent implements TestCaseOwner, RequestSender {
         this.doRemainingTests();
     }
 
-    receiveRequestResult(statusCode: number, testRequest: TestCaseTYPE, testResult: TestResultTYPE): void {
+    receiveRequestResult(statusCode: number, testRequest: TestRequestTYPE, testResult: TestResultTYPE): void {
         this.busy = false;
-        this.testsDone.tests.push(testRequest);
+        this.testSuiteDone.testrequests.push(testRequest);
         if (this.specialTest == true) {
             // do not increment counter
         } else {
             console.log("test erfolgreich");
             this.currentTestIndex++;
-            if (this.currentTestIndex == this.tests.tests.length) {
+            if (this.currentTestIndex == this.testSuite.testrequests.length) {
                 this.currentTestIndex--;
             } else {
                 if (this.doContinue) {
@@ -205,14 +205,14 @@ export class AppComponent implements TestCaseOwner, RequestSender {
     }
 
     removeLastTestFromDone() : void {
-        this.testsDone.tests.pop();
+        this.testSuiteDone.testrequests.pop();
     }
 
-    receiveRequestError(statusCode: number, testRequest: TestCaseTYPE, errorMessage: string): void {
+    receiveRequestError(statusCode: number, testRequest: TestRequestTYPE, errorMessage: string): void {
         this.busy = false;
         this.specialTest = false;
         this.errormessage = errorMessage;
-        this.testsDone.tests.push(testRequest);
+        this.testSuiteDone.testrequests.push(testRequest);
         this.doContinue = false;
         var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
         response.error = errorMessage;

@@ -1,8 +1,8 @@
 import {Input, Component, OnInit} from '@angular/core';
 import {TestResultsTYPE, TestResultTYPE} from "../types/test.result.type";
 import {TestResultOwner} from "./test.result.owner";
-import {TestCaseOwner} from "../app/test.case.owner";
-import {TestCaseTYPE} from "../types/test.cases.type";
+import {TestSuiteOwner} from "../app/test.case.owner";
+import {TestRequestTYPE} from "../types/test.cases.type";
 import {TestResultAndResponseTYPE} from "../types/test.result.type";
 
 @Component({
@@ -13,11 +13,11 @@ import {TestResultAndResponseTYPE} from "../types/test.result.type";
 export class ResultsComponent implements OnInit, TestResultOwner {
     results: TestResultsTYPE = new TestResultsTYPE();
     showTable: boolean = true;
-    testcase : TestCaseTYPE = null;
+    testcase : TestRequestTYPE = null;
     task: string = "";
 
     @Input()
-    private testCaseOwner: TestCaseOwner;
+    private testCaseOwner: TestSuiteOwner;
 
     constructor() {
         this.results.results = new Array<TestResultAndResponseTYPE>();
@@ -41,7 +41,7 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         this.task = i;
     }
 
-    showTestcase(t:TestCaseTYPE) : void {
+    showTestcase(t:TestRequestTYPE) : void {
         if (t == null) {
             this.testcase = null;
         } else {

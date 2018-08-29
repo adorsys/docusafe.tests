@@ -55,7 +55,7 @@ function format_hotfix_branch_name {
 }
 
 # Hook to build the snapshot modules before release
-# You can build and run your tests here to avoid releasing an unstable build
+# You can build and run your testSuite here to avoid releasing an unstable build
 function build_snapshot_modules {
   echo "do nothing" >> /dev/null
 }

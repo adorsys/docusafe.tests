@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {TestCaseOwner} from "../app/test.case.owner";
-import {TestCasesTYPE} from "../types/test.cases.type";
+import {TestSuiteOwner} from "../app/test.case.owner";
+import {TestSuiteTYPE} from "../types/test.cases.type";
 import {FileContentHolder} from "./file.content.holder";
 import {Consts} from "../environments/consts";
 
@@ -16,7 +16,7 @@ export class DndComponent implements OnInit, FileContentHolder {
 
 
     @Input()
-    private testCaseOwner: TestCaseOwner;
+    private testCaseOwner: TestSuiteOwner;
 
     constructor() {
         console.log("dnd constructor");
