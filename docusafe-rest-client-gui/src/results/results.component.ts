@@ -14,7 +14,7 @@ import {TestSuiteTYPE} from "../types/test.cases.type";
 export class ResultsComponent implements OnInit, TestResultOwner {
     results: TestResultsTYPE = new TestResultsTYPE();
     showTable: boolean = true;
-    testcase : TestRequestTYPE = null;
+    testresult : TestResultTYPE = null;
     task: string = "";
 
     @Input()
@@ -55,11 +55,11 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         this.task = i;
     }
 
-    showTestcase(t:TestRequestTYPE) : void {
+    showTestcase(t:TestResultTYPE) : void {
         if (t == null) {
-            this.testcase = null;
+            this.testresult = null;
         } else {
-            this.testcase = t;
+            this.testresult = t;
         }
     }
 }

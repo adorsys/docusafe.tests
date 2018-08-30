@@ -44,6 +44,16 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td>Number of threads</td>
+                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].staticClientInfo.numberOfThreads">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Number of repeats</td>
+                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].staticClientInfo.numberOfRepeats">
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Test Action</td>
                                 <td>
                                     <select [(ngModel)]="testSuite.testrequests[currentTestIndex].testAction">

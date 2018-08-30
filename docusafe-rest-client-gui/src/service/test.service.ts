@@ -16,12 +16,12 @@ export class TestService {
     constructor(private httpClient: HttpClient) {
     }
 
-    test(urlPrefix: string, testCase: TestRequestTYPE, requestSender: RequestSender): void {
+    test(urlPrefix: string, testRequeset: TestRequestTYPE, requestSender: RequestSender): void {
         var url = urlPrefix + "/test";
-        console.log("PUT " + testCase + " TO " + url);
-        this.httpClient.put<TestResultTYPE>(url, testCase, httpOptions).subscribe(
-            data => requestSender.receiveRequestResult(1, testCase, data),
-            error => requestSender.receiveRequestError(0, testCase, this.getErrorMessage(error))
+        console.log("PUT " + JSON.stringify(testRequeset) + " TO " + url);
+        this.httpClient.put<TestResultTYPE>(url, testRequeset, httpOptions).subscribe(
+            data => requestSender.receiveRequestResult(1, testRequeset, data),
+            error => requestSender.receiveRequestError(0, testRequeset, this.getErrorMessage(error))
         );
         console.log("sent get to " + url);
     }

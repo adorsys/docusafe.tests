@@ -1,3 +1,13 @@
+export class StaticClientInfoTYPE {
+    numberOfThreads : number;
+    numberOfRepeats : number;
+};
+
+export class DynamicClientInfoTYPE {
+    threadNumber: number;
+    repetitionNumber: number;
+};
+
 export class TestRequestTYPE {
     testAction: string;
     docusafeLayer: string;
@@ -5,9 +15,12 @@ export class TestRequestTYPE {
     userid: string;
     sizeOfDocument: number;
     documentsPerDirectory: number;
-    numberOfDocuments: number
+    numberOfDocuments: number;
+    staticClientInfo: StaticClientInfoTYPE;
+    dynamicClientInfo: DynamicClientInfoTYPE;
 };
 
 export class TestSuiteTYPE {
     testrequests: TestRequestTYPE[];
 };
+

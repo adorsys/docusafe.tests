@@ -22,7 +22,15 @@ var defaultTestSuite: TestSuiteTYPE =
             "userid": "",
             "sizeOfDocument": 50,
             "documentsPerDirectory": 1,
-            "numberOfDocuments": 1
+            "numberOfDocuments": 1,
+            staticClientInfo: {
+                numberOfThreads: 1,
+                numberOfRepeats: 1
+            },
+            dynamicClientInfo: {
+                threadNumber: 0,
+                repetitionNumber: 0
+            }
         }
     ]
 };
@@ -45,6 +53,8 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     me: TestSuiteOwner = this;
     currentTestIndex: number = -1;
     numberOfTests: number = 0;
+    numberOfThreadsThatAnswered : number = 0;
+    numberOfRepeatsDone : number = 0;
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
@@ -158,15 +168,32 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.specialTest = true;
         this.errormessage = "";
         // var deleteTestCase: TestRequestTYPE  = new TestRequestTYPE();
-        var deleteTestCase: TestRequestTYPE = Object.assign({}, defaultTestSuite.testrequests[0]);
+        var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(defaultTestSuite.testrequests[0]));
         deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
         this.testService.test(this.destinationUrl, deleteTestCase, this);
     }
 
     doCurrentTest(): void {
+
+
         this.busy = true;
         this.errormessage = "";
-        this.testService.test(this.destinationUrl, this.testSuite.testrequests[this.currentTestIndex], this);
+        this.numberOfThreadsThatAnswered = 0;
+        this.numberOfRepeatsDone = 0;
+
+
+        this.startRepeatTest();
+    }
+
+    startRepeatTest() : void {
+        let currentTest:TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuite.testrequests[this.currentTestIndex]));
+        currentTest.dynamicClientInfo.repetitionNumber = this.numberOfRepeatsDone;
+
+        for (let i = 0; i<currentTest.staticClientInfo.numberOfThreads; i++) {
+            let request : TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
+            request.dynamicClientInfo.threadNumber = i;
+            this.testService.test(this.destinationUrl, request, this);
+        }
     }
 
     doRemainingTests(): void {
@@ -179,9 +206,32 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.doRemainingTests();
     }
 
+    removeLastTestFromDone(): void {
+        this.testResultOwner.remove();
+    }
+
     receiveRequestResult(statusCode: number, testRequest: TestRequestTYPE, testResult: TestResultTYPE): void {
-        this.busy = false;
+        console.log("receiveRequestResult");
+        var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
+        response.result = testResult;
+        response.statusCode = statusCode;
+        response.request = testRequest;
+        response.date = testResult.date;
+        this.testResultOwner.add(response);
+        this.numberOfThreadsThatAnswered++;
+        if (this.numberOfThreadsThatAnswered < testRequest.staticClientInfo.numberOfThreads) {
+            console.log("only " + this.numberOfThreadsThatAnswered + " have ansewred yet. continue to wait");
+            return;
+        }
+        this.numberOfRepeatsDone++;
+        if (this.numberOfRepeatsDone < testRequest.staticClientInfo.numberOfRepeats) {
+            console.log("erst die " + this.numberOfRepeatsDone + " Wiederholung, test wird wiederholt");
+            this.startRepeatTest();
+            return;
+        }
+        console.log("continue testsing");
         this.testSuiteDone.testrequests.push(testRequest);
+        this.busy = false;
         if (this.specialTest == true) {
             // do not increment counter
         } else {
@@ -196,24 +246,10 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
             }
         }
         this.specialTest = false;
-        var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
-        response.result = testResult;
-        response.statusCode = statusCode;
-        response.request = testRequest;
-        response.date = testResult.date;
-        this.testResultOwner.add(response);
-    }
-
-    removeLastTestFromDone() : void {
-        this.testResultOwner.remove();
     }
 
     receiveRequestError(statusCode: number, testRequest: TestRequestTYPE, errorMessage: string): void {
-        this.busy = false;
-        this.specialTest = false;
-        this.errormessage = errorMessage;
-        this.testSuiteDone.testrequests.push(testRequest);
-        this.doContinue = false;
+        console.log("receiveRequestError");
         var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
         response.error = errorMessage;
         response.statusCode = statusCode;
@@ -221,9 +257,26 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         response.date = formatDate(new Date(), 'yyyy-MM-dd-hh:mm:SS', 'en');
         console.error("an error occured: " + errorMessage);
         this.testResultOwner.add(response);
+        this.numberOfThreadsThatAnswered++;
+        if (this.numberOfThreadsThatAnswered < testRequest.staticClientInfo.numberOfThreads) {
+            console.log("error only " + this.numberOfThreadsThatAnswered + " have ansewred yet. continue to wait");
+            return;
+        }
+        this.numberOfRepeatsDone++;
+        if (this.numberOfRepeatsDone < testRequest.staticClientInfo.numberOfRepeats) {
+            console.log("error erst die " + this.numberOfRepeatsDone + " Wiederholung, test wird wiederholt");
+            this.startRepeatTest();
+            return;
+        }
+        console.log("continue testsing");
+        this.busy = false;
+        this.specialTest = false;
+        this.errormessage = errorMessage;
+        this.doContinue = false;
+        this.testSuiteDone.testrequests.push(testRequest);
     }
 
-    copy() : void {
+    copy(): void {
         this.clipboardService.copy(JSON.stringify(this.testResultOwner.getAll()));
     }
 }

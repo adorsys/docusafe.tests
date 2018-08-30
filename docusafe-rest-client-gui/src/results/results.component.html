@@ -10,6 +10,8 @@
                     <table border="1" class="small-font">
                         <tr>
                             <td>date date</td>
+                            <td>thread</td>
+                            <td>repeat</td>
                             <td>test action</td>
                             <td>total time</td>
                             <td colspan=5>tasks</td>
@@ -18,9 +20,11 @@
                         <ng-template ngFor let-r [ngForOf]="results.results.reverse()">
                             <tr *ngIf="r.error == null"
                                 class="okline"
-                                (mouseover)="showTestcase(r.request)"
+                                (mouseover)="showTestcase(r)"
                             >
                                 <td>{{r.date}}</td>
+                                <td>{{r.request.dynamicClientInfo.threadNumber+1}}/{{r.request.staticClientInfo.numberOfThreads}}</td>
+                                <td>{{r.request.dynamicClientInfo.repetitionNumber+1}}/{{r.request.staticClientInfo.numberOfRepeats}}</td>
                                 <td>{{r.request.testAction}}</td>
                                 <td>{{r.result.totalTime}}</td>
                                 <ng-template ngFor let-t [ngForOf]="r.result.tasks">
@@ -34,9 +38,11 @@
                             </tr>
                             <tr *ngIf="r.error != null"
                                 class="errorline"
-                                (mouseover)="showTestcase(r.request)"
+                                (mouseover)="showTestcase(r)"
                             >
                                 <td>{{r.date}}</td>
+                                <td>{{r.request.dynamicClientInfo.threadNumber}}/{{r.request.staticClientInfo.numberOfThreads}}</td>
+                                <td>{{r.request.dynamicClientInfo.repetitionNumber}}/{{r.request.staticClientInfo.numberOfRepeats}}</td>
                                 <td
                                         (mouseover)="showTask(r.error)"
                                         (mouseout)="showTask('&nbsp;')">
@@ -46,9 +52,9 @@
                         </ng-template>
                     </table>
                 </div>
-                <div class="col-md-8 text-right">
+                <div class="col-md-8">
                     <div>
-                        <pre *ngIf="testcase != null">{{testcase | json}}</pre>
+                        <pre *ngIf="testresult != null">{{testresult | json}}</pre>
                     </div>
                     <div>
                         <pre>{{task}}</pre>
