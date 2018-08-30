@@ -18,11 +18,11 @@ var defaultTestSuite: TestSuiteTYPE =
         {
             "testAction": "CREATE_DOCUMENTS",
             "docusafeLayer": "DOCUSAFE_BASE",
-            "cacheType": "NO_CACHE",
+            "cacheType": "GUAVA",
             "userid": "",
             "sizeOfDocument": 50,
-            "documentsPerDirectory": 1,
-            "numberOfDocuments": 1,
+            "documentsPerDirectory": 10,
+            "numberOfDocuments": 10,
             staticClientInfo: {
                 numberOfThreads: 1,
                 numberOfRepeats: 1
@@ -167,6 +167,8 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.busy = true;
         this.specialTest = true;
         this.errormessage = "";
+        this.numberOfRepeatsDone = 1;
+        this.numberOfThreadsThatAnswered = 1;
         // var deleteTestCase: TestRequestTYPE  = new TestRequestTYPE();
         var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(defaultTestSuite.testrequests[0]));
         deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
@@ -178,8 +180,8 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
 
         this.busy = true;
         this.errormessage = "";
-        this.numberOfThreadsThatAnswered = 0;
-        this.numberOfRepeatsDone = 0;
+        this.numberOfThreadsThatAnswered = 1;
+        this.numberOfRepeatsDone = 1;
 
 
         this.startRepeatTest();
@@ -189,7 +191,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         let currentTest:TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuite.testrequests[this.currentTestIndex]));
         currentTest.dynamicClientInfo.repetitionNumber = this.numberOfRepeatsDone;
 
-        for (let i = 0; i<currentTest.staticClientInfo.numberOfThreads; i++) {
+        for (let i = 1; i<=currentTest.staticClientInfo.numberOfThreads; i++) {
             let request : TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
             this.testService.test(this.destinationUrl, request, this);
@@ -219,12 +221,12 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         response.date = testResult.date;
         this.testResultOwner.add(response);
         this.numberOfThreadsThatAnswered++;
-        if (this.numberOfThreadsThatAnswered < testRequest.staticClientInfo.numberOfThreads) {
+        if (this.numberOfThreadsThatAnswered <= testRequest.staticClientInfo.numberOfThreads) {
             console.log("only " + this.numberOfThreadsThatAnswered + " have ansewred yet. continue to wait");
             return;
         }
         this.numberOfRepeatsDone++;
-        if (this.numberOfRepeatsDone < testRequest.staticClientInfo.numberOfRepeats) {
+        if (this.numberOfRepeatsDone <= testRequest.staticClientInfo.numberOfRepeats) {
             console.log("erst die " + this.numberOfRepeatsDone + " Wiederholung, test wird wiederholt");
             this.startRepeatTest();
             return;

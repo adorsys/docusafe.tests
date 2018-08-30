@@ -23,8 +23,8 @@
                                 (mouseover)="showTestcase(r)"
                             >
                                 <td>{{r.date}}</td>
-                                <td>{{r.request.dynamicClientInfo.threadNumber+1}}/{{r.request.staticClientInfo.numberOfThreads}}</td>
-                                <td>{{r.request.dynamicClientInfo.repetitionNumber+1}}/{{r.request.staticClientInfo.numberOfRepeats}}</td>
+                                <td>{{r.request.dynamicClientInfo.threadNumber}}/{{r.request.staticClientInfo.numberOfThreads}}</td>
+                                <td>{{r.request.dynamicClientInfo.repetitionNumber}}/{{r.request.staticClientInfo.numberOfRepeats}}</td>
                                 <td>{{r.request.testAction}}</td>
                                 <td>{{r.result.totalTime}}</td>
                                 <ng-template ngFor let-t [ngForOf]="r.result.tasks">
