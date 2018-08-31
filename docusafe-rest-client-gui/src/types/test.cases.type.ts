@@ -6,6 +6,7 @@ export class StaticClientInfoTYPE {
 export class DynamicClientInfoTYPE {
     threadNumber: number;
     repetitionNumber: number;
+    testID: string; // fuer alle threads und repeats gleich
 };
 
 export class TestRequestTYPE {

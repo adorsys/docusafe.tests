@@ -11,6 +11,7 @@ import {TestResultAndResponseTYPE} from "../types/test.result.type";
 import {formatDate} from '@angular/common';
 import {isUndefined} from "util";
 import {ClipboardService} from "../clipboard/clipboard.service";
+import {v4 as uuid} from 'uuid';
 
 var defaultTestSuite: TestSuiteTYPE =
 {
@@ -24,12 +25,13 @@ var defaultTestSuite: TestSuiteTYPE =
             "documentsPerDirectory": 10,
             "numberOfDocuments": 10,
             staticClientInfo: {
-                numberOfThreads: 1,
-                numberOfRepeats: 1
+                numberOfThreads: 3,
+                numberOfRepeats: 2
             },
             dynamicClientInfo: {
                 threadNumber: 0,
-                repetitionNumber: 0
+                repetitionNumber: 0,
+                testID: null
             }
         }
     ]
@@ -53,8 +55,9 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     me: TestSuiteOwner = this;
     currentTestIndex: number = -1;
     numberOfTests: number = 0;
-    numberOfThreadsThatAnswered : number = 0;
-    numberOfRepeatsDone : number = 0;
+    numberOfThreadsThatAnswered: number = 0;
+    numberOfRepeatsDone: number = 0;
+    testID: string = null;
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
@@ -116,29 +119,10 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         }
     }
 
-    show() {
-        console.log(this.testSuite.testrequests[this.currentTestIndex]);
-        console.log(this.destinationUrl);
-    }
-
     fromModelToFile() {
         var newfilecontent: string = JSON.stringify(this.testSuite);
         this.fileContentHolder.setMessage(newfilecontent);
         this.currentTestIndex = 0;
-    }
-
-    appendToFile() {
-        console.log("am2f 1");
-        var filecontent: string = this.fileContentHolder.getMessage();
-        console.log("am2f 2");
-        var fileTestCases: TestSuiteTYPE = JSON.parse(filecontent);
-        console.log("am2f 3");
-        fileTestCases.testrequests.push(this.testSuite.testrequests[this.currentTestIndex]);
-        console.log("am2f 4");
-        this.testSuite = fileTestCases;
-        console.log("am2f 5");
-        this.fromModelToFile();
-        console.log("am2f 6");
     }
 
     registerFileContentHolder(fch: FileContentHolder): void {
@@ -182,17 +166,18 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.errormessage = "";
         this.numberOfThreadsThatAnswered = 1;
         this.numberOfRepeatsDone = 1;
-
+        this.testID = uuid();
 
         this.startRepeatTest();
     }
 
-    startRepeatTest() : void {
-        let currentTest:TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuite.testrequests[this.currentTestIndex]));
+    startRepeatTest(): void {
+        let currentTest: TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuite.testrequests[this.currentTestIndex]));
         currentTest.dynamicClientInfo.repetitionNumber = this.numberOfRepeatsDone;
+        currentTest.dynamicClientInfo.testID = this.testID;
 
-        for (let i = 1; i<=currentTest.staticClientInfo.numberOfThreads; i++) {
-            let request : TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
+        for (let i = 1; i <= currentTest.staticClientInfo.numberOfThreads; i++) {
+            let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
             this.testService.test(this.destinationUrl, request, this);
         }
