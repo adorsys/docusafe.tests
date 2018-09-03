@@ -58,7 +58,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     numberOfThreadsThatAnswered: number = 0;
     numberOfRepeatsDone: number = 0;
     testID: string = null;
-    lastSendTestRequest : TestRequestTYPE = null;
+    lastSendTestRequest: TestRequestTYPE = null;
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
@@ -168,6 +168,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     doCurrentTest(): void {
 
 
+        this.specialTest = false;
         this.busy = true;
         this.errormessage = "";
         this.numberOfThreadsThatAnswered = 1;
@@ -226,7 +227,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.continueTesting(response, testRequest);
     }
 
-    continueTesting(response: TestResultAndResponseTYPE, testRequest: TestRequestTYPE) : void {
+    continueTesting(response: TestResultAndResponseTYPE, testRequest: TestRequestTYPE): void {
         this.testResultOwner.add(response);
         this.numberOfThreadsThatAnswered++;
         if (this.numberOfThreadsThatAnswered <= testRequest.staticClientInfo.numberOfThreads) {
@@ -240,21 +241,24 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
             return;
         }
         this.busy = false;
+        console.log("einzelner test beendt");
+
         if (this.specialTest == true) {
             console.log("TEST FINISHED");
-        } else {
-            console.log("test beendt");
+            return;
+        }
+
+        if (this.doContinue) {
             this.currentTestIndex++;
             if (this.currentTestIndex == this.testSuite.testrequests.length) {
                 this.currentTestIndex--;
+                this.doContinue = false;
+                console.log("alle tests beendt");
             } else {
-                if (this.doContinue) {
-                    console.log("CONTINUE TESTING");
-                    this.doRemainingTests();
-                }
+                console.log("CONTINUE TESTING");
+                this.doRemainingTests();
             }
         }
-        this.specialTest = false;
     }
 
     copy(): void {

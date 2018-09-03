@@ -37,6 +37,8 @@ export class ResultsComponent implements OnInit, TestResultOwner {
             subsumedTest = new SubsumedTestTYPE();
             subsumedTest.staticClientInfo = response.request.staticClientInfo;
             subsumedTest.testAction = response.request.testAction;
+            subsumedTest.cacheType = response.request.cacheType;
+            subsumedTest.layer = response.request.docusafeLayer;
             subsumedTest.repeats = new Array<TestResultAndResponseThreadsMapTYPE>(subsumedTest.staticClientInfo.numberOfRepeats);
             for (var i = 0; i < subsumedTest.repeats.length; i++) {
                 subsumedTest.repeats[i] = null;

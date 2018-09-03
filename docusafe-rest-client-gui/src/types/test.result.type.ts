@@ -42,6 +42,8 @@ export class SubsumedTestTYPE {
     lastReceivedDate: string;
     staticClientInfo: StaticClientInfoTYPE = new StaticClientInfoTYPE();
     testAction: string;
+    cacheType: string;
+    layer:string;
     testOk: boolean;
 }
 

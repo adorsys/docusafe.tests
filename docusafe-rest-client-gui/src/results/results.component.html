@@ -28,7 +28,10 @@
                             <td>
                                 {{singleThread.request.dynamicClientInfo.repetitionNumber}}/{{singleThread.request.staticClientInfo.numberOfRepeats}}
                             </td>
-                            <td>{{singleThread.request.testAction}}</td>
+                            <td>{{singleThread.request.testAction}}<br>
+                                {{singleThread.request.cacheType}}<br>
+                                {{singleThread.request.docusafeLayer}}
+                            </td>
                             <td>{{singleThread.result.totalTime}}</td>
                             <ng-template ngFor let-t [ngForOf]="singleThread.result.tasks">
                                 <td title="{{t.name}}"
@@ -51,7 +54,9 @@
                             <td
                                     (mouseover)="showTask(singleThread.error)"
                                     (mouseout)="showTask('&nbsp;')">
-                                {{singleThread.request.testAction}}
+                                {{singleThread.request.testAction}}<br>
+                                {{singleThread.request.cacheType}}<br>
+                                {{singleThread.request.docusafeLayer}}
                             </td>
                         </tr>
                     </table>
@@ -72,7 +77,10 @@
                                      [ngForOf]="viewForTests.subsumedTests.reverse()">
                             <tr class="{{subsumedTest.testOk ? 'okline' : 'errorline'}}">
                                 <td>{{subsumedTest.lastReceivedDate}}</td>
-                                <td>{{subsumedTest.testAction}}</td>
+                                <td>{{subsumedTest.testAction}}<br>
+                                    {{subsumedTest.cacheType}}<br>
+                                    {{subsumedTest.layer}}
+                                </td>
                                 <td>{{subsumedTest.averageTime}}</td>
                                 <td>{{subsumedTest.maxTime}}</td>
                                 <td>{{subsumedTest.minTime}}</td>
@@ -116,7 +124,8 @@
                                                         (click)="showSingleThread(thread)">
                                                         {{thread.result.totalTime}}
                                                     </td>
-                                                    <td *ngIf="thread!=null && ! thread.testOk" class="errorline clickable"
+                                                    <td *ngIf="thread!=null && ! thread.testOk"
+                                                        class="errorline clickable"
                                                         (click)="showSingleThread(thread)">
                                                         x
                                                     </td>
