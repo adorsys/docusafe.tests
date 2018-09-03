@@ -17,7 +17,6 @@ import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
 export class ResultsComponent implements OnInit, TestResultOwner {
     viewForTests: ViewForTests = new ViewForTests();
     showTable: boolean = true;
-    testresult: TestResultTYPE = null;
     task: string = "";
     singleThread : TestResultAndResponseTYPE = null;
 
@@ -170,14 +169,6 @@ export class ResultsComponent implements OnInit, TestResultOwner {
 
     showTask(i: string): void {
         this.task = i;
-    }
-
-    showTestcase(t: TestResultTYPE): void {
-        if (t == null) {
-            this.testresult = null;
-        } else {
-            this.testresult = t;
-        }
     }
 
     showSingleThread(thread: TestResultAndResponseTYPE) : void {

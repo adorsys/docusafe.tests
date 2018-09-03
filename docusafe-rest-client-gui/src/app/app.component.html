@@ -15,7 +15,7 @@
             </h1>
             Repetition {{numberOfRepeatsDone}}
             <div style="text-align: left">
-                <pre>{{testSuite.testrequests[currentTestIndex] | json}}</pre>
+                <pre>{{lastSendTestRequest | json}}</pre>
             </div>
         </div>
         <div [hidden]="busy">

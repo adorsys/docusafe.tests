@@ -23,7 +23,7 @@ export class TestService {
             data => requestSender.receiveRequestResult(1, testRequeset, data),
             error => requestSender.receiveRequestError(0, testRequeset, this.getErrorMessage(error))
         );
-        console.log("sent get to " + url);
+        console.log("sent PUT done to " + url);
     }
 
     private getErrorMessage(error: HttpErrorResponse): string {

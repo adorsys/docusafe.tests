@@ -20,8 +20,7 @@
                         </tr>
 
                         <tr *ngIf="singleThread.error == null"
-                            class="okline"
-                            (mouseover)="showTestcase(r)">
+                            class="okline">
                             <td>{{singleThread.date}}</td>
                             <td>
                                 {{singleThread.request.dynamicClientInfo.threadNumber}}/{{singleThread.request.staticClientInfo.numberOfThreads}}
@@ -41,8 +40,7 @@
 
                         </tr>
                         <tr *ngIf="singleThread.error != null"
-                            class="errorline"
-                            (mouseover)="showTestcase(singleThread)">
+                            class="errorline">
                             <td>{{singleThread.date}}</td>
                             <td>
                                 {{singleThread.request.dynamicClientInfo.threadNumber}}/{{singleThread.request.staticClientInfo.numberOfThreads}}
@@ -120,6 +118,7 @@
                                                     </td>
                                                     <td *ngIf="thread!=null && ! thread.testOk" class="errorline clickable"
                                                         (click)="showSingleThread(thread)">
+                                                        x
                                                     </td>
                                                     <td *ngIf="thread==null">
 
@@ -137,7 +136,7 @@
 
                     <div class="col-md-8">
                         <div>
-                            <pre *ngIf="testresult != null">{{testresult | json}}</pre>
+                            <pre *ngIf="singleThread != null">{{singleThread | json}}</pre>
                         </div>
                         <div>
                             <pre>{{task}}</pre>

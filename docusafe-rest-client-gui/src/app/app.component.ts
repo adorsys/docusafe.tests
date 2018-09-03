@@ -58,6 +58,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     numberOfThreadsThatAnswered: number = 0;
     numberOfRepeatsDone: number = 0;
     testID: string = null;
+    lastSendTestRequest : TestRequestTYPE = null;
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
@@ -87,7 +88,6 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
 
     constructor(private testService: TestService, private clipboardService: ClipboardService) {
         this.setTests(defaultTestSuite);
-        this.testSuiteDone.testrequests = new Array<TestRequestTYPE>();
     }
 
     notifyForChanchedFileContent(): void {
@@ -156,6 +156,12 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         // var deleteTestCase: TestRequestTYPE  = new TestRequestTYPE();
         var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(defaultTestSuite.testrequests[0]));
         deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
+        deleteTestCase.dynamicClientInfo.testID = uuid();
+        deleteTestCase.dynamicClientInfo.threadNumber = 1;
+        deleteTestCase.dynamicClientInfo.repetitionNumber = 1;
+        deleteTestCase.staticClientInfo.numberOfRepeats = 1;
+        deleteTestCase.staticClientInfo.numberOfThreads = 1;
+        this.lastSendTestRequest = deleteTestCase;
         this.testService.test(this.destinationUrl, deleteTestCase, this);
     }
 
@@ -179,6 +185,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         for (let i = 1; i <= currentTest.staticClientInfo.numberOfThreads; i++) {
             let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
+            this.lastSendTestRequest = request;
             this.testService.test(this.destinationUrl, request, this);
         }
     }
@@ -205,6 +212,21 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         response.request = testRequest;
         response.date = testResult.date;
         response.testOk = true;
+        this.continueTesting(response, testRequest);
+    }
+
+    receiveRequestError(statusCode: number, testRequest: TestRequestTYPE, errorMessage: string): void {
+        console.log("receiveRequestError");
+        var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
+        response.error = errorMessage;
+        response.statusCode = statusCode;
+        response.request = testRequest;
+        response.date = formatDate(new Date(), 'yyyy-MM-dd-hh:mm:SS', 'en');
+        response.testOk = false;
+        this.continueTesting(response, testRequest);
+    }
+
+    continueTesting(response: TestResultAndResponseTYPE, testRequest: TestRequestTYPE) : void {
         this.testResultOwner.add(response);
         this.numberOfThreadsThatAnswered++;
         if (this.numberOfThreadsThatAnswered <= testRequest.staticClientInfo.numberOfThreads) {
@@ -217,52 +239,22 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
             this.startRepeatTest();
             return;
         }
-        console.log("continue testsing");
-        this.testSuiteDone.testrequests.push(testRequest);
         this.busy = false;
         if (this.specialTest == true) {
-            // do not increment counter
+            console.log("TEST FINISHED");
         } else {
-            console.log("test erfolgreich");
+            console.log("test beendt");
             this.currentTestIndex++;
             if (this.currentTestIndex == this.testSuite.testrequests.length) {
                 this.currentTestIndex--;
             } else {
                 if (this.doContinue) {
+                    console.log("CONTINUE TESTING");
                     this.doRemainingTests();
                 }
             }
         }
         this.specialTest = false;
-    }
-
-    receiveRequestError(statusCode: number, testRequest: TestRequestTYPE, errorMessage: string): void {
-        console.log("receiveRequestError");
-        var response: TestResultAndResponseTYPE = new TestResultAndResponseTYPE();
-        response.error = errorMessage;
-        response.statusCode = statusCode;
-        response.request = testRequest;
-        response.date = formatDate(new Date(), 'yyyy-MM-dd-hh:mm:SS', 'en');
-        response.testOk = false;
-        console.error("an error occured: " + errorMessage);
-        this.testResultOwner.add(response);
-        this.numberOfThreadsThatAnswered++;
-        if (this.numberOfThreadsThatAnswered < testRequest.staticClientInfo.numberOfThreads) {
-            console.log("error only " + this.numberOfThreadsThatAnswered + " have ansewred yet. continue to wait");
-            return;
-        }
-        this.numberOfRepeatsDone++;
-        if (this.numberOfRepeatsDone < testRequest.staticClientInfo.numberOfRepeats) {
-            console.log("error erst die " + this.numberOfRepeatsDone + " Wiederholung, test wird wiederholt");
-            this.startRepeatTest();
-            return;
-        }
-        console.log("continue testsing");
-        this.busy = false;
-        this.specialTest = false;
-        this.errormessage = errorMessage;
-        this.doContinue = false;
-        this.testSuiteDone.testrequests.push(testRequest);
     }
 
     copy(): void {
