@@ -20,6 +20,7 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     showTable: boolean = true;
     testresult: TestResultTYPE = null;
     task: string = "";
+    singleThread : TestResultAndResponseTYPE = null;
 
     @Input()
     private testCaseOwner: TestSuiteOwner;
@@ -177,6 +178,10 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         } else {
             this.testresult = t;
         }
+    }
+
+    showSingleThread(thread: TestResultAndResponseTYPE) : void {
+        this.singleThread = thread;
     }
 
     createRange(size: number): number[] {

@@ -6,73 +6,9 @@
     <div *ngIf="showTable">
         <label ngbButtonLabel class="btn-primary full" (click)="toggleView()">show as json</label>
 
-        <div>
-            <table border="1" class="small-font">
-                <tr>
-                    <td>date</td>
-                    <td>test action</td>
-                    <td>average time</td>
-                    <td>max time</td>
-                    <td>min time</td>
-                    <td>results</td>
-                </tr>
-
-                <ng-template ngFor let-subsumedTest
-                             [ngForOf]="viewForTests.subsumedTests.reverse()">
-                    <tr class="{{subsumedTest.testOk ? 'okline' : 'errorline'}}">
-                        <td>{{subsumedTest.lastReceivedDate}}</td>
-                        <td>{{subsumedTest.testAction}}</td>
-                        <td>{{subsumedTest.averageTime}}</td>
-                        <td>{{subsumedTest.maxTime}}</td>
-                        <td>{{subsumedTest.minTime}}</td>
-                        <td>
-                            <table border="1">
-                                <tr class="headline">
-                                    <td>repeat</td>
-                                    <td>avg</td>
-                                    <td>max</td>
-                                    <td>min</td>
-                                    <ng-template ngFor let-threadIndex
-                                                 [ngForOf]="createRange(subsumedTest.staticClientInfo.numberOfThreads)">
-                                        <td>tt {{threadIndex+1}}/{{subsumedTest.staticClientInfo.numberOfThreads}}</td>
-                                    </ng-template>
-                                </tr>
-
-                                <ng-template ngFor let-repeat
-                                             [ngForOf]="subsumedTest.repeats"
-                                             let-repeatIndex="index+1">
-
-
-                                    <tr *ngIf="repeat"
-                                        class="{{repeat.testOk ? 'okline' : 'errorline'}}">
-                                    <td>{{repeatIndex}}/{{subsumedTest.staticClientInfo.numberOfRepeats}}</td>
-                                        <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">{{repeat.averageTime}}</td>
-                                        <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">{{repeat.maxTime}}</td>
-                                        <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">{{repeat.minTime}}</td>
-
-                                        <ng-template ngFor let-thread
-                                                     [ngForOf]="repeat.threads">
-                                            <td *ngIf="thread!=null && thread.testOk" class="okline">
-                                                {{thread.result.totalTime}}
-                                            </td>
-                                            <td *ngIf="thread!=null && ! thread.testOk" class="errorline">
-                                            </td>
-                                            <td *ngIf="thread==null">
-
-                                            </td>
-                                        </ng-template>
-                                    </tr>
-
-                                </ng-template>
-                            </table>
-                        </td>
-                    </tr>
-                </ng-template>
-            </table>
-
-
-            <div class="row no-margin">
-                <div>
+        <div class="row no-margin">
+            <div>
+                <div *ngIf="singleThread != null">
                     <table border="1" class="small-font">
                         <tr>
                             <td>date</td>
@@ -83,45 +19,129 @@
                             <td colspan=5>tasks</td>
                         </tr>
 
-                        <ng-template ngFor let-r [ngForOf]="results.results.reverse()">
-                            <tr *ngIf="r.error == null"
-                                class="okline"
-                                (mouseover)="showTestcase(r)">
-                                <td>{{r.date}}</td>
-                                <td>{{r.request.dynamicClientInfo.threadNumber}}/{{r.request.staticClientInfo.numberOfThreads}}</td>
-                                <td>{{r.request.dynamicClientInfo.repetitionNumber}}/{{r.request.staticClientInfo.numberOfRepeats}}</td>
-                                <td>{{r.request.testAction}}</td>
-                                <td>{{r.result.totalTime}}</td>
-                                <ng-template ngFor let-t [ngForOf]="r.result.tasks">
-                                    <td title="{{t.name}}"
-                                        (mouseover)="showTask(t.name)"
-                                        (mouseout)="showTask('&nbsp;')"
-                                    >{{t.time}}
-                                    </td>
-                                </ng-template>
+                        <tr *ngIf="singleThread.error == null"
+                            class="okline"
+                            (mouseover)="showTestcase(r)">
+                            <td>{{singleThread.date}}</td>
+                            <td>
+                                {{singleThread.request.dynamicClientInfo.threadNumber}}/{{singleThread.request.staticClientInfo.numberOfThreads}}
+                            </td>
+                            <td>
+                                {{singleThread.request.dynamicClientInfo.repetitionNumber}}/{{singleThread.request.staticClientInfo.numberOfRepeats}}
+                            </td>
+                            <td>{{singleThread.request.testAction}}</td>
+                            <td>{{singleThread.result.totalTime}}</td>
+                            <ng-template ngFor let-t [ngForOf]="singleThread.result.tasks">
+                                <td title="{{t.name}}"
+                                    (mouseover)="showTask(t.name)"
+                                    (mouseout)="showTask('&nbsp;')"
+                                >{{t.time}}
+                                </td>
+                            </ng-template>
 
-                            </tr>
-                            <tr *ngIf="r.error != null"
-                                class="errorline"
-                                (mouseover)="showTestcase(r)">
-                                <td>{{r.date}}</td>
-                                <td>{{r.request.dynamicClientInfo.threadNumber}}/{{r.request.staticClientInfo.numberOfThreads}}</td>
-                                <td>{{r.request.dynamicClientInfo.repetitionNumber}}/{{r.request.staticClientInfo.numberOfRepeats}}</td>
-                                <td
-                                        (mouseover)="showTask(r.error)"
-                                        (mouseout)="showTask('&nbsp;')">
-                                    {{r.request.testAction}}
+                        </tr>
+                        <tr *ngIf="singleThread.error != null"
+                            class="errorline"
+                            (mouseover)="showTestcase(singleThread)">
+                            <td>{{singleThread.date}}</td>
+                            <td>
+                                {{singleThread.request.dynamicClientInfo.threadNumber}}/{{singleThread.request.staticClientInfo.numberOfThreads}}
+                            </td>
+                            <td>
+                                {{singleThread.request.dynamicClientInfo.repetitionNumber}}/{{singleThread.request.staticClientInfo.numberOfRepeats}}
+                            </td>
+                            <td
+                                    (mouseover)="showTask(singleThread.error)"
+                                    (mouseout)="showTask('&nbsp;')">
+                                {{singleThread.request.testAction}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div>
+                    <table border="1" class="small-font">
+                        <tr>
+                            <td>date</td>
+                            <td>test action</td>
+                            <td>average time</td>
+                            <td>max time</td>
+                            <td>min time</td>
+                            <td>results</td>
+                        </tr>
+
+                        <ng-template ngFor let-subsumedTest
+                                     [ngForOf]="viewForTests.subsumedTests.reverse()">
+                            <tr class="{{subsumedTest.testOk ? 'okline' : 'errorline'}}">
+                                <td>{{subsumedTest.lastReceivedDate}}</td>
+                                <td>{{subsumedTest.testAction}}</td>
+                                <td>{{subsumedTest.averageTime}}</td>
+                                <td>{{subsumedTest.maxTime}}</td>
+                                <td>{{subsumedTest.minTime}}</td>
+                                <td>
+                                    <table border="1">
+                                        <tr class="headline">
+                                            <td>repeat</td>
+                                            <td>avg</td>
+                                            <td>max</td>
+                                            <td>min</td>
+                                            <ng-template ngFor let-threadIndex
+                                                         [ngForOf]="createRange(subsumedTest.staticClientInfo.numberOfThreads)">
+                                                <td>tt
+                                                    {{threadIndex+1}}/{{subsumedTest.staticClientInfo.numberOfThreads}}
+                                                </td>
+                                            </ng-template>
+                                        </tr>
+
+                                        <ng-template ngFor let-repeat
+                                                     [ngForOf]="subsumedTest.repeats"
+                                                     let-repeatIndex="index+1">
+
+
+                                            <tr *ngIf="repeat"
+                                                class="{{repeat.testOk ? 'okline' : 'errorline'}}">
+                                                <td>{{repeatIndex}}/{{subsumedTest.staticClientInfo.numberOfRepeats}}
+                                                </td>
+                                                <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">
+                                                    {{repeat.averageTime}}
+                                                </td>
+                                                <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">
+                                                    {{repeat.maxTime}}
+                                                </td>
+                                                <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">
+                                                    {{repeat.minTime}}
+                                                </td>
+
+                                                <ng-template ngFor let-thread
+                                                             [ngForOf]="repeat.threads">
+                                                    <td *ngIf="thread!=null && thread.testOk" class="okline"
+                                                        (click)="showSingleThread(thread)">
+                                                        {{thread.result.totalTime}}
+                                                    </td>
+                                                    <td *ngIf="thread!=null && ! thread.testOk" class="errorline"
+                                                        (click)="showSingleThread(thread)">
+                                                    </td>
+                                                    <td *ngIf="thread==null">
+
+                                                    </td>
+                                                </ng-template>
+                                            </tr>
+
+                                        </ng-template>
+                                    </table>
                                 </td>
                             </tr>
                         </ng-template>
                     </table>
-                </div>
-                <div class="col-md-8">
-                    <div>
-                        <pre *ngIf="testresult != null">{{testresult | json}}</pre>
-                    </div>
-                    <div>
-                        <pre>{{task}}</pre>
+
+
+                    <div class="col-md-8">
+                        <div>
+                            <pre *ngIf="testresult != null">{{testresult | json}}</pre>
+                        </div>
+                        <div>
+                            <pre>{{task}}</pre>
+                        </div>
                     </div>
                 </div>
             </div>
