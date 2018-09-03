@@ -18,6 +18,10 @@
     background-color: lightgreen;
 }
 
+.headline {
+    background-color: lightgrey;
+}
+
 .no-margin {
     margin:0px;
 }

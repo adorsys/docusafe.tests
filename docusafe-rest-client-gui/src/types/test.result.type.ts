@@ -19,6 +19,7 @@ export class TestResultAndResponseTYPE {
     result: TestResultTYPE;
     statusCode: number;
     error: string;
+    testOk: boolean;
 }
 
 export class TestResultsTYPE {
@@ -30,6 +31,7 @@ export class TestResultAndResponseThreadsMapTYPE {
     averageTime: number = 1;
     maxTime: number = 2;
     minTime: number = 3;
+    testOk: boolean;
 }
 
 export class SubsumedTestTYPE {
@@ -40,6 +42,7 @@ export class SubsumedTestTYPE {
     lastReceivedDate: string;
     staticClientInfo: StaticClientInfoTYPE = new StaticClientInfoTYPE();
     testAction: string;
+    testOk: boolean;
 }
 
 export class ViewForTests {

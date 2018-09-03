@@ -204,6 +204,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         response.statusCode = statusCode;
         response.request = testRequest;
         response.date = testResult.date;
+        response.testOk = true;
         this.testResultOwner.add(response);
         this.numberOfThreadsThatAnswered++;
         if (this.numberOfThreadsThatAnswered <= testRequest.staticClientInfo.numberOfThreads) {
@@ -242,6 +243,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         response.statusCode = statusCode;
         response.request = testRequest;
         response.date = formatDate(new Date(), 'yyyy-MM-dd-hh:mm:SS', 'en');
+        response.testOk = false;
         console.error("an error occured: " + errorMessage);
         this.testResultOwner.add(response);
         this.numberOfThreadsThatAnswered++;

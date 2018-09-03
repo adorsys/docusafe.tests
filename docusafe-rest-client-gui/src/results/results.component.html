@@ -19,7 +19,7 @@
 
                 <ng-template ngFor let-subsumedTest
                              [ngForOf]="viewForTests.subsumedTests.reverse()">
-                    <tr>
+                    <tr class="{{subsumedTest.testOk ? 'okline' : 'errorline'}}">
                         <td>{{subsumedTest.lastReceivedDate}}</td>
                         <td>{{subsumedTest.testAction}}</td>
                         <td>{{subsumedTest.averageTime}}</td>
@@ -27,7 +27,7 @@
                         <td>{{subsumedTest.minTime}}</td>
                         <td>
                             <table border="1">
-                                <tr>
+                                <tr class="headline">
                                     <td>repeat</td>
                                     <td>avg</td>
                                     <td>max</td>
@@ -43,16 +43,19 @@
                                              let-repeatIndex="index+1">
 
 
-                                    <tr *ngIf="repeat">
-                                        <td>{{repeatIndex}}/{{subsumedTest.staticClientInfo.numberOfRepeats}}</td>
-                                        <td>{{repeat.averageTime}}</td>
-                                        <td>{{repeat.maxTime}}</td>
-                                        <td>{{repeat.minTime}}</td>
+                                    <tr *ngIf="repeat"
+                                        class="{{repeat.testOk ? 'okline' : 'errorline'}}">
+                                    <td>{{repeatIndex}}/{{subsumedTest.staticClientInfo.numberOfRepeats}}</td>
+                                        <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">{{repeat.averageTime}}</td>
+                                        <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">{{repeat.maxTime}}</td>
+                                        <td class="{{repeat.testOk ? 'okline' : 'errorline'}}">{{repeat.minTime}}</td>
 
                                         <ng-template ngFor let-thread
                                                      [ngForOf]="repeat.threads">
-                                            <td *ngIf="thread!=null">
+                                            <td *ngIf="thread!=null && thread.testOk" class="okline">
                                                 {{thread.result.totalTime}}
+                                            </td>
+                                            <td *ngIf="thread!=null && ! thread.testOk" class="errorline">
                                             </td>
                                             <td *ngIf="thread==null">
 
