@@ -48,6 +48,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     testResultOwner: TestResultOwner = null;
     busy: boolean = false;
     doContinue: boolean = false;
+    doAbort: boolean = false;
     specialTest: boolean = false;
     errormessage: string = "";
     testSuite: TestSuiteTYPE = null;
@@ -174,6 +175,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.numberOfThreadsThatAnswered = 1;
         this.numberOfRepeatsDone = 1;
         this.testID = uuid();
+        this.doAbort = false;
 
         this.startRepeatTest();
     }
@@ -182,6 +184,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         let currentTest: TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuite.testrequests[this.currentTestIndex]));
         currentTest.dynamicClientInfo.repetitionNumber = this.numberOfRepeatsDone;
         currentTest.dynamicClientInfo.testID = this.testID;
+        this.numberOfThreadsThatAnswered = 1;
 
         for (let i = 1; i <= currentTest.staticClientInfo.numberOfThreads; i++) {
             let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
@@ -199,6 +202,10 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     doAllTests(): void {
         this.currentTestIndex = 0;
         this.doRemainingTests();
+    }
+
+    abort(): void {
+        this.doAbort = true;
     }
 
     removeLastTestFromDone(): void {
@@ -229,17 +236,24 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
 
     continueTesting(response: TestResultAndResponseTYPE, testRequest: TestRequestTYPE): void {
         this.testResultOwner.add(response);
+        if (this.doAbort) {
+            console.log("abort is true. do not continue");
+            this.busy = false;
+            return;
+        }
         this.numberOfThreadsThatAnswered++;
         if (this.numberOfThreadsThatAnswered <= testRequest.staticClientInfo.numberOfThreads) {
             console.log("only " + this.numberOfThreadsThatAnswered + " have ansewred yet. continue to wait");
             return;
         }
+        console.log("ALL " + this.numberOfThreadsThatAnswered + " Threads answered yed");
         this.numberOfRepeatsDone++;
         if (this.numberOfRepeatsDone <= testRequest.staticClientInfo.numberOfRepeats) {
             console.log("erst die " + this.numberOfRepeatsDone + " Wiederholung, test wird wiederholt");
             this.startRepeatTest();
             return;
         }
+        console.log("ALL " + this.numberOfRepeatsDone + " reppetitions done yes");
         this.busy = false;
         console.log("einzelner test beendt");
 

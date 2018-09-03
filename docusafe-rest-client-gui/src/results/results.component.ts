@@ -48,13 +48,13 @@ export class ResultsComponent implements OnInit, TestResultOwner {
             this.viewForTests.subsumedTests.push(subsumedTest);
             subsumedTest.testOk = true;
         }
-        console.log("found subsumed test for " + response.request.dynamicClientInfo.testID);
+//        console.log("found subsumed test for " + response.request.dynamicClientInfo.testID);
 
         subsumedTest.lastReceivedDate = response.date;
 
         let testResultAndResponseThreadsMap: TestResultAndResponseThreadsMapTYPE = subsumedTest.repeats[(response.request.dynamicClientInfo.repetitionNumber - 1)];
         if (testResultAndResponseThreadsMap == null) {
-            console.log("create repeat for " + response.request.dynamicClientInfo.repetitionNumber);
+//            console.log("create repeat for " + response.request.dynamicClientInfo.repetitionNumber);
             testResultAndResponseThreadsMap = new TestResultAndResponseThreadsMapTYPE();
             testResultAndResponseThreadsMap.threads = new Array<TestResultAndResponseTYPE>(subsumedTest.staticClientInfo.numberOfThreads);
             for (var i = 0; i < testResultAndResponseThreadsMap.threads.length; i++) {
@@ -62,7 +62,7 @@ export class ResultsComponent implements OnInit, TestResultOwner {
             }
             subsumedTest.repeats[(response.request.dynamicClientInfo.repetitionNumber - 1)] = testResultAndResponseThreadsMap;
         }
-        console.log("found repeat for " + response.request.dynamicClientInfo.repetitionNumber);
+//        console.log("found repeat for " + response.request.dynamicClientInfo.repetitionNumber);
         testResultAndResponseThreadsMap.threads[(response.request.dynamicClientInfo.threadNumber - 1)] = response;
 
         {
@@ -117,12 +117,12 @@ export class ResultsComponent implements OnInit, TestResultOwner {
                     if (subsumedTest.repeats[i].testOk) {
 
                         let time: number = subsumedTest.repeats[i].averageTime;
-                        console.log("time ist " + time);
+//                        console.log("time ist " + time);
                         totalTime = totalTime + time;
-                        console.log("total time ist " + totalTime);
+//                        console.log("total time ist " + totalTime);
                         numberOfRepeats++;
-                        console.log("number of repeats ist " + numberOfRepeats);
-                        console.log("average time ist " + (totalTime / numberOfRepeats).toFixed(0));
+//                        console.log("number of repeats ist " + numberOfRepeats);
+//                        console.log("average time ist " + (totalTime / numberOfRepeats).toFixed(0));
                         if (subsumedTest.repeats[i].maxTime > maxTime) {
                             maxTime = subsumedTest.repeats[i].maxTime;
                         }

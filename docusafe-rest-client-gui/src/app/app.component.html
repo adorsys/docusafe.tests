@@ -14,6 +14,8 @@
                 Test is {{currentTestIndex+1}}/{{numberOfTests}} running .....
             </h1>
             Repetition {{numberOfRepeatsDone}}
+            <label ngbButtonLabel class="btn-primary full" (click)="abort()">abort</label>
+
             <div style="text-align: left">
                 <pre>{{lastSendTestRequest | json}}</pre>
             </div>
