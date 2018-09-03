@@ -15,7 +15,6 @@ import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
     styleUrls: ['./results.component.css']
 })
 export class ResultsComponent implements OnInit, TestResultOwner {
-    results: TestResultsTYPE = new TestResultsTYPE();
     viewForTests: ViewForTests = new ViewForTests();
     showTable: boolean = true;
     testresult: TestResultTYPE = null;
@@ -26,7 +25,6 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     private testCaseOwner: TestSuiteOwner;
 
     constructor() {
-        this.results.results = new Array<TestResultAndResponseTYPE>();
     }
 
     ngOnInit() {
@@ -34,8 +32,6 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     }
 
     add(response: TestResultAndResponseTYPE): void {
-        this.results.results.push(response);
-
         let subsumedTest = this.viewForTests.testMap[response.request.dynamicClientInfo.testID];
         if (subsumedTest == null) {
             console.log("create new testresult for " + response.request.dynamicClientInfo.testID);
@@ -150,14 +146,18 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     }
 
     remove(): void {
-        this.results.results.pop();
+        this.viewForTests.subsumedTests.pop();
     }
 
     getAll(): TestSuiteTYPE {
         var testSuite: TestSuiteTYPE = new TestSuiteTYPE();
-        testSuite.testrequests = new Array<TestRequestTYPE>(this.results.results.length);
-        for (var i = 0; i < this.results.results.length; i++) {
-            testSuite.testrequests.push(this.results.results[i].request);
+        testSuite.testrequests = new Array<TestRequestTYPE>();
+        for (var i = 0; i < this.viewForTests.subsumedTests.length; i++) {
+           let tr : TestRequestTYPE  = JSON.parse(JSON.stringify(this.viewForTests.subsumedTests[i].repeats[0].threads[0].request));
+            tr.dynamicClientInfo.repetitionNumber = 0;
+            tr.dynamicClientInfo.threadNumber = 0;
+            tr.dynamicClientInfo.testID = null;
+            testSuite.testrequests.push(tr);
         }
         return testSuite;
     }
