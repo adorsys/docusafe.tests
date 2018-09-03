@@ -22,6 +22,10 @@
     background-color: lightgrey;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .no-margin {
     margin:0px;
 }

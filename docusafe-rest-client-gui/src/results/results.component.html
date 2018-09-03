@@ -114,11 +114,11 @@
 
                                                 <ng-template ngFor let-thread
                                                              [ngForOf]="repeat.threads">
-                                                    <td *ngIf="thread!=null && thread.testOk" class="okline"
+                                                    <td *ngIf="thread!=null && thread.testOk" class="okline clickable"
                                                         (click)="showSingleThread(thread)">
                                                         {{thread.result.totalTime}}
                                                     </td>
-                                                    <td *ngIf="thread!=null && ! thread.testOk" class="errorline"
+                                                    <td *ngIf="thread!=null && ! thread.testOk" class="errorline clickable"
                                                         (click)="showSingleThread(thread)">
                                                     </td>
                                                     <td *ngIf="thread==null">
