@@ -1,0 +1,310 @@
+{
+    "testrequests": [
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "CACHED_TRANSACTIONAL",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "CACHED_TRANSACTIONAL",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "CACHED_TRANSACTIONAL",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "CACHED_TRANSACTIONAL",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": 50,
+      "staticClientInfo": {
+        "numberOfRepeats": 1,
+        "numberOfThreads": 1
+      },
+      "testAction": "DELETE_DATABASE_AND_CACHES",
+      "userid": ""
+    }
+  ]
+}

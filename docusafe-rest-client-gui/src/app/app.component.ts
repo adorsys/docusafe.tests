@@ -12,9 +12,11 @@ import {formatDate} from '@angular/common';
 import {isUndefined} from "util";
 import {ClipboardService} from "../clipboard/clipboard.service";
 import {v4 as uuid} from 'uuid';
+import * as fulltestJson from "../testsuites/fulltest.json";
 
 var defaultTestSuite: TestSuiteTYPE =
 {
+
     "testrequests": [
         {
             "testAction": "CREATE_DOCUMENTS",
@@ -37,6 +39,8 @@ var defaultTestSuite: TestSuiteTYPE =
     ]
 };
 
+var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -52,7 +56,6 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     specialTest: boolean = false;
     errormessage: string = "";
     testSuite: TestSuiteTYPE = null;
-    testSuiteDone: TestSuiteTYPE = new TestSuiteTYPE();
     me: TestSuiteOwner = this;
     currentTestIndex: number = -1;
     numberOfTests: number = 0;
@@ -88,7 +91,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     ];
 
     constructor(private testService: TestService, private clipboardService: ClipboardService) {
-        this.setTests(defaultTestSuite);
+        this.setTests(fullTestSuite);
     }
 
     notifyForChanchedFileContent(): void {
