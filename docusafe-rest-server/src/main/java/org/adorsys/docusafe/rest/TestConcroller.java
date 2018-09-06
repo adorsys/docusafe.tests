@@ -24,6 +24,7 @@ import org.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceI
 import org.adorsys.docusafe.transactional.types.TxID;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
+import org.bouncycastle.util.test.TestResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -102,6 +106,7 @@ public class TestConcroller {
         if (testParameter.userid == null || testParameter.userid.getValue().length() == 0) {
             testParameter.userid = new UserID(UUID.randomUUID().toString());
         }
+        testsResult.userID = testParameter.userid;
         int index = 0;
         switch (testParameter.cacheType) {
             case NO_CACHE:
@@ -119,8 +124,10 @@ public class TestConcroller {
         UserIDAuth userIDAuth = new UserIDAuth(testParameter.userid, new ReadKeyPassword("password for " + testParameter.userid.getValue()));
         StopWatch stopWatch = new StopWatch();
         TxID txID = null;
+        List<TestsResult.CreatedDocument> createdDocuments = new ArrayList<>();
         switch (testParameter.testAction) {
             case CREATE_DOCUMENTS: {
+
                 switch (testParameter.docusafeLayer) {
                     case DOCUSAFE_BASE:
                         documentSafeService[index].createUser(userIDAuth);
@@ -151,9 +158,15 @@ public class TestConcroller {
                     if (i % testParameter.documentsPerDirectory == 0) {
                         folderIndex++;
                     }
-                    StringBuilder sb = new StringBuilder();
-
-                    DSDocument dsDocument = new DSDocument(documentFQN, createDocumentContent(testParameter.sizeOfDocument, documentFQN), null);
+                    String uniqueToken = getUniqueStringForDocument(documentFQN, userIDAuth.getUserID());
+                    {
+                        TestsResult.CreatedDocument testResultCreatedDocument = new TestsResult.CreatedDocument();
+                        testResultCreatedDocument.documentFQN = documentFQN;
+                        testResultCreatedDocument.uniqueToken = uniqueToken;
+                        testResultCreatedDocument.size = testParameter.sizeOfDocument;
+                        createdDocuments.add(testResultCreatedDocument);
+                    }
+                    DSDocument dsDocument = new DSDocument(documentFQN, createDocumentContent(testParameter.sizeOfDocument, documentFQN, uniqueToken), null);
                     stopWatch.start("create document " + documentFQN.getValue());
                     switch (testParameter.docusafeLayer) {
                         case DOCUSAFE_BASE:
@@ -188,6 +201,7 @@ public class TestConcroller {
             }
         }
         addStopWatchToTestsResult(stopWatch, testsResult);
+        addCreatedDocumentsToTestResults(createdDocuments, testsResult);
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
@@ -273,10 +287,35 @@ public class TestConcroller {
         LOGGER.info(testsResult.toString());
     }
 
-    private DocumentContent createDocumentContent(Integer sizeOfDocument, DocumentFQN documentFQN) {
+    private void addCreatedDocumentsToTestResults(List<TestsResult.CreatedDocument> createdDocuments, TestsResult testsResult) {
+        testsResult.listOfCreatedDocuments = createdDocuments.toArray(new TestsResult.CreatedDocument[createdDocuments.size()]);
+    }
+
+    private DocumentContent createDocumentContent(Integer sizeOfDocument, DocumentFQN documentFQN, String uniqueToken) {
+        byte[] uniqueTokenBytes = uniqueToken.getBytes();
+        int uniqueTokenLength = uniqueTokenBytes.length;
+        if (sizeOfDocument < uniqueTokenLength) {
+            sizeOfDocument = uniqueTokenLength;
+        }
         byte[] bytes = new byte[sizeOfDocument];
         new Random().nextBytes(bytes);
+
+        for (int i = 0; i<uniqueTokenLength; i++) {
+            bytes[i]=uniqueTokenBytes[i];
+        }
         return new DocumentContent(bytes);
+    }
+
+    private String getUniqueStringForDocument(DocumentFQN documentFQN, UserID userID) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
+        String timestamp = sdf.format(new Date());
+        String fullName = documentFQN.getValue();
+        String uniqueToken = wrap(userID.getValue()) + wrap(fullName) + wrap(timestamp);
+        return uniqueToken;
+    }
+
+    private String wrap(String content) {
+        return "(" + content + ")";
     }
 
 

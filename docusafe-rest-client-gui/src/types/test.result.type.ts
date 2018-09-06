@@ -6,11 +6,19 @@ export class TaskTYPE {
     time: number
 }
 
+export class CreatedDocumentTYPE {
+    documentFQN : string;
+    uniqueToken : string;
+    size : number;
+}
+
 export class TestResultTYPE {
     date: string; // date im Server erzeugt bei beginn des Tests
     extendedStoreConnection: string;
     totalTime: number;
     tasks: TaskTYPE[];
+    listOfCreatedDocuments: CreatedDocumentTYPE[];
+
 }
 
 export class TestResultAndResponseTYPE {
