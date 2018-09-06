@@ -1,7 +1,6 @@
 package org.adorsys.docusafe.rest.types;
 
 import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,8 +14,8 @@ public class TestsResult {
     public long totalTime;
     public TaskInfo[] tasks;
     public UserID userID;
-    public CreatedDocument[] listOfCreatedDocuments;
-
+    public DocumentInfo[] listOfCreatedDocuments;
+    public ReadDocumentResult[] listOfReadDocuments;
 
     public TestsResult() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
@@ -34,12 +33,6 @@ public class TestsResult {
                     ", time=" + time +
                     '}';
         }
-    }
-
-    public static class CreatedDocument {
-        public DocumentFQN documentFQN;
-        public String uniqueToken;
-        public int size;
     }
 
     @Override

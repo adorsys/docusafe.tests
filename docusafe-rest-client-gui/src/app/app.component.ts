@@ -13,6 +13,9 @@ import {isUndefined} from "util";
 import {ClipboardService} from "../clipboard/clipboard.service";
 import {v4 as uuid} from 'uuid';
 import * as fulltestJson from "../testsuites/fulltest.json";
+import {SubsumedTestTYPE} from "../types/test.result.type";
+import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
+import {DocumentInfoTYPE} from "../types/test.result.type";
 
 var defaultTestSuite: TestSuiteTYPE =
 {
@@ -34,12 +37,14 @@ var defaultTestSuite: TestSuiteTYPE =
                 threadNumber: 0,
                 repetitionNumber: 0,
                 testID: null
-            }
+            },
+            documentsToRead: []
         }
     ]
 };
 
-var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
+// var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
+var fullTestSuite = defaultTestSuite;
 
 @Component({
     selector: 'app-root',
@@ -63,6 +68,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     numberOfRepeatsDone: number = 0;
     testID: string = null;
     lastSendTestRequest: TestRequestTYPE = null;
+    lastWriteResult: SubsumedTestTYPE = null;
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
@@ -171,6 +177,11 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
 
     doCurrentTest(): void {
 
+        if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1]) {
+            this.lastWriteResult = this.testResultOwner.getLastWriteResult();
+            // Anzahl der threads und repeats müssen vom WriteTest übernommen werden.
+            this.testSuite.testrequests[this.currentTestIndex].staticClientInfo = this.lastWriteResult.staticClientInfo;
+        }
 
         this.specialTest = false;
         this.busy = true;
@@ -179,6 +190,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.numberOfRepeatsDone = 1;
         this.testID = uuid();
         this.doAbort = false;
+
 
         this.startRepeatTest();
     }
@@ -192,6 +204,10 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         for (let i = 1; i <= currentTest.staticClientInfo.numberOfThreads; i++) {
             let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
+            if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1]) {
+                this.modifyReadRequest(request, this.lastWriteResult);
+            }
+
             this.lastSendTestRequest = request;
             this.testService.test(this.destinationUrl, request, this);
         }
@@ -212,7 +228,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     }
 
     removeLastTestFromDone(): void {
-        this.testResultOwner.remove();
+        this.testResultOwner.removeLastTest();
     }
 
     receiveRequestResult(statusCode: number, testRequest: TestRequestTYPE, testResult: TestResultTYPE): void {
@@ -249,14 +265,14 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
             console.log("only " + this.numberOfThreadsThatAnswered + " have ansewred yet. continue to wait");
             return;
         }
-        console.log("ALL " + this.numberOfThreadsThatAnswered + " Threads answered yed");
+        console.log("ALL " + (this.numberOfThreadsThatAnswered-1) + " Threads answered yes");
         this.numberOfRepeatsDone++;
         if (this.numberOfRepeatsDone <= testRequest.staticClientInfo.numberOfRepeats) {
             console.log("erst die " + this.numberOfRepeatsDone + " Wiederholung, test wird wiederholt");
             this.startRepeatTest();
             return;
         }
-        console.log("ALL " + this.numberOfRepeatsDone + " reppetitions done yes");
+        console.log("ALL " + (this.numberOfRepeatsDone-1) + " reppetitions done yes");
         this.busy = false;
         console.log("einzelner test beendt");
 
@@ -280,5 +296,13 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
 
     copy(): void {
         this.clipboardService.copy(JSON.stringify(this.testResultOwner.getAll()));
+    }
+
+    private modifyReadRequest(request: TestRequestTYPE, lastWriteResult: SubsumedTestTYPE) {
+        let result : TestResultAndResponseTYPE = lastWriteResult.repeats[request.dynamicClientInfo.repetitionNumber-1].threads[request.dynamicClientInfo.threadNumber-1];
+        if (result.error ==  null) {
+            request.documentsToRead = result.result.listOfCreatedDocuments;
+        }
+        request.userid = result.result.userID;
     }
 }

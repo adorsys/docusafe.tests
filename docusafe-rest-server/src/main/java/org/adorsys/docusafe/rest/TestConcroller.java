@@ -13,6 +13,10 @@ import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
 import org.adorsys.docusafe.rest.impl.SimpleRequestMemoryContextImpl;
+import org.adorsys.docusafe.rest.types.DocumentInfo;
+import org.adorsys.docusafe.rest.types.ReadDocumentResult;
+import org.adorsys.docusafe.rest.types.ReadResult;
+import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.rest.types.TestsResult;
 import org.adorsys.docusafe.service.types.DocumentContent;
@@ -24,7 +28,6 @@ import org.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceI
 import org.adorsys.docusafe.transactional.types.TxID;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
-import org.bouncycastle.util.test.TestResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -104,6 +107,9 @@ public class TestConcroller {
 
     private ResponseEntity<TestsResult> regularTest(TestParameter testParameter, TestsResult testsResult) {
         if (testParameter.userid == null || testParameter.userid.getValue().length() == 0) {
+            if (testParameter.testAction.equals(TestAction.READ_DOCUMENTS)) {
+                throw new BaseException("programming error. request must contain userid");
+            }
             testParameter.userid = new UserID(UUID.randomUUID().toString());
         }
         testsResult.userID = testParameter.userid;
@@ -124,7 +130,8 @@ public class TestConcroller {
         UserIDAuth userIDAuth = new UserIDAuth(testParameter.userid, new ReadKeyPassword("password for " + testParameter.userid.getValue()));
         StopWatch stopWatch = new StopWatch();
         TxID txID = null;
-        List<TestsResult.CreatedDocument> createdDocuments = new ArrayList<>();
+        List<DocumentInfo> createdDocuments = new ArrayList<>();
+        List<ReadDocumentResult> readDocuments = new ArrayList<>();
         switch (testParameter.testAction) {
             case CREATE_DOCUMENTS: {
 
@@ -160,7 +167,7 @@ public class TestConcroller {
                     }
                     String uniqueToken = getUniqueStringForDocument(documentFQN, userIDAuth.getUserID());
                     {
-                        TestsResult.CreatedDocument testResultCreatedDocument = new TestsResult.CreatedDocument();
+                        DocumentInfo testResultCreatedDocument = new DocumentInfo();
                         testResultCreatedDocument.documentFQN = documentFQN;
                         testResultCreatedDocument.uniqueToken = uniqueToken;
                         testResultCreatedDocument.size = testParameter.sizeOfDocument;
@@ -186,23 +193,107 @@ public class TestConcroller {
                     }
                     stopWatch.stop();
                 }
+                break;
             }
-            switch (testParameter.docusafeLayer) {
-                case TRANSACTIONAL:
-                    stopWatch.start("endTransaction");
-                    transactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
+            case READ_DOCUMENTS: {
+                switch (testParameter.docusafeLayer) {
+                    case TRANSACTIONAL:
+                        stopWatch.start("beginTransaction");
+                        txID = transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                    case CACHED_TRANSACTIONAL:
+                        stopWatch.start("beginTransaction");
+                        txID = cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                }
+
+                for (DocumentInfo documentInfo : testParameter.documentsToRead) {
+                    DocumentFQN documentFQN = documentInfo.documentFQN;
+                    String uniqueToken = documentInfo.uniqueToken;
+                    int size = documentInfo.size;
+                    DSDocument dsDocument = null;
+                    stopWatch.start("read document " + documentFQN.getValue());
+                    try {
+                        switch (testParameter.docusafeLayer) {
+                            case DOCUSAFE_BASE:
+                                dsDocument = documentSafeService[index].readDocument(userIDAuth, documentFQN);
+                                break;
+                            case NON_TRANSACTIONAL:
+                                dsDocument = nonTransactionalDocumentSafeServices[index].nonTxReadDocument(userIDAuth, documentFQN);
+                                break;
+                            case TRANSACTIONAL:
+                                dsDocument = transactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
+                                break;
+                            case CACHED_TRANSACTIONAL:
+                                dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
+                                break;
+                            default:
+                                throw new BaseException("missing switch");
+                        }
+                    } catch (BaseException e) {
+                        // TODO genauer Typ muss hier noch geprüft werden, nur die FileNotFoundException wird erwartet....
+                    }
                     stopWatch.stop();
-                    break;
-                case CACHED_TRANSACTIONAL:
-                    stopWatch.start("endTransaction");
-                    cachedTransactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
-                    stopWatch.stop();
-                    break;
+                    readDocuments.add(checkDocument(dsDocument, documentInfo));
+                }
+                break;
             }
+            default:
+                throw new BaseException("missing switch for " + testParameter.testAction);
+
+        }
+        switch (testParameter.docusafeLayer) {
+            case TRANSACTIONAL:
+                stopWatch.start("endTransaction");
+                transactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
+                stopWatch.stop();
+                break;
+            case CACHED_TRANSACTIONAL:
+                stopWatch.start("endTransaction");
+                cachedTransactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
+                stopWatch.stop();
+                break;
         }
         addStopWatchToTestsResult(stopWatch, testsResult);
         addCreatedDocumentsToTestResults(createdDocuments, testsResult);
+        boolean error = false;
+        addReadDocumentsToTestResults(readDocuments, testsResult);
+        for (ReadDocumentResult doc : readDocuments) {
+            if (!(doc.readResult.equals(ReadResult.OK))) {
+                error = true;
+            }
+        }
+        if (error) {
+            return new ResponseEntity<>(testsResult, HttpStatus.CONFLICT);
+        }
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
+    }
+
+    private ReadDocumentResult checkDocument(DSDocument dsDocument, DocumentInfo documentInfo) {
+        ReadDocumentResult readDocumentResult = new ReadDocumentResult();
+        readDocumentResult.documentFQN = documentInfo.documentFQN;
+        if (dsDocument == null) {
+            readDocumentResult.readResult = ReadResult.NOT_FOUND;
+        } else {
+            byte[] foundBytes = dsDocument.getDocumentContent().getValue();
+            if (foundBytes.length != documentInfo.size && documentInfo.size > documentInfo.uniqueToken.length()) {
+                readDocumentResult.readResult = ReadResult.WRONG_SIZE;
+            } else {
+                byte[] expectedBytes = documentInfo.uniqueToken.getBytes();
+                readDocumentResult.readResult = ReadResult.OK;
+                for (int i = 0; i < expectedBytes.length; i++) {
+                    if (expectedBytes[i] != foundBytes[i]) {
+                        readDocumentResult.readResult = ReadResult.WRONG_CONTENT;
+                    }
+                }
+            }
+        }
+        if (readDocumentResult.readResult == null) {
+            throw new BaseException("Programming Error. readResult must not be null");
+        }
+        return readDocumentResult;
     }
 
     private ResponseEntity<TestsResult> deleteDB(TestParameter testParameter, TestsResult testsResult) {
@@ -287,8 +378,12 @@ public class TestConcroller {
         LOGGER.info(testsResult.toString());
     }
 
-    private void addCreatedDocumentsToTestResults(List<TestsResult.CreatedDocument> createdDocuments, TestsResult testsResult) {
-        testsResult.listOfCreatedDocuments = createdDocuments.toArray(new TestsResult.CreatedDocument[createdDocuments.size()]);
+    private void addCreatedDocumentsToTestResults(List<DocumentInfo> createdDocuments, TestsResult testsResult) {
+        testsResult.listOfCreatedDocuments = createdDocuments.toArray(new DocumentInfo[createdDocuments.size()]);
+    }
+
+    private void addReadDocumentsToTestResults(List<ReadDocumentResult> readDocuments, TestsResult testsResult) {
+        testsResult.listOfReadDocuments = readDocuments.toArray(new ReadDocumentResult[readDocuments.size()]);
     }
 
     private DocumentContent createDocumentContent(Integer sizeOfDocument, DocumentFQN documentFQN, String uniqueToken) {
@@ -300,8 +395,8 @@ public class TestConcroller {
         byte[] bytes = new byte[sizeOfDocument];
         new Random().nextBytes(bytes);
 
-        for (int i = 0; i<uniqueTokenLength; i++) {
-            bytes[i]=uniqueTokenBytes[i];
+        for (int i = 0; i < uniqueTokenLength; i++) {
+            bytes[i] = uniqueTokenBytes[i];
         }
         return new DocumentContent(bytes);
     }
@@ -317,7 +412,6 @@ public class TestConcroller {
     private String wrap(String content) {
         return "(" + content + ")";
     }
-
 
 
 }

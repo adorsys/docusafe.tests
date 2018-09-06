@@ -1,3 +1,4 @@
+import {DocumentInfoTYPE} from "./test.result.type";
 export class StaticClientInfoTYPE {
     numberOfThreads : number;
     numberOfRepeats : number;
@@ -19,6 +20,8 @@ export class TestRequestTYPE {
     numberOfDocuments: number;
     staticClientInfo: StaticClientInfoTYPE;
     dynamicClientInfo: DynamicClientInfoTYPE;
+    documentsToRead : DocumentInfoTYPE[];
+
 };
 
 export class TestSuiteTYPE {

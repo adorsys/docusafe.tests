@@ -13,6 +13,7 @@ public class TestParameter {
     public Integer numberOfDocuments;
     public Integer sizeOfDocument;
     public Integer documentsPerDirectory;
+    public DocumentInfo[] documentsToRead;
 
     @Override
     public String toString() {

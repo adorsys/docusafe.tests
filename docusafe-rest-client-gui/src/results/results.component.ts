@@ -18,7 +18,7 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     viewForTests: ViewForTests = new ViewForTests();
     showTable: boolean = true;
     task: string = "";
-    singleThread : TestResultAndResponseTYPE = null;
+    singleThread: TestResultAndResponseTYPE = null;
 
     @Input()
     private testCaseOwner: TestSuiteOwner;
@@ -146,15 +146,27 @@ export class ResultsComponent implements OnInit, TestResultOwner {
 
     }
 
-    remove(): void {
+    removeLastTest(): void {
         this.viewForTests.subsumedTests.pop();
+
+        // delete funktioniert nicht, da put nicht benutzt wird
+        // put wird nicht benutzt, weil sonst die json Darstellung immer leer ist
+        // daher wird die map neu angelegt, ohne das zu löschende element
+
+        let newTestMap: Map<string, SubsumedTestTYPE> = new Map();
+        for (let i = 0; i <this.viewForTests.subsumedTests.length; i++) {
+            let t : SubsumedTestTYPE = this.viewForTests.subsumedTests[i];
+            let key: string = t.repeats[0].threads[0].request.dynamicClientInfo.testID;
+            newTestMap[key] = this.viewForTests.testMap[key];
+        }
+        this.viewForTests.testMap = newTestMap;
     }
 
     getAll(): TestSuiteTYPE {
         var testSuite: TestSuiteTYPE = new TestSuiteTYPE();
         testSuite.testrequests = new Array<TestRequestTYPE>();
         for (var i = 0; i < this.viewForTests.subsumedTests.length; i++) {
-           let tr : TestRequestTYPE  = JSON.parse(JSON.stringify(this.viewForTests.subsumedTests[i].repeats[0].threads[0].request));
+            let tr: TestRequestTYPE = JSON.parse(JSON.stringify(this.viewForTests.subsumedTests[i].repeats[0].threads[0].request));
             tr.dynamicClientInfo.repetitionNumber = 0;
             tr.dynamicClientInfo.threadNumber = 0;
             tr.dynamicClientInfo.testID = null;
@@ -163,6 +175,16 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         return testSuite;
     }
 
+    getLastWriteResult(): SubsumedTestTYPE {
+        if (this.viewForTests.subsumedTests.length == 0) {
+            throw "no previous test found";
+        }
+        let subsumendTest: SubsumedTestTYPE = this.viewForTests.subsumedTests[this.viewForTests.subsumedTests.length - 1];
+        if (subsumendTest.testAction == "CREATE_DOCUMENTS") {
+            return subsumendTest;
+        }
+        throw "did not find last write test";
+    }
 
     toggleView(): void {
         this.showTable = (this.showTable == true ? false : true);
@@ -173,7 +195,7 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         this.task = i;
     }
 
-    showSingleThread(thread: TestResultAndResponseTYPE) : void {
+    showSingleThread(thread: TestResultAndResponseTYPE): void {
         this.singleThread = thread;
     }
 

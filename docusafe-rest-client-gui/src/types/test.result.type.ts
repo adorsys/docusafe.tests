@@ -6,7 +6,7 @@ export class TaskTYPE {
     time: number
 }
 
-export class CreatedDocumentTYPE {
+export class DocumentInfoTYPE {
     documentFQN : string;
     uniqueToken : string;
     size : number;
@@ -17,7 +17,8 @@ export class TestResultTYPE {
     extendedStoreConnection: string;
     totalTime: number;
     tasks: TaskTYPE[];
-    listOfCreatedDocuments: CreatedDocumentTYPE[];
+    userID: string;
+    listOfCreatedDocuments: DocumentInfoTYPE[];
 
 }
 
