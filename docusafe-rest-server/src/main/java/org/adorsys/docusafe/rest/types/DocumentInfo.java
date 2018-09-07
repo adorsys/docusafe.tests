@@ -9,4 +9,13 @@ public class DocumentInfo {
         public DocumentFQN documentFQN;
         public String uniqueToken;
         public Integer size;
+
+        @Override
+        public String toString() {
+                return "DocumentInfo{" +
+                        "documentFQN=" + documentFQN +
+                        ", uniqueToken='" + uniqueToken + '\'' +
+                        ", size=" + size +
+                        '}';
+        }
 }
