@@ -12,6 +12,11 @@ import org.adorsys.docusafe.business.types.UserID;
 public class UserIDJsonAdapter extends TypeAdapter<UserID> {
     @Override
     public void write(JsonWriter out, UserID value) throws IOException {
+        if (value == null) {
+            String nullString = null;
+            out.value(nullString);
+            return;
+        }
         out.value(value.getValue());
     }
     @Override

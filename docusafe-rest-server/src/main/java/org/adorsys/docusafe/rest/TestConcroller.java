@@ -1,6 +1,7 @@
 package org.adorsys.docusafe.rest;
 
 import org.adorsys.cryptoutils.exceptions.BaseException;
+import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
 import org.adorsys.cryptoutils.storeconnectionfactory.ExtendedStoreConnectionFactory;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
@@ -92,16 +93,23 @@ public class TestConcroller {
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
         testsResult.extendedStoreConnection = extendedStoreConnection.getClass().getName();
-        switch (testParameter.testAction) {
-            case READ_DOCUMENTS:
-            case CREATE_DOCUMENTS:
-                return regularTest(testParameter, testsResult);
-            case DELETE_DATABASE_AND_CACHES:
-            case DELETE_CACHES:
-            case DELETE_DATABASE:
-                return deleteDB(testParameter, testsResult);
-            default:
-                throw new BaseException("testCase not expected:" + testParameter.testAction);
+        LOGGER.info("START TEST " + testParameter.testAction);
+        try {
+            switch (testParameter.testAction) {
+                case READ_DOCUMENTS:
+                case CREATE_DOCUMENTS:
+                    return regularTest(testParameter, testsResult);
+                case DELETE_DATABASE_AND_CACHES:
+                case DELETE_CACHES:
+                case DELETE_DATABASE:
+                    return deleteDB(testParameter, testsResult);
+                default:
+                    throw new BaseException("testCase not expected:" + testParameter.testAction);
+            }
+        } catch (Exception e) {
+            throw BaseExceptionHandler.handle(e);
+        } finally {
+            LOGGER.info("FINISED TEST " + testParameter.testAction + testsResult);
         }
     }
 
@@ -375,7 +383,6 @@ public class TestConcroller {
             testsResult.tasks[i].time = stopWatchTaskInfo.getTimeMillis();
         }
         testsResult.totalTime = stopWatch.getTotalTimeMillis();
-        LOGGER.info(testsResult.toString());
     }
 
     private void addCreatedDocumentsToTestResults(List<DocumentInfo> createdDocuments, TestsResult testsResult) {

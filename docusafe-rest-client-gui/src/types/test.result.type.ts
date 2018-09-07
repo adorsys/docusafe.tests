@@ -12,14 +12,20 @@ export class DocumentInfoTYPE {
     size : number;
 }
 
+export class ReadDocumentResultTYPE {
+    documentFQN: string;
+    readResult: string;
+}
+
 export class TestResultTYPE {
     date: string; // date im Server erzeugt bei beginn des Tests
     extendedStoreConnection: string;
+    threadName: string;
     totalTime: number;
     tasks: TaskTYPE[];
     userID: string;
     listOfCreatedDocuments: DocumentInfoTYPE[];
-
+    listOfReadDocuments: ReadDocumentResultTYPE[];
 }
 
 export class TestResultAndResponseTYPE {

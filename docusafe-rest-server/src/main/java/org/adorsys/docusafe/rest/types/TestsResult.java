@@ -1,8 +1,10 @@
 package org.adorsys.docusafe.rest.types;
 
 import org.adorsys.docusafe.business.types.UserID;
+import org.springframework.lang.Nullable;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -11,20 +13,22 @@ import java.util.Date;
 public class TestsResult {
     public String date;
     public String extendedStoreConnection;
-    public long totalTime;
-    public TaskInfo[] tasks;
-    public UserID userID;
-    public DocumentInfo[] listOfCreatedDocuments;
-    public ReadDocumentResult[] listOfReadDocuments;
+    public String threadName;
+    public Long totalTime = null;
+    public TaskInfo[] tasks = null;
+    public UserID userID = null;
+    public DocumentInfo[] listOfCreatedDocuments = null;
+    public ReadDocumentResult[] listOfReadDocuments = null;
 
     public TestsResult() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS");
         this.date = sdf.format(new Date());
+        this.threadName = Thread.currentThread().getName();
     }
 
     public static class TaskInfo {
         public String name;
-        public long time;
+        public Long time;
 
         @Override
         public String toString() {
@@ -38,10 +42,14 @@ public class TestsResult {
     @Override
     public String toString() {
         return "TestsResult{" +
+                "date='" + date + '\'' +
                 ", extendedStoreConnection='" + extendedStoreConnection + '\'' +
+                ", threadName='" + threadName + '\'' +
                 ", totalTime=" + totalTime +
-                // ", tasks=" + Arrays.toString(tasks) +
-                ", # of tasks=" + tasks.length +
+                ", tasks=" + Arrays.toString(tasks) +
+                ", userID=" + userID +
+                ", listOfCreatedDocuments=" + Arrays.toString(listOfCreatedDocuments) +
+                ", listOfReadDocuments=" + Arrays.toString(listOfReadDocuments) +
                 '}';
     }
 }

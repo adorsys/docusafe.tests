@@ -8,5 +8,5 @@ import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 public class DocumentInfo {
         public DocumentFQN documentFQN;
         public String uniqueToken;
-        public int size;
+        public Integer size;
 }
