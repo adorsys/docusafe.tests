@@ -55,7 +55,26 @@
         "numberOfThreads": "30"
       },
       "testAction": "READ_DOCUMENTS",
-      "userid": "4c3624fe-7f84-463d-a972-72fb05997212"
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "DOCUMENT_EXISTS",
+      "userid": ""
     },
     {
       "cacheType": "GUAVA",
@@ -112,7 +131,26 @@
         "numberOfThreads": "30"
       },
       "testAction": "READ_DOCUMENTS",
-      "userid": "4c3624fe-7f84-463d-a972-72fb05997212"
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "DOCUMENTS_EXISTS",
+      "userid": ""
     },
     {
       "cacheType": "GUAVA",
@@ -169,7 +207,26 @@
         "numberOfThreads": "30"
       },
       "testAction": "READ_DOCUMENTS",
-      "userid": "bc06af87-fdb3-42db-ae0a-266a5ec54612"
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "CACHED_TRANSACTIONAL",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "DOCUMENT_EXISTS",
+      "userid": ""
     },
     {
       "cacheType": "GUAVA",
@@ -226,7 +283,26 @@
         "numberOfThreads": "30"
       },
       "testAction": "READ_DOCUMENTS",
-      "userid": "aebcf2cb-94c0-43cb-88c3-fd9ec2c3be90"
+      "userid": ""
+    },
+    {
+      "cacheType": "GUAVA",
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "CACHED_TRANSACTIONAL",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "30"
+      },
+      "testAction": "DOCUMENT_EXISTS",
+      "userid": ""
     }
   ]
 }

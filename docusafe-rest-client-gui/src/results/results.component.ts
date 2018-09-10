@@ -176,12 +176,11 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     }
 
     getLastWriteResult(): SubsumedTestTYPE {
-        if (this.viewForTests.subsumedTests.length == 0) {
-            throw "no previous test found";
-        }
-        let subsumendTest: SubsumedTestTYPE = this.viewForTests.subsumedTests[this.viewForTests.subsumedTests.length - 1];
-        if (subsumendTest.testAction == "CREATE_DOCUMENTS") {
-            return subsumendTest;
+        for (var i = this.viewForTests.subsumedTests.length -1; i >= 0; i--) {
+            let subsumendTest: SubsumedTestTYPE = this.viewForTests.subsumedTests[i];
+            if (subsumendTest.testAction == "CREATE_DOCUMENTS") {
+                return subsumendTest;
+            }
         }
         throw "did not find last write test";
     }

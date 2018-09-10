@@ -98,6 +98,7 @@ public class TestConcroller {
             switch (testParameter.testAction) {
                 case READ_DOCUMENTS:
                 case CREATE_DOCUMENTS:
+                case DOCUMENT_EXISTS:
                     return regularTest(testParameter, testsResult);
                 case DELETE_DATABASE_AND_CACHES:
                 case DELETE_CACHES:
@@ -203,7 +204,8 @@ public class TestConcroller {
                 }
                 break;
             }
-            case READ_DOCUMENTS: {
+            case READ_DOCUMENTS:
+            case DOCUMENT_EXISTS: {
                 switch (testParameter.docusafeLayer) {
                     case TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
@@ -217,35 +219,67 @@ public class TestConcroller {
                         break;
                 }
 
-                for (DocumentInfo documentInfo : testParameter.documentsToRead) {
-                    DocumentFQN documentFQN = documentInfo.documentFQN;
-                    String uniqueToken = documentInfo.uniqueToken;
-                    int size = documentInfo.size;
-                    DSDocument dsDocument = null;
-                    stopWatch.start("read document " + documentFQN.getValue());
-                    try {
-                        switch (testParameter.docusafeLayer) {
-                            case DOCUSAFE_BASE:
-                                dsDocument = documentSafeService[index].readDocument(userIDAuth, documentFQN);
-                                break;
-                            case NON_TRANSACTIONAL:
-                                dsDocument = nonTransactionalDocumentSafeServices[index].nonTxReadDocument(userIDAuth, documentFQN);
-                                break;
-                            case TRANSACTIONAL:
-                                dsDocument = transactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
-                                break;
-                            case CACHED_TRANSACTIONAL:
-                                dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
-                                break;
-                            default:
-                                throw new BaseException("missing switch");
+                switch (testParameter.testAction) {
+                    case READ_DOCUMENTS: {
+                        for (DocumentInfo documentInfo : testParameter.documentsToRead) {
+                            DocumentFQN documentFQN = documentInfo.documentFQN;
+                            String uniqueToken = documentInfo.uniqueToken;
+                            int size = documentInfo.size;
+                            DSDocument dsDocument = null;
+                            stopWatch.start("read document " + documentFQN.getValue());
+                            try {
+                                switch (testParameter.docusafeLayer) {
+                                    case DOCUSAFE_BASE:
+                                        dsDocument = documentSafeService[index].readDocument(userIDAuth, documentFQN);
+                                        break;
+                                    case NON_TRANSACTIONAL:
+                                        dsDocument = nonTransactionalDocumentSafeServices[index].nonTxReadDocument(userIDAuth, documentFQN);
+                                        break;
+                                    case TRANSACTIONAL:
+                                        dsDocument = transactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
+                                        break;
+                                    case CACHED_TRANSACTIONAL:
+                                        dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
+                                        break;
+                                    default:
+                                        throw new BaseException("missing switch");
+                                }
+                            } catch (BaseException e) {
+                                // TODO genauer Typ muss hier noch geprüft werden, nur die FileNotFoundException wird erwartet....
+                            }
+                            stopWatch.stop();
+                            readDocuments.add(checkDocumentWasRead(dsDocument, documentInfo));
                         }
-                    } catch (BaseException e) {
-                        // TODO genauer Typ muss hier noch geprüft werden, nur die FileNotFoundException wird erwartet....
+                        break;
                     }
-                    stopWatch.stop();
-                    readDocuments.add(checkDocument(dsDocument, documentInfo));
+                    case DOCUMENT_EXISTS: {
+                        for (DocumentInfo documentInfo : testParameter.documentsToRead) {
+                            DocumentFQN documentFQN = documentInfo.documentFQN;
+                            boolean exists;
+                            stopWatch.start("document exists" + documentFQN.getValue());
+                            switch (testParameter.docusafeLayer) {
+                                case DOCUSAFE_BASE:
+                                    exists = documentSafeService[index].documentExists(userIDAuth, documentFQN);
+                                    break;
+                                case NON_TRANSACTIONAL:
+                                    exists = nonTransactionalDocumentSafeServices[index].nonTxDocumentExists(userIDAuth, documentFQN);
+                                    break;
+                                case TRANSACTIONAL:
+                                    exists = transactionalDocumentSafeServices[index].txDocumentExists(txID, userIDAuth, documentFQN);
+                                    break;
+                                case CACHED_TRANSACTIONAL:
+                                    exists = cachedTransactionalDocumentSafeServices[index].txDocumentExists(txID, userIDAuth, documentFQN);
+                                    break;
+                                default:
+                                    throw new BaseException("missing switch");
+                            }
+                            stopWatch.stop();
+                            readDocuments.add(checkDocumentExsits(exists, documentInfo));
+                        }
+                        break;
+                    }
                 }
+
                 break;
             }
             default:
@@ -279,7 +313,7 @@ public class TestConcroller {
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
-    private ReadDocumentResult checkDocument(DSDocument dsDocument, DocumentInfo documentInfo) {
+    private ReadDocumentResult checkDocumentWasRead(DSDocument dsDocument, DocumentInfo documentInfo) {
         ReadDocumentResult readDocumentResult = new ReadDocumentResult();
         readDocumentResult.documentFQN = documentInfo.documentFQN;
         if (dsDocument == null) {
@@ -301,6 +335,13 @@ public class TestConcroller {
         if (readDocumentResult.readResult == null) {
             throw new BaseException("Programming Error. readResult must not be null");
         }
+        return readDocumentResult;
+    }
+
+    private ReadDocumentResult checkDocumentExsits(Boolean exists, DocumentInfo documentInfo) {
+        ReadDocumentResult readDocumentResult = new ReadDocumentResult();
+        readDocumentResult.documentFQN = documentInfo.documentFQN;
+        readDocumentResult.readResult = exists ? ReadResult.OK : ReadResult.NOT_FOUND;
         return readDocumentResult;
     }
 

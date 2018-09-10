@@ -80,6 +80,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
     testactions: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",
+        "DOCUMENT_EXISTS",
         "DELETE_DATABASE",
         "DELETE_DATABASE_AND_CACHES",
         "DELETE_CACHES"
@@ -177,7 +178,9 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
 
     doCurrentTest(): void {
 
-        if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1]) {
+        if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1] ||
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[2]
+        ) {
             this.lastWriteResult = this.testResultOwner.getLastWriteResult();
             // Anzahl der threads und repeats müssen vom WriteTest übernommen werden.
             this.testSuite.testrequests[this.currentTestIndex].staticClientInfo = this.lastWriteResult.staticClientInfo;
@@ -204,7 +207,9 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         for (let i = 1; i <= currentTest.staticClientInfo.numberOfThreads; i++) {
             let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
-            if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1]) {
+            if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1] ||
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[2]
+            ) {
                 this.modifyReadRequest(request, this.lastWriteResult);
             }
 
