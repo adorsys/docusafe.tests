@@ -300,16 +300,7 @@ public class TestConcroller {
         }
         addStopWatchToTestsResult(stopWatch, testsResult);
         addCreatedDocumentsToTestResults(createdDocuments, testsResult);
-        boolean error = false;
         addReadDocumentsToTestResults(readDocuments, testsResult);
-        for (ReadDocumentResult doc : readDocuments) {
-            if (!(doc.readResult.equals(ReadResult.OK))) {
-                error = true;
-            }
-        }
-        if (error) {
-            return new ResponseEntity<>(testsResult, HttpStatus.CONFLICT);
-        }
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 

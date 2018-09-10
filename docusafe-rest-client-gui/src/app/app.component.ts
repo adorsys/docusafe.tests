@@ -244,6 +244,15 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         response.request = testRequest;
         response.date = testResult.date;
         response.testOk = true;
+        if (testRequest.testAction == this.testactions[1] ||
+            testRequest.testAction == this.testactions[2])
+        {
+            for (var i = 0; i<testResult.listOfReadDocuments.length; i++) {
+                if (testResult.listOfReadDocuments[i].readResult != "OK") {
+                    response.testOk = false;
+                }
+            }
+        }
         this.continueTesting(response, testRequest);
     }
 
