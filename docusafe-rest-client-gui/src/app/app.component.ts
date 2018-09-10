@@ -43,8 +43,8 @@ var defaultTestSuite: TestSuiteTYPE =
     ]
 };
 
-// var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
-var fullTestSuite = defaultTestSuite;
+var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
+// var fullTestSuite = defaultTestSuite;
 
 @Component({
     selector: 'app-root',
