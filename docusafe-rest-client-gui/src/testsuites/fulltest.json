@@ -149,7 +149,7 @@
         "numberOfRepeats": "5",
         "numberOfThreads": "30"
       },
-      "testAction": "DOCUMENTS_EXISTS",
+      "testAction": "DOCUMENT_EXISTS",
       "userid": ""
     },
     {
