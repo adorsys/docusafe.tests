@@ -39,12 +39,13 @@ export class ResultsComponent implements OnInit, TestResultOwner {
             subsumedTest.testAction = response.request.testAction;
             subsumedTest.cacheType = response.request.cacheType;
             subsumedTest.layer = response.request.docusafeLayer;
+            subsumedTest.testID = response.request.dynamicClientInfo.testID;
             subsumedTest.repeats = new Array<TestResultAndResponseThreadsMapTYPE>(subsumedTest.staticClientInfo.numberOfRepeats);
             for (var i = 0; i < subsumedTest.repeats.length; i++) {
                 subsumedTest.repeats[i] = null;
             }
 
-            this.viewForTests.testMap[response.request.dynamicClientInfo.testID] = subsumedTest;
+            this.viewForTests.testMap[subsumedTest.testID] = subsumedTest;
             this.viewForTests.subsumedTests.push(subsumedTest);
             subsumedTest.testOk = true;
         }
@@ -154,15 +155,15 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         // daher wird die map neu angelegt, ohne das zu löschende element
 
         let newTestMap: Map<string, SubsumedTestTYPE> = new Map();
-        for (let i = 0; i <this.viewForTests.subsumedTests.length; i++) {
-            let t : SubsumedTestTYPE = this.viewForTests.subsumedTests[i];
-            let key: string = t.repeats[0].threads[0].request.dynamicClientInfo.testID;
+        for (let i = 0; i < this.viewForTests.subsumedTests.length; i++) {
+            let t: SubsumedTestTYPE = this.viewForTests.subsumedTests[i];
+            let key: string = t.testID;
             newTestMap[key] = this.viewForTests.testMap[key];
         }
         this.viewForTests.testMap = newTestMap;
     }
 
-    getAll(): TestSuiteTYPE {
+    getTestSuite(): TestSuiteTYPE {
         var testSuite: TestSuiteTYPE = new TestSuiteTYPE();
         testSuite.testrequests = new Array<TestRequestTYPE>();
         for (var i = 0; i < this.viewForTests.subsumedTests.length; i++) {
@@ -175,8 +176,23 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         return testSuite;
     }
 
+    getSubsumedTests(): SubsumedTestTYPE[] {
+        return this.viewForTests.subsumedTests;
+    }
+
+    loadSubsumedTests(subsumedTests : SubsumedTestTYPE[]) : void {
+        this.viewForTests.subsumedTests = new Array<SubsumedTestTYPE>();
+        this.viewForTests.testMap = new Map<string, SubsumedTestTYPE>();
+
+        for (var i = 0; i<subsumedTests.length; i++) {
+            this.viewForTests.subsumedTests.push(subsumedTests[i]);
+            this.viewForTests.testMap[subsumedTests[i].testID] = subsumedTests[i];
+        }
+    }
+
+
     getLastWriteResult(): SubsumedTestTYPE {
-        for (var i = this.viewForTests.subsumedTests.length -1; i >= 0; i--) {
+        for (var i = this.viewForTests.subsumedTests.length - 1; i >= 0; i--) {
             let subsumendTest: SubsumedTestTYPE = this.viewForTests.subsumedTests[i];
             if (subsumendTest.testAction == "CREATE_DOCUMENTS") {
                 return subsumendTest;

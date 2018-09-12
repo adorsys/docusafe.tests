@@ -118,7 +118,9 @@
                         <label ngbButtonLabel class="btn-warning full" (click)="doCleanDatabase()">clean
                             database</label>
                         <label ngbButtonLabel class="btn-primary full" (click)="removeLastTestFromDone()">remove last test from done</label>
-                        <label ngbButtonLabel class="btn-primary full" (click)="copy()">copy testcases done to clipboard</label>
+                        <label ngbButtonLabel class="btn-primary full" (click)="copyTestSuite()">copy testcases done to clipboard</label>
+                        <label ngbButtonLabel class="btn-primary full" (click)="saveTestSuite()">save testcases done to file</label>
+                        <label ngbButtonLabel class="btn-primary full" (click)="saveTestResults()">save testresults to file</label>
                         {{errormessage}}
                     </div>
                 </div>

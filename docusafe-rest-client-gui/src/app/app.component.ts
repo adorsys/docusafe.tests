@@ -14,8 +14,11 @@ import {ClipboardService} from "../clipboard/clipboard.service";
 import {v4 as uuid} from 'uuid';
 import * as fulltestJson from "../testsuites/fulltest.json";
 import {SubsumedTestTYPE} from "../types/test.result.type";
+import { saveAs } from "file-saver/FileSaver";
+
 import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
 import {DocumentInfoTYPE} from "../types/test.result.type";
+
 
 var defaultTestSuite: TestSuiteTYPE =
 {
@@ -194,7 +197,6 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.testID = uuid();
         this.doAbort = false;
 
-
         this.startRepeatTest();
     }
 
@@ -230,6 +232,7 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
 
     abort(): void {
         this.doAbort = true;
+        this.busy = false;
     }
 
     removeLastTestFromDone(): void {
@@ -308,10 +311,25 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         }
     }
 
-    copy(): void {
-        this.clipboardService.copy(JSON.stringify(this.testResultOwner.getAll()));
+    copyTestSuite(): void {
+        this.clipboardService.copy(JSON.stringify(this.testResultOwner.getTestSuite()));
     }
 
+    saveTestSuite(): void {
+        const filename ="tests.json"
+        const blob = new Blob([JSON.stringify(this.testResultOwner.getTestSuite())], { type: 'text/plain' });
+        saveAs(blob, filename);
+    }
+
+    saveTestResults(): void {
+        const filename ="testresults.json"
+        const blob = new Blob([JSON.stringify(this.testResultOwner.getSubsumedTests())], { type: 'text/plain' });
+        saveAs(blob, filename);
+    }
+
+    loadTestResults(): void {
+        // this.testResultOwner.loadSubsumedTests(subsumedTests);
+    }
     private modifyReadRequest(request: TestRequestTYPE, lastWriteResult: SubsumedTestTYPE) {
         let result : TestResultAndResponseTYPE = lastWriteResult.repeats[request.dynamicClientInfo.repetitionNumber-1].threads[request.dynamicClientInfo.threadNumber-1];
         if (result.error ==  null) {

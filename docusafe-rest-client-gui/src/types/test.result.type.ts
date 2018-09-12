@@ -50,6 +50,7 @@ export class TestResultAndResponseThreadsMapTYPE {
 }
 
 export class SubsumedTestTYPE {
+    testID: string;
     repeats: TestResultAndResponseThreadsMapTYPE[];
     averageTime: number = 4;
     maxTime: number = 5;

@@ -4,6 +4,8 @@ import {SubsumedTestTYPE} from "../types/test.result.type";
 export interface TestResultOwner {
     add(response: TestResultAndResponseTYPE) : void;
     removeLastTest () : void;
-    getAll() : TestSuiteTYPE;
+    getTestSuite() : TestSuiteTYPE;
+    getSubsumedTests() : SubsumedTestTYPE[];
+    loadSubsumedTests(subsumedTests : SubsumedTestTYPE[]) : void;
     getLastWriteResult() : SubsumedTestTYPE;
 }
