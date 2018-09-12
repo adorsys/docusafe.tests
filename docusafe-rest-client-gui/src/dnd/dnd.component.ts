@@ -1,8 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {TestSuiteOwner} from "../app/test.case.owner";
-import {TestSuiteTYPE} from "../types/test.cases.type";
 import {FileContentHolder} from "./file.content.holder";
 import {Consts} from "../environments/consts";
+import {DndOwner} from "./dnd.owner";
 
 @Component({
     selector: 'app-dnd',
@@ -16,7 +15,10 @@ export class DndComponent implements OnInit, FileContentHolder {
 
 
     @Input()
-    private testCaseOwner: TestSuiteOwner;
+    private dndOwner: DndOwner;
+
+    @Input()
+    private id: number;
 
     constructor() {
         console.log("dnd constructor");
@@ -24,7 +26,7 @@ export class DndComponent implements OnInit, FileContentHolder {
 
     ngOnInit() {
         console.log("ngOnInit dnd")
-        this.testCaseOwner.registerFileContentHolder(this);
+        this.dndOwner.registerFileContentHolder(this.id, this);
     }
 
     onFilesChange(files: FileList) {
@@ -46,7 +48,7 @@ export class DndComponent implements OnInit, FileContentHolder {
     setMessage(m: string) : void {
         this.message = m;
         this.errorMessage = "";
-        this.testCaseOwner.notifyForChanchedFileContent();
+        this.dndOwner.notifyForChanchedFileContent(this.id);
     }
 
     setErrorMessage(em: string) : void {

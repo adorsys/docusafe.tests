@@ -18,6 +18,7 @@ import { saveAs } from "file-saver/FileSaver";
 
 import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
 import {DocumentInfoTYPE} from "../types/test.result.type";
+import {DndOwner} from "../dnd/dnd.owner";
 
 
 var defaultTestSuite: TestSuiteTYPE =
@@ -54,9 +55,10 @@ var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements TestSuiteOwner, RequestSender {
+export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     title = 'docusafe-test-client';
-    fileContentHolder: FileContentHolder = null;
+    dndForTestSuite: FileContentHolder = null;
+    dndForTestResults: FileContentHolder = null;
     testResultOwner: TestResultOwner = null;
     busy: boolean = false;
     doContinue: boolean = false;
@@ -104,22 +106,42 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         this.setTests(fullTestSuite);
     }
 
-    notifyForChanchedFileContent(): void {
-        var filecontent: string = this.fileContentHolder.getMessage();
-        try {
-            console.log("parse testrequests");
-            var testCases: TestSuiteTYPE = JSON.parse(filecontent);
-            if (isUndefined(testCases)) {
-                throw "dropped element are not json";
+    notifyForChanchedFileContent(id: number): void {
+        if (id == 1) {
+            var filecontent: string = this.dndForTestSuite.getMessage();
+            try {
+                console.log("parse testrequests");
+                var testCases: TestSuiteTYPE = JSON.parse(filecontent);
+                if (isUndefined(testCases)) {
+                    throw "dropped element are not json";
+                }
+                var length = testCases.testrequests.length;
+                console.log("anzahl der neu geladenen testfälle:" + length);
+                if (length == 0) {
+                    throw "dropped element are not json testactions";
+                }
+                this.setTests(testCases);
+            } catch (e) {
+                this.dndForTestSuite.setErrorMessage(e);
             }
-            var length = testCases.testrequests.length;
-            console.log("anzahl der neu geladenen testfälle:" + length);
-            if (length == 0) {
-                throw "dropped element are not json testactions";
+        }
+        if (id == 2) {
+            var filecontent: string = this.dndForTestResults.getMessage();
+            try {
+                console.log("parse testresults");
+                var subsumendTests : SubsumedTestTYPE[] = JSON.parse(filecontent);
+                if (isUndefined(subsumendTests)) {
+                    throw "dropped element are not json";
+                }
+                var length = subsumendTests.length;
+                console.log("anzahl der neu geladenen testergebnisse:" + length);
+                if (length == 0) {
+                    throw "dropped element are not json testactions";
+                }
+                this.testResultOwner.loadSubsumedTests(subsumendTests);
+            } catch (e) {
+                this.dndForTestResults.setErrorMessage(e);
             }
-            this.setTests(testCases);
-        } catch (e) {
-            this.fileContentHolder.setErrorMessage(e);
         }
     }
 
@@ -133,15 +155,13 @@ export class AppComponent implements TestSuiteOwner, RequestSender {
         }
     }
 
-    fromModelToFile() {
-        var newfilecontent: string = JSON.stringify(this.testSuite);
-        this.fileContentHolder.setMessage(newfilecontent);
-        this.currentTestIndex = 0;
-    }
-
-    registerFileContentHolder(fch: FileContentHolder): void {
-        this.fileContentHolder = fch;
-        this.fromModelToFile();
+    registerFileContentHolder(id: number, fch: FileContentHolder): void {
+        if (id == 1) {
+            this.dndForTestSuite = fch;
+        }
+        if (id == 2) {
+            this.dndForTestResults = fch;
+        }
     }
 
     registerResultsHolder(r: TestResultOwner): void {

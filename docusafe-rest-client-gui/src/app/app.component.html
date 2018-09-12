@@ -102,7 +102,8 @@
                                 <td>Documents per directory</td>
                                 <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].documentsPerDirectory"></td>
                             </tr>
-                            <app-dnd [testCaseOwner]="me"></app-dnd>
+                            <app-dnd [dndOwner]="me" [id]="1"></app-dnd>
+                            <app-dnd [dndOwner]="me" [id]="2"></app-dnd>
 
                         </table>
                     </div>
