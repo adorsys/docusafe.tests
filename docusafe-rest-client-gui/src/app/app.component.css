@@ -21,7 +21,7 @@
 }
 
 .col3 {
-    width:300px;
+    width:400px;
     text-align: left;
 }
 
@@ -52,3 +52,17 @@ textarea {
     margin-left: 3%;
 }
 
+.samerow {
+    display:inline-block;
+}
+
+.samerow1 {
+    float:left;
+    width:48%;
+    margin-right:2%;
+}
+.samerow2 {
+    float:right;
+    width:48%;
+    margin-left:2%;
+}

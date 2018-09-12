@@ -3,3 +3,7 @@
   background-color: #eee;
   border: dotted 1px #aaa;
 }
+
+.full {
+  width:100%;
+}

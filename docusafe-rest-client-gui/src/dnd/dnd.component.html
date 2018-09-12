@@ -1,16 +1,6 @@
-<tr style="height:10px;">
-
-</tr>
-<tr>
-    <td>
-        <div class="dropzone form-group rounded-0"
-             appDnd (filesChangeEmiter)="onFilesChange($event)"
-        >
-            drag and drop test suite in <br>json format here
-            <br>
-        </div>
-    </td>
-    <td>
-        {{errorMessage}}
-    </td>
-</tr>
+<div>
+    <span class="full dropzone form-group rounded-0" appDnd (filesChangeEmiter)="onFilesChange($event)">
+    {{labelText}}
+    </span>
+    {{errorMessage}}
+</div>

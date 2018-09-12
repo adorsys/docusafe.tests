@@ -9,10 +9,11 @@ import {DndOwner} from "./dnd.owner";
     styleUrls: ['./dnd.component.css']
 })
 export class DndComponent implements OnInit, FileContentHolder {
-    message: string = "Drop your testcases in json format here!";
+    message: string = "";
     errorMessage: string = "";
-    private imageURL : string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
+    @Input()
+    private labelText : string;
 
     @Input()
     private dndOwner: DndOwner;

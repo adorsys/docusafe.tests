@@ -48,12 +48,14 @@
                             </tr>
                             <tr>
                                 <td>Number of threads</td>
-                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].staticClientInfo.numberOfThreads">
+                                <td><input
+                                        [(ngModel)]="testSuite.testrequests[currentTestIndex].staticClientInfo.numberOfThreads">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Number of repeats</td>
-                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].staticClientInfo.numberOfRepeats">
+                                <td><input
+                                        [(ngModel)]="testSuite.testrequests[currentTestIndex].staticClientInfo.numberOfRepeats">
                                 </td>
                             </tr>
                             <tr>
@@ -61,7 +63,8 @@
                                 <td>
                                     <select [(ngModel)]="testSuite.testrequests[currentTestIndex].testAction">
                                         <option *ngFor="let tc of testactions"
-                                                [selected]="testSuite.testrequests[currentTestIndex].testAction == tc">{{tc}}
+                                                [selected]="testSuite.testrequests[currentTestIndex].testAction == tc">
+                                            {{tc}}
                                         </option>
                                     </select>
                                 </td>
@@ -71,7 +74,8 @@
                                 <td>
                                     <select [(ngModel)]="testSuite.testrequests[currentTestIndex].docusafeLayer">
                                         <option *ngFor="let dl of docusafelayer"
-                                                [selected]="testSuite.testrequests[currentTestIndex].docusafeLayer == dl">{{dl}}
+                                                [selected]="testSuite.testrequests[currentTestIndex].docusafeLayer == dl">
+                                            {{dl}}
                                         </option>
                                     </select>
                                 </td>
@@ -81,7 +85,8 @@
                                 <td>
                                     <select [(ngModel)]="testSuite.testrequests[currentTestIndex].cacheType">
                                         <option *ngFor="let ct of cachetypes"
-                                                [selected]="testSuite.testrequests[currentTestIndex].cacheType == ct">{{ct}}
+                                                [selected]="testSuite.testrequests[currentTestIndex].cacheType == ct">
+                                            {{ct}}
                                         </option>
                                     </select>
                                 </td>
@@ -92,7 +97,8 @@
                             </tr>
                             <tr>
                                 <td>Number of Documents</td>
-                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].numberOfDocuments"></td>
+                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].numberOfDocuments">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Size of Documents</td>
@@ -100,10 +106,9 @@
                             </tr>
                             <tr>
                                 <td>Documents per directory</td>
-                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].documentsPerDirectory"></td>
+                                <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].documentsPerDirectory">
+                                </td>
                             </tr>
-                            <app-dnd [dndOwner]="me" [id]="1"></app-dnd>
-                            <app-dnd [dndOwner]="me" [id]="2"></app-dnd>
 
                         </table>
                     </div>
@@ -111,19 +116,22 @@
                 <div class="col3">
                     <div class="headline">ACTIONS</div>
                     <div class="content">
-                        <label ngbButtonLabel class="btn-primary full" (click)="doCurrentTest()"
-                               [attr.disabled]="busy == true ? true : null">do current test</label>
-                        <label ngbButtonLabel class="btn-primary full" (click)="doRemainingTests()">do remaining
-                            tests</label>
+                        <div>
+                            <label ngbButtonLabel class="btn-primary full" (click)="doCurrentTest()">do current test</label>
+                        </div>
+                        <label ngbButtonLabel class="btn-primary full" (click)="doRemainingTests()">do
+                            remaining tests</label>
                         <label ngbButtonLabel class="btn-primary full" (click)="doAllTests()">do all tests</label>
-                        <label ngbButtonLabel class="btn-warning full" (click)="doCleanDatabase()">clean
-                            database</label>
+                        <label ngbButtonLabel class="btn-warning full" (click)="doCleanDatabase()">clean database</label>
                         <label ngbButtonLabel class="btn-primary full" (click)="removeLastTestFromDone()">remove last test from done</label>
-                        <label ngbButtonLabel class="btn-primary full" (click)="copyTestSuite()">copy testcases done to clipboard</label>
-                        <label ngbButtonLabel class="btn-primary full" (click)="saveTestSuite()">save testcases done to file</label>
-                        <label ngbButtonLabel class="btn-primary full" (click)="saveTestResults()">save testresults to file</label>
-                        {{errormessage}}
+                        <div class="samerow full">
+                        <label ngbButtonLabel class="btn-primary samerow1" (click)="saveTestSuite()">save testsuite to file</label>
+                        <app-dnd class="samerow2" [dndOwner]="me" [id]="1" [labelText]="'drop testSuite here'"></app-dnd>
+                            </div>
+                        <label ngbButtonLabel class="btn-primary samerow1" (click)="saveTestResults()">save testresults to file</label>
+                        <app-dnd class="samerow2" [dndOwner]="me" [id]="2" [labelText]="'drop testResults here'"></app-dnd>
                     </div>
+                    {{errormessage}}
                 </div>
             </div>
         </div>
