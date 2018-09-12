@@ -336,13 +336,17 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     }
 
     saveTestSuite(): void {
-        const filename ="tests.json"
+        var date:string = formatDate(new Date(), 'yyyyMMdd-hhmmSS', 'en');
+
+        const filename = date + "_testsuite.json"
         const blob = new Blob([JSON.stringify(this.testResultOwner.getTestSuite())], { type: 'text/plain' });
         saveAs(blob, filename);
     }
 
     saveTestResults(): void {
-        const filename ="testresults.json"
+        var date:string = formatDate(new Date(), 'yyyyMMdd-hhmmSS', 'en');
+
+        const filename =date + "_testresults.json"
         const blob = new Blob([JSON.stringify(this.testResultOwner.getSubsumedTests())], { type: 'text/plain' });
         saveAs(blob, filename);
     }
