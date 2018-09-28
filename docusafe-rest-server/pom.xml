@@ -12,9 +12,22 @@
 
     <artifactId>docusafe-rest-server</artifactId>
 
+    <dependencyManagement>
+        <dependencies>
+            <!--https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-build-systems.html#using-boot-maven-without-a-parent -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
 
-        <!-- first to make sure, the correct mongodb is included -->
+        <!-- first to make sure, the correct cryptutils is included -->
         <dependency>
             <groupId>de.adorsys.cryptoutils</groupId>
             <artifactId>storeconnectionfactory</artifactId>
@@ -27,7 +40,14 @@
             <version>${crypt.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.cryptoutils</groupId>
+            <artifactId>basetypes</artifactId>
+            <version>${crypt.version}</version>
+        </dependency>
+
         <!-- Spring boot -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -63,9 +83,13 @@
 
         <dependency>
             <groupId>de.adorsys</groupId>
-            <artifactId>docusafe-business</artifactId>
+            <artifactId>docusafe-cached-transactional</artifactId>
             <version>${docusafe.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>de.adorsys.cryptoutils</groupId>
                     <artifactId>encobject</artifactId>
@@ -82,18 +106,6 @@
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>docusafe-transactional</artifactId>
-            <version>${docusafe.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>docusafe-cached-transactional</artifactId>
-            <version>${docusafe.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.9.5</version>
@@ -105,10 +117,14 @@
             <version>2.9.5</version>
         </dependency>
 
+        <!-- extra logback, damit ein logfile existiert -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j-simple.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
         </dependency>
     </dependencies>
 
@@ -134,7 +150,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
-
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
                 </configuration>
@@ -147,12 +162,12 @@
                 </executions>
             </plugin>
 
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
--->
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                        </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

@@ -199,6 +199,11 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         this.testService.test(this.destinationUrl, deleteTestCase, this);
     }
 
+    doCurrentTestOnly() : void {
+        this.doContinue = false;
+        this.doCurrentTest();
+    }
+
     doCurrentTest(): void {
 
         if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1] ||
