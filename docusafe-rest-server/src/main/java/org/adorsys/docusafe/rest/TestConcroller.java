@@ -138,7 +138,6 @@ public class TestConcroller {
         }
         UserIDAuth userIDAuth = new UserIDAuth(testParameter.userid, new ReadKeyPassword("password for " + testParameter.userid.getValue()));
         StopWatch stopWatch = new StopWatch();
-        TxID txID = null;
         List<DocumentInfo> createdDocuments = new ArrayList<>();
         List<ReadDocumentResult> readDocuments = new ArrayList<>();
         switch (testParameter.testAction) {
@@ -154,13 +153,13 @@ public class TestConcroller {
                     case TRANSACTIONAL:
                         transactionalDocumentSafeServices[index].createUser(userIDAuth);
                         stopWatch.start("beginTransaction");
-                        txID = transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                     case CACHED_TRANSACTIONAL:
                         cachedTransactionalDocumentSafeServices[index].createUser(userIDAuth);
                         stopWatch.start("beginTransaction");
-                        txID = cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                     default:
@@ -192,10 +191,10 @@ public class TestConcroller {
                             nonTransactionalDocumentSafeServices[index].nonTxStoreDocument(userIDAuth, dsDocument);
                             break;
                         case TRANSACTIONAL:
-                            transactionalDocumentSafeServices[index].txStoreDocument(txID, userIDAuth, dsDocument);
+                            transactionalDocumentSafeServices[index].txStoreDocument(userIDAuth, dsDocument);
                             break;
                         case CACHED_TRANSACTIONAL:
-                            cachedTransactionalDocumentSafeServices[index].txStoreDocument(txID, userIDAuth, dsDocument);
+                            cachedTransactionalDocumentSafeServices[index].txStoreDocument(userIDAuth, dsDocument);
                             break;
                         default:
                             throw new BaseException("missing switch");
@@ -209,12 +208,12 @@ public class TestConcroller {
                 switch (testParameter.docusafeLayer) {
                     case TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
-                        txID = transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                     case CACHED_TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
-                        txID = cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                 }
@@ -236,10 +235,10 @@ public class TestConcroller {
                                         dsDocument = nonTransactionalDocumentSafeServices[index].nonTxReadDocument(userIDAuth, documentFQN);
                                         break;
                                     case TRANSACTIONAL:
-                                        dsDocument = transactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
+                                        dsDocument = transactionalDocumentSafeServices[index].txReadDocument(userIDAuth, documentFQN);
                                         break;
                                     case CACHED_TRANSACTIONAL:
-                                        dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(txID, userIDAuth, documentFQN);
+                                        dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(userIDAuth, documentFQN);
                                         break;
                                     default:
                                         throw new BaseException("missing switch");
@@ -265,10 +264,10 @@ public class TestConcroller {
                                     exists = nonTransactionalDocumentSafeServices[index].nonTxDocumentExists(userIDAuth, documentFQN);
                                     break;
                                 case TRANSACTIONAL:
-                                    exists = transactionalDocumentSafeServices[index].txDocumentExists(txID, userIDAuth, documentFQN);
+                                    exists = transactionalDocumentSafeServices[index].txDocumentExists(userIDAuth, documentFQN);
                                     break;
                                 case CACHED_TRANSACTIONAL:
-                                    exists = cachedTransactionalDocumentSafeServices[index].txDocumentExists(txID, userIDAuth, documentFQN);
+                                    exists = cachedTransactionalDocumentSafeServices[index].txDocumentExists(userIDAuth, documentFQN);
                                     break;
                                 default:
                                     throw new BaseException("missing switch");
@@ -289,12 +288,12 @@ public class TestConcroller {
         switch (testParameter.docusafeLayer) {
             case TRANSACTIONAL:
                 stopWatch.start("endTransaction");
-                transactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
+                transactionalDocumentSafeServices[index].endTransaction(userIDAuth);
                 stopWatch.stop();
                 break;
             case CACHED_TRANSACTIONAL:
                 stopWatch.start("endTransaction");
-                cachedTransactionalDocumentSafeServices[index].endTransaction(txID, userIDAuth);
+                cachedTransactionalDocumentSafeServices[index].endTransaction(userIDAuth);
                 stopWatch.stop();
                 break;
         }
