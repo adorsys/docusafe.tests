@@ -3,5 +3,5 @@ ENV JAVA_OPTS -Xmx512m
 WORKDIR /home/docusafe
 COPY target/docusafe-rest-server.jar .
 EXPOSE 9999
-CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /home/docusafe/docusafe-rest-server.jar -DSC-AMAZONS3=http://minio-psp-docusafe-performancetest.cloud.adorsys.de,simpleAccessKey,simpleSecretKey,any
-# CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /home/docusafe/docusafe-rest-server.jar -DSC-MINIO=http://minio-psp-docusafe-performancetest.cloud.adorsys.de,simpleAccessKey,simpleSecretKey,any
+CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /home/docusafe/docusafe-rest-server.jar -DSC-AMAZONS3=http://minio-psp-docusafe-performancetest.cloud.adorsys.de,simpleAccessKey,simpleSecretKey
+# CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /home/docusafe/docusafe-rest-server.jar -DSC-MINIO=http://minio-psp-docusafe-performancetest.cloud.adorsys.de,simpleAccessKey,simpleSecretKey,any -DSC-NO-ENCRYPTION-PASSWORD
