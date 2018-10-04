@@ -104,6 +104,29 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>docusafe-spring</artifactId>
+            <version>${docusafe.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>de.adorsys.cryptoutils</groupId>
+                    <artifactId>encobject</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>de.adorsys.cryptoutils</groupId>
+                    <artifactId>basetypes</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>de.adorsys.cryptoutils</groupId>
+                    <artifactId>jkeyutils</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

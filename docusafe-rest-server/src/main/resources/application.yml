@@ -1,0 +1,3 @@
+docusafe:
+  storeconnection:
+    fulldescription: -DSC-AMAZONS3=http://192.168.178.60:9000,simpleAccessKey,simpleSecretKey
