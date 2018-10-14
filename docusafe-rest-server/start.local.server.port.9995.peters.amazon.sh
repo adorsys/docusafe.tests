@@ -1,0 +1,1 @@
+mvn -Dspring.config.location=file:./src/main/resources/port.9995.peters.amazon.yml spring-boot:run

@@ -14,9 +14,11 @@ import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.rest.types.GrantDocument;
 import org.adorsys.encobject.complextypes.BucketPath;
 import org.adorsys.encobject.domain.ReadKeyPassword;
+import org.adorsys.encobject.service.api.ExtendedStoreConnection;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.AntPathMatcher;
@@ -47,8 +49,11 @@ public class DocumentSafeController {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentSafeController.class);
     private DocumentSafeService service;
 
+    @Autowired
+    ExtendedStoreConnection extendedStoreConnection;
+
     public DocumentSafeController() {
-        service = new DocumentSafeServiceImpl(WithCache.TRUE, ExtendedStoreConnectionFactory.get());
+        service = new DocumentSafeServiceImpl(WithCache.TRUE, extendedStoreConnection);
     }
 
     /**

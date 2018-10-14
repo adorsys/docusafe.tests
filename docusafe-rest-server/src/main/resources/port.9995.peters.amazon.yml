@@ -1,0 +1,11 @@
+server:
+  port: 9995
+
+docusafe:
+  storeconnection:
+    amazons3:
+      url: https://s3.amazonaws.com
+      accesskey: *
+      secretkey: *
+      region: us-east-1
+      rootbucket: adorsys.peter

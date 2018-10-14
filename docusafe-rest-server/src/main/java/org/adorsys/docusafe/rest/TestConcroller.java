@@ -25,6 +25,7 @@ import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -49,14 +50,14 @@ public class TestConcroller {
     private CachedTransactionalDocumentSafeService[] cachedTransactionalDocumentSafeServices = null;
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
 
-    private ExtendedStoreConnection extendedStoreConnection = null;
+    @Autowired
+    private ExtendedStoreConnection extendedStoreConnection;
 
     public TestConcroller() {
         counter++;
         if (counter > 1) {
             throw new BaseException("did not expect to get more than one controller");
         }
-        extendedStoreConnection = ExtendedStoreConnectionFactory.get();
 
         documentSafeService = new DocumentSafeService[3];
         nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeService[3];

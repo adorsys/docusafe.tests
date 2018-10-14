@@ -1,0 +1,36 @@
+12:18:28.176 [main] ERROR o.a.d.s.c.UseExtendedStoreConnectionConfiguration - at least filesystem, amazons3, minio or mongo has to be specified with
+docusafe:
+  storeconnection:
+    filesystem:
+      basedir: (mandatory)
+      encryptionpassword: (optional. null means no ecryption)
+      encryptionfilenameonly: (optional. TRUE means, path is not encrypted)
+docusafe:
+  storeconnection:
+    amazons3:
+      url: (mandatory)
+      accesskey: (mandatory)
+      secretkey: (mandatory)
+      region: (optional)
+      rootbucket: (optional)
+      encryptionpassword: (optional. null means no ecryption)
+      encryptionfilenameonly: (optional. TRUE means, path is not encrypted)
+docusafe:
+  storeconnection:
+    minio:
+      url: (mandatory)
+      accesskey: (mandatory)
+      secretkey: (mandatory)
+      rootbucket: (optional)
+      encryptionpassword: (optional. null means no ecryption)
+      encryptionfilenameonly: (optional. TRUE means, path is not encrypted)
+docusafe:
+  storeconnection:
+    mongo:
+      database: (mandatory)
+      host: (mandatory)
+      port: (mandatory)
+      user: (optional)
+      password: (optional)
+      encryptionpassword: (optional. null means no ecryption)
+      encryptionfilenameonly: (optional. TRUE means, path is not encrypted)

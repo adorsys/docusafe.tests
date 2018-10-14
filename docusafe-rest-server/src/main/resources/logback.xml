@@ -47,6 +47,13 @@
     </logger>
 
 
+    <logger name="org.adorsys.cryptoutils.extendedstoreconnection.impls.pathencryption" level="trace" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <!--
+        <appender-ref ref="FILE" />
+        -->
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>

@@ -1,3 +1,24 @@
+server:
+  port: 9999
+
 docusafe:
   storeconnection:
-    fulldescription: -DSC-AMAZONS3=http://192.168.178.60:9000,simpleAccessKey,simpleSecretKey
+    no-filesystem:
+      basedir: affe
+    no-minio:
+      url: http://192.168.178.60:9000
+      accesskey: simpleAccessKey
+      secretkey: simpleSecretKey
+      rootbucket: affe
+      no-encryptionpassword: null
+    no-mongo:
+      database: admin
+      host: 192.168.178.60
+      port: 32770
+      user: null
+      password: null
+    amazons3:
+      url: http://192.168.178.60:9000
+      accesskey: simpleAccessKey
+      secretkey: simpleSecretKey
+      encryptionpassword: Affenpapier1'

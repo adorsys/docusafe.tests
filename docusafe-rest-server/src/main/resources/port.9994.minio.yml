@@ -1,0 +1,10 @@
+server:
+  port: 9994
+
+docusafe:
+  storeconnection:
+    amazons3:
+      url: http://192.168.178.60:9000
+      accesskey: simpleAccessKey
+      secretkey: simpleSecretKey
+      rootbucket: adorsys

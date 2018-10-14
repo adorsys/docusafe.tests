@@ -1,0 +1,1 @@
+mvn -Dspring.config.location=file:./src/main/resources/port.9991.ceph.yml spring-boot:run

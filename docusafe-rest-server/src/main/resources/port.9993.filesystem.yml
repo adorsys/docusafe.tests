@@ -1,0 +1,7 @@
+server:
+  port: 9993
+
+docusafe:
+  storeconnection:
+    filesystem:
+      basedir: .target/test-filesystem

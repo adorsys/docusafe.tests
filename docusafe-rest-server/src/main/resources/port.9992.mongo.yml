@@ -1,0 +1,9 @@
+server:
+  port: 9992
+
+docusafe:
+  storeconnection:
+    mongo:
+      database: adorsys
+      host: 192.168.178.60
+      port: 27017
