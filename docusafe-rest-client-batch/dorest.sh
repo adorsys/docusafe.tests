@@ -2,6 +2,7 @@
 
 # BASE_URL=http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de/
 BASE_URL=http://localhost:9999
+BASE_URL=http://10.211.55.4:9999
 
 trap error ERR
 
@@ -17,35 +18,6 @@ function print () {
 	} | tee -a curl.log
 }
 
-function checkGuards() {
-	if [[ filesystem -ne 1 ]]
-	then
-		echo "no guards check, filesystem is not active"
-		return
-	fi
-	user=$1
-	expected=$2
-
-	guardKeys=$(find target/filesystemstorage -type f |  grep "^target/filesystemstorage/bp-$user/.keystore" | grep bucketGuardKey | grep -v $META | wc -l)
-	if (( guardKeys == expected )) 
-	then
-		echo "ok Anzahl von $user GuardKeys ist $expected.  Das ist fein." | tee -a curl.log
-	else
-	    find target/filesystemstorage
-		print "DANGER DANGER ACHTUNG FEHLER. ANZAHL DER GUARD KEYs von $user IST NICHT KORREKT expected $expected but was $guardKeys"
-		exit 1;
-	fi
-
-	guards=$(find target/filesystemstorage -type f |  grep "^target/filesystemstorage/bp-$user/.keystore/KS-$user.DK.*" | grep -v $META | wc -l)
-	if (( guards == expected )) 
-	then
-		echo "ok Anzahl von $user Guards ist $expected.  Das ist fein." | tee -a curl.log
-	else
-	    find target/filesystemstorage
-		print "DANGER DANGER ACHTUNG FEHLER. ANZAHL DER GUARD von $user IST NICHT KORREKT expected $expected but was $guards"
-		exit 1
-	fi
-}
 
 function checkCurl() {
 	status=$1
@@ -91,17 +63,13 @@ function checkCurl() {
 }
 
 function basictest() {
-	echo "DO REST FILESYSTEM ACTIVE: $filesystem"
-	META="._META-INFORMATION_"
-
 	rm -f curl.log
 	print "delete user, if exists, ignore error"
-	checkCurl any -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"peter", "readKeyPassword":"rkp"}'
-	checkCurl any -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}' 
+	checkCurl any -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/internal/user 
+	checkCurl any -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/internal/user 
 
 	print "create user peter"
 	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"peter", "readKeyPassword":"rkp"}' 
-	checkGuards peter   1
 
 	print "check user peter exists"
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user/peter
@@ -117,21 +85,18 @@ function basictest() {
 	  "documentFQN": "deeper/and/deeper/README.txt",
 	  "documentContent": "AFFE"
 	}' 
-	checkGuards peter   2
 
 	print "peter saves another deep document"
 	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document --data '{
 	  "documentFQN": "deeper/and/deeper/README2.txt",
 	  "documentContent": "AFFE1010"
 	}'
-	checkGuards peter   2
 
 	print "peter gets deep document"
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22deeper/and/deeper/README.txt%22"
 
 	print "create user francis"
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}' 
-	checkGuards francis 1
 
 	print "peter grants read permsission for  deeper/and/deeper to francis"
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/grant/document --data '{
@@ -139,7 +104,6 @@ function basictest() {
 	  "receivingUser": "francis",
 	  "accessType" : "READ"
 	}' 
-	checkGuards francis 2
 
 	print "francis liest deeper Document von Peter"
 	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter/%22/deeper/and/deeper/README.txt%22
@@ -159,7 +123,6 @@ function basictest() {
 	  "receivingUser": "francis",
 	  "accessType" : "WRITE"
 	}' 
-	checkGuards francis 2
 
 	print "francis tries to  save peters deeper document"
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter --data '{
@@ -173,7 +136,6 @@ function basictest() {
 	  "receivingUser": "francis",
 	  "accessType" : "NONE"
 	}' 
-	checkGuards francis 1
 
 	print "francis tries to read deeper Document von Peter"
 	checkCurl 403 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter/%22/deeper/and/deeper/README.txt%22
@@ -205,9 +167,6 @@ function basictest() {
 		find target/filesystemstorage -type f >> curl.log
 	fi
 
-	checkGuards peter   2
-	checkGuards francis 1
-
 	print "peter gets README.txt of home dir"
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22README.txt%22" >> curl.log
 
@@ -231,15 +190,4 @@ function basictest() {
 	# checkCurl -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}'
 }
 
-filesystem=1
-if [[ $# -eq 0 ]]
-then
-	echo "expected first param to be basictest or performancetest"
-	exit 1
-fi
-if [[ $# -eq 2 ]]
-then
-	filesystem=$2
-fi
-
-$1
+basictest

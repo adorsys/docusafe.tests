@@ -54,7 +54,7 @@ public class SlowInputStream extends InputStream {
         readSoFar++;
 
         if (readSoFar % chunkSize == 1) {
-            LOGGER.debug("returned so far " + readSoFar);
+            LOGGER.debug("bytes send so far " + readSoFar);
             int diff = getDiff();
             int numberOfChuncsAllowedToReadSoFar = diff / secsForOneChunk;
             // long bytesAllowedToReadSoFar = numberOfChuncsAllowedToReadSoFar * chunkSize;

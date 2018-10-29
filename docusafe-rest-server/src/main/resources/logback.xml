@@ -33,13 +33,13 @@
         -->
     </logger>
 
-    <logger name="org.adorsys.cryptoutils" level="info" additivity="false">
+    <logger name="org.adorsys.cryptoutils" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
         <!--
         <appender-ref ref="FILE" />
         -->
     </logger>
-    <logger name="org.adorsys.encobject" level="info" additivity="false">
+    <logger name="org.adorsys.encobject" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
         <!--
         <appender-ref ref="FILE" />
@@ -54,7 +54,7 @@
         -->
     </logger>
 
-    <root level="INFO">
+    <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
 
