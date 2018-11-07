@@ -1,5 +1,8 @@
 package org.adorsys.docusafe.rest.aspects;
 
+import org.adorsys.docusafe.business.exceptions.UserIDAlreadyExistsException;
+import org.adorsys.docusafe.business.types.complex.UserIDAuth;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,8 +12,16 @@ import org.slf4j.LoggerFactory;
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
     pointcut serviceMethods(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
-    Object around(): serviceMethods() {
-        LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), "userIDAuth.getUserID().getValue()"));
+    Object around(ProceedingJoinPoint joinPoint): serviceMethods() {
+        UserIDAuth userIDAuth = null;
+        Object[] args = joinPoint.getArgs();
+        for (Object arg : args) {
+            if (arg instanceof UserIDAuth) {
+                userIDAuth = (UserIDAuth) arg;
+            }
+        }
+        String user = userIDAuth != null ? userIDAuth.getUserID().getValue(): "<unknown>");
+        LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), user));
         long start = System.currentTimeMillis();
         Object result = null;
         RuntimeException throwable = null;
