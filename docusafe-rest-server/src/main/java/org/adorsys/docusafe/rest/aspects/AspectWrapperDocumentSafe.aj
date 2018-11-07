@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
  */
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
-    pointcut serviceMethods(): execution(* *..CachedTransactionalDocumentSafeService.*(..) && args(userIDAuth,..));
-    Object around(UserIDAuth userIDAuth): serviceMethods() {
-        LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), userIDAuth.getUserID().getValue()));
+    pointcut serviceMethods(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
+    Object around(): serviceMethods() {
+        LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), "userIDAuth.getUserID().getValue()"));
         long start = System.currentTimeMillis();
         Object result = null;
         RuntimeException throwable = null;
