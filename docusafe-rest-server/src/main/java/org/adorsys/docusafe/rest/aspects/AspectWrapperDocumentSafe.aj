@@ -1,5 +1,9 @@
 package org.adorsys.docusafe.rest.aspects;
 
+import org.adorsys.docusafe.business.types.complex.UserIDAuth;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,9 +12,9 @@ import org.slf4j.LoggerFactory;
  */
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
-    pointcut serviceMethods(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
-    Object around(): serviceMethods() {
-        LOGGER.info(String.format("============================================= \"%s\"", thisJoinPointStaticPart.getSignature()));
+    pointcut serviceMethods(): execution(* *..CachedTransactionalDocumentSafeService.*(..) && args(userIDAuth,..));
+    Object around(UserIDAuth userIDAuth): serviceMethods() {
+        LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), userIDAuth.getUserID().getValue()));
         long start = System.currentTimeMillis();
         Object result = null;
         RuntimeException throwable = null;
