@@ -20,7 +20,7 @@ public aspect AspectWrapperDocumentSafe {
                 userIDAuth = (UserIDAuth) arg;
             }
         }
-        String user = userIDAuth != null ? userIDAuth.getUserID().getValue(): "<unknown>";
+        String user = userIDAuth != null ? userIDAuth.getUserID().getValue() : "<unknown>";
         LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), user));
         long start = System.currentTimeMillis();
         Object result = null;
