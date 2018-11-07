@@ -3,7 +3,7 @@ server:
 
 docusafe:
   storeconnection:
-    no-filesystem:
+    filesystem:
       basedir: affe
     no-minio:
       url: http://192.168.178.60:9000
@@ -12,12 +12,8 @@ docusafe:
       rootbucket: affe
       no-encryptionpassword: null
     no-mongo:
-      database: admin
-      host: 192.168.178.60
-      port: 32770
-      user: null
-      password: null
-    amazons3:
+      mongoURI: mongodb://192.168.178.60:32770
+    no-amazons3:
       url: http://192.168.178.60:9000
       accesskey: simpleAccessKey
       secretkey: simpleSecretKey

@@ -2,7 +2,6 @@ package org.adorsys.docusafe.rest;
 
 import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
-import org.adorsys.cryptoutils.storeconnectionfactory.ExtendedStoreConnectionFactory;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
 import org.adorsys.docusafe.business.impl.WithCache;
@@ -14,7 +13,12 @@ import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
 import org.adorsys.docusafe.rest.impl.SimpleRequestMemoryContextImpl;
-import org.adorsys.docusafe.rest.types.*;
+import org.adorsys.docusafe.rest.types.DocumentInfo;
+import org.adorsys.docusafe.rest.types.ReadDocumentResult;
+import org.adorsys.docusafe.rest.types.ReadResult;
+import org.adorsys.docusafe.rest.types.TestAction;
+import org.adorsys.docusafe.rest.types.TestParameter;
+import org.adorsys.docusafe.rest.types.TestsResult;
 import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
@@ -29,19 +33,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Created by peter on 15.08.18 at 15:57.
  */
 @RestController
-public class TestConcroller {
+public class TestController {
 
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(TestConcroller.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(TestController.class);
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
     private DocumentSafeService[] documentSafeService = null;
@@ -53,7 +66,7 @@ public class TestConcroller {
     @Autowired
     private ExtendedStoreConnection extendedStoreConnection;
 
-    public TestConcroller() {
+    public TestController() {
         counter++;
         if (counter > 1) {
             throw new BaseException("did not expect to get more than one controller");
