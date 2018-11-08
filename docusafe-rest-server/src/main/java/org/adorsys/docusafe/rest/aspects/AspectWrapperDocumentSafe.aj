@@ -1,8 +1,8 @@
 package org.adorsys.docusafe.rest.aspects;
 
-import org.adorsys.docusafe.business.exceptions.UserIDAlreadyExistsException;
+import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
-import org.aspectj.lang.ProceedingJoinPoint;
+import org.adorsys.docusafe.rest.lombokstuff.DataHolderToTestLombokAndAspects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,17 +11,17 @@ import org.slf4j.LoggerFactory;
  */
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
-    pointcut serviceMethods(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
-    Object around(ProceedingJoinPoint joinPoint): serviceMethods() {
-        UserIDAuth userIDAuth = null;
-        Object[] args = joinPoint.getArgs();
+    pointcut serviceMethods(): execution(* org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService.*(..));
+    Object around(): serviceMethods() {
+        DataHolderToTestLombokAndAspects d = new DataHolderToTestLombokAndAspects();
+        Object[] args = thisJoinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof UserIDAuth) {
-                userIDAuth = (UserIDAuth) arg;
+                d.setName(((UserIDAuth) arg).getUserID().getValue());
             }
         }
-        String user = userIDAuth != null ? userIDAuth.getUserID().getValue() : "<unknown>";
-        LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), user));
+
+        LOGGER.info(String.format("============================================= (%s) \"%s\"", d.getName(), thisJoinPointStaticPart.getSignature()));
         long start = System.currentTimeMillis();
         Object result = null;
         RuntimeException throwable = null;
@@ -33,14 +33,13 @@ public aspect AspectWrapperDocumentSafe {
         }
         long end = System.currentTimeMillis();
         if (throwable != null) {
-            LOGGER.info(String.format("============================================= \"%s\" time: %d ms finished with exception: %s message: %s", thisJoinPointStaticPart.getSignature(),
+            LOGGER.info(String.format("============================================= (%s) \"%s\" time: %d ms finished with exception: %s message: %s",d.getName(), thisJoinPointStaticPart.getSignature(),
                     (end - start),
                     throwable.getClass(), throwable.getMessage()));
             throw throwable;
         }
-        LOGGER.info(String.format("============================================= \"%s\" time: %d ms finished", thisJoinPointStaticPart.getSignature(),
+        LOGGER.info(String.format("============================================= (%s) \"%s\" time: %d ms finished", d.getName(), thisJoinPointStaticPart.getSignature(),
                 (end - start)));
         return result;
     }
-
 }

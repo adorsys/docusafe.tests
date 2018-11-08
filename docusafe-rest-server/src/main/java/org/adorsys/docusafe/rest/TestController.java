@@ -13,6 +13,7 @@ import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
 import org.adorsys.docusafe.rest.impl.SimpleRequestMemoryContextImpl;
+import org.adorsys.docusafe.rest.lombokstuff.DataHolderToTestLombokAndAspects;
 import org.adorsys.docusafe.rest.types.DocumentInfo;
 import org.adorsys.docusafe.rest.types.ReadDocumentResult;
 import org.adorsys.docusafe.rest.types.ReadResult;
@@ -90,9 +91,11 @@ public class TestController {
     public
     @ResponseBody
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
+        DataHolderToTestLombokAndAspects d = new DataHolderToTestLombokAndAspects();
+        d.setName(testParameter.testAction.name());
         TestsResult testsResult = new TestsResult();
         testsResult.extendedStoreConnection = extendedStoreConnection.getClass().getName();
-        LOGGER.info("START TEST " + testParameter.testAction);
+        LOGGER.info("START TEST " + d.getName());
         try {
             switch (testParameter.testAction) {
                 case READ_DOCUMENTS:

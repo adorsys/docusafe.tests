@@ -26,7 +26,6 @@
         <crypt.version>0.23.4</crypt.version>
         <docusafe.version>0.5.8</docusafe.version>
         <spring.aop.version>5.1.2.RELEASE</spring.aop.version>
-        <aspect.jweaver.version>1.9.2</aspect.jweaver.version>
         <aspectj.maven.plugin.version>1.11</aspectj.maven.plugin.version>
         <aspectj.version>1.9.2</aspectj.version>
     </properties>
@@ -87,7 +86,7 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>${aspect.jweaver.version}</version>
+            <version>${aspectj.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -157,12 +157,19 @@
             <version>${aspectj.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
 
     <build>
         <finalName>${project.artifactId}</finalName>
 
+        <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -193,12 +200,6 @@
                 </executions>
             </plugin>
 
-            <!--
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-compiler-plugin</artifactId>
-                        </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -222,26 +223,47 @@
             </plugin>
 
             <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.4.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <addOutputDirectory>false</addOutputDirectory>
+                    <sourceDirectory>src/main/java</sourceDirectory>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <version>${aspectj.maven.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                     <complianceLevel>1.8</complianceLevel>
-                    <!--
-                    <Xlint>error</Xlint>
-                    -->
-                    <verbose>true</verbose>
                     <forceAjcCompile>true</forceAjcCompile>
                     <showWeaveInfo>true</showWeaveInfo>
                     <verbose>true</verbose>
 
                     <weaveDependencies>
-                    <weaveDependency>
-                        <groupId>de.adorsys</groupId>
-                        <artifactId>docusafe-cached-transactional</artifactId>
-                    </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys</groupId>
+                            <artifactId>docusafe-cached-transactional</artifactId>
+                        </weaveDependency>
                     </weaveDependencies>
                 </configuration>
                 <executions>
@@ -251,13 +273,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
         </plugins>
