@@ -222,6 +222,10 @@
                 </configuration>
             </plugin>
 
+            <!--
+            to get lombok and ajp together running, this thread gave the solution
+            https://github.com/rzwitserloot/lombok/issues/995
+            -->
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
