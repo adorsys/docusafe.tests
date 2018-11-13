@@ -83,12 +83,14 @@
             <version>${spring.aop.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
             <scope>compile</scope>
         </dependency>
+        -->
     </dependencies>
 
     <build>

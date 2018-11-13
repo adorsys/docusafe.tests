@@ -4,6 +4,4 @@ server:
 docusafe:
   storeconnection:
     mongo:
-      database: adorsys
-      host: 192.168.178.60
-      port: 27017
+      mongoURI: mongodb://192.168.178.60:27017/mongodb

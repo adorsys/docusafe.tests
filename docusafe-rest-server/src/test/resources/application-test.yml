@@ -1,0 +1,4 @@
+docusafe:
+  storeconnection:
+    filesystem:
+      basedir: target/test-filesystem

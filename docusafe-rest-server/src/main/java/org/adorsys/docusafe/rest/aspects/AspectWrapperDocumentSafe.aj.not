@@ -1,6 +1,5 @@
 package org.adorsys.docusafe.rest.aspects;
 
-import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.rest.lombokstuff.DataHolderToTestLombokAndAspects;
 import org.slf4j.Logger;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by peter on 07.11.18 16:13.
  */
+
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
     pointcut serviceMethods(): execution(* org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService.*(..));
