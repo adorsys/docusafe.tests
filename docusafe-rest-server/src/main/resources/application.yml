@@ -4,7 +4,7 @@ server:
 docusafe:
   storeconnection:
     filesystem:
-      basedir: affe
+      basedir: target/affe
     no-minio:
       url: http://192.168.178.60:9000
       accesskey: simpleAccessKey
