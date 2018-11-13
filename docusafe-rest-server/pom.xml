@@ -47,7 +47,7 @@
         </dependency>
 
         <!-- Spring boot -->
-
+<!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -59,6 +59,8 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
+-->
+        <!-- SWAGGER -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -70,7 +72,6 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.7.0</version>
         </dependency>
-
         <!-- JCloud not compatible wit spring-boot 1.4
         Dependency: encobject-jcloud->filesystem->jclouds-blobstore->jclouds->core->gson
         see: https://github.com/spring-projects/spring-boot/issues/6761
@@ -164,28 +165,41 @@
         </dependency>
 
         <!--test -->
+        <!--
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.aop.version}</version>
             <scope>test</scope>
         </dependency>
+-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
 
-        <!--
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
             <version>${spring-boot.version}</version>
             <scope>test</scope>
         </dependency>
--->
+
         <!--
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.aop.version}</version>
         </dependency>
-        -->
+-->
     </dependencies>
 
 

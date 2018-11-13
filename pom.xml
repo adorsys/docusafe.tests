@@ -15,19 +15,25 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.swagger>1.5.5</version.swagger>
+
         <deploy.disabled>false</deploy.disabled>
-        <spring-boot.version>2.0.1.RELEASE</spring-boot.version>
-        <slf4j-simple.version>1.7.25</slf4j-simple.version>
+
+        <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
         <catch.exception.version>2.0.0-beta-1</catch.exception.version>
+        <slf4j-simple.version>1.7.25</slf4j-simple.version>
         <junit.version>4.12</junit.version>
+<!--
         <guava.version>26.0-jre</guava.version>
-        <crypt.version>0.23.4</crypt.version>
-        <docusafe.version>0.5.8</docusafe.version>
         <spring.aop.version>5.1.2.RELEASE</spring.aop.version>
+
         <aspectj.maven.plugin.version>1.11</aspectj.maven.plugin.version>
         <aspectj.version>1.9.2</aspectj.version>
+-->
+        <crypt.version>0.23.4</crypt.version>
+        <docusafe.version>0.5.8</docusafe.version>
     </properties>
 
     <scm>
@@ -64,12 +70,14 @@
 
     <dependencies>
         <!-- Tests -->
+        <!--
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        -->
         <dependency>
             <groupId>eu.codearte.catch-exception</groupId>
             <artifactId>catch-exception</artifactId>
@@ -77,12 +85,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <version>${spring.aop.version}</version>
             <scope>compile</scope>
         </dependency>
+        -->
         <!--
         <dependency>
             <groupId>org.aspectj</groupId>

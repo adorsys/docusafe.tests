@@ -1,4 +1,4 @@
 docusafe:
   storeconnection:
     filesystem:
-      basedir: target/test2-filesystem
+      basedir: target/test1-filesystem

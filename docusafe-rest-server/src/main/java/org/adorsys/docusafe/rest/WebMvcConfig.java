@@ -1,5 +1,6 @@
 package org.adorsys.docusafe.rest;
 
+import com.google.api.client.json.Json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.adorsys.docusafe.business.types.UserID;
@@ -29,7 +30,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.List;
 

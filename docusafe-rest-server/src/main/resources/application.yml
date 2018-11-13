@@ -4,7 +4,7 @@ server:
 docusafe:
   storeconnection:
     filesystem:
-      basedir: affe
+      basedir: tartet/affe
     no-minio:
       url: http://192.168.178.60:9000
       accesskey: simpleAccessKey
@@ -12,7 +12,7 @@ docusafe:
       rootbucket: affe
       no-encryptionpassword: null
     no-mongo:
-      mongoURI: mongodb://192.168.178.60:32770
+      mongoURI: mongodb://192.168.178.60:32770/mongodb
     no-amazons3:
       url: http://192.168.178.60:9000
       accesskey: simpleAccessKey

@@ -1,9 +1,8 @@
 package org.adorsys.docusafe.rest;
 
-import org.adorsys.cryptoutils.exceptions.BaseException;
-import org.adorsys.docusafe.rest.config.DocusafeSpringConfigForTest;
-import org.adorsys.docusafe.spring.annotation.UseExtendedStoreConnection;
-import org.adorsys.encobject.service.api.ExtendedStoreConnection;
+import org.adorsys.docusafe.rest.config.FileProperty;
+import org.adorsys.docusafe.rest.config.PropertyConfigForTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +13,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * Created by peter on 12.11.18 08:53.
  */
-
-/*
-@RunWith(SpringRunner.class)
 // @ComponentScan(basePackages = {"org.adorsys.docusafe"})
 // @TestPropertySource(locations="file:/Volumes/ssd-data/data/source/adorsys/docusafe.tests/docusafe-rest-server/src/test/resources/application-test.yml")
 // @PropertySource("file:/Volumes/ssd-data/data/source/adorsys/docusafe.tests/docusafe-rest-server/src/test/resources/application-test.yml")
+// @SpringBootTest
+// @SpringBootApplication(exclude = {RestApplication.class})
+// @UseExtendedStoreConnection
+// @TestPropertySource(locations="classpath:application-test.yml")
+// @ImportAutoConfiguration(DocusafeSpringConfigForTest.class)
+// @TestPropertySource(locations="classpath:application-test.yml")
+// @ContextConfiguration(classes={DocusafeSpringConfiguration.class})
+// @ActiveProfiles("test")
 
-@TestPropertySource(locations="classpath:application-test.yml")
-@ContextConfiguration(classes={DocusafeSpringConfigForTest.class})
-@UseExtendedStoreConnection
-*/
+@RunWith(SpringRunner.class)
+// @TestPropertySource(locations="classpath:application.properties")
+@ContextConfiguration(classes={FileProperty.class, PropertyConfigForTest.class})
+
 public class DocusafeTest {
     /*
     @Autowired
@@ -38,4 +42,14 @@ public class DocusafeTest {
         extendedStoreConnection.listAllBuckets();
     }
     */
+
+    @Autowired
+    String basedir;
+
+
+    @Test
+    public void a() {
+        System.out.println("read from propertyfile:" + basedir);
+//         Assert.assertNotNull(basedir);
+    }
 }
