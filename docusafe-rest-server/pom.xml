@@ -238,10 +238,38 @@
                     <verbose>true</verbose>
 
                     <weaveDependencies>
-                    <weaveDependency>
-                        <groupId>de.adorsys</groupId>
-                        <artifactId>docusafe-cached-transactional</artifactId>
-                    </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys</groupId>
+                            <artifactId>docusafe-cached-transactional</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys</groupId>
+                            <artifactId>docusafe-transactional</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys</groupId>
+                            <artifactId>docusafe-business</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys.cryptoutils</groupId>
+                            <artifactId>storeconnection-api</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys.cryptoutils</groupId>
+                            <artifactId>amazons3storeconnection</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys.cryptoutils</groupId>
+                            <artifactId>filesystemstoreconnection</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys.cryptoutils</groupId>
+                            <artifactId>mongodbstoreconnection</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>de.adorsys.cryptoutils</groupId>
+                            <artifactId>miniostoreconnection</artifactId>
+                        </weaveDependency>
                     </weaveDependencies>
                 </configuration>
                 <executions>

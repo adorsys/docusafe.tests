@@ -1,10 +1,10 @@
 server:
   port: 9991
 
-docusafe:
+sdocusafe:
   storeconnection:
     amazons3:
       url: http://192.168.178.60:8000
-      accesskey: L0KTF5L7V7P6DL34PMRN
-      secretkey: a4phBqawvlml4oTjpRXCnLfBvBJdun7SaJtcSLoa
-      encryption-filename-only: true
+      accesskey: 3WLDAH6VR4ZK87OMLBH5
+      secretkey: TaYUCFGbpzNGlJ14MIDNVdeaNcaSN2h2yMlkTlHd
+      encryptionpassword: null

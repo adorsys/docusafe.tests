@@ -11,6 +11,8 @@ import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.rest.types.GrantDocument;
+import org.adorsys.docusafe.spring.annotation.UseExtendedStoreConnection;
+import org.adorsys.docusafe.spring.annotation.UseSpringExtendedStoreConnectionFactory;
 import org.adorsys.encobject.complextypes.BucketPath;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
@@ -40,6 +43,7 @@ import java.io.OutputStream;
  * UserIDAuth wird natürlich kein expliziter Parameter sein. Aber die JWT Logik kommt
  * erst im zweiten Schritt. Jetzt erst mal loslegen mit explizitem Parameter.
  */
+@UseExtendedStoreConnection
 @RestController
 public class DocumentSafeController {
     private final static String APPLICATION_JSON = "application/json";
@@ -51,7 +55,8 @@ public class DocumentSafeController {
     @Autowired
     ExtendedStoreConnection extendedStoreConnection;
 
-    public DocumentSafeController() {
+    @PostConstruct
+    public void postconstruction() {
         service = new DocumentSafeServiceImpl(WithCache.TRUE, extendedStoreConnection);
     }
 

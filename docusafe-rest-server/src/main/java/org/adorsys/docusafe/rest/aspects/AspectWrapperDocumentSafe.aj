@@ -8,9 +8,13 @@ import org.slf4j.LoggerFactory;
  */
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
-    pointcut serviceMethods(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
-    Object around(): serviceMethods() {
-        LOGGER.info(String.format("============================================= \"%s\" %s", thisJoinPointStaticPart.getSignature(), "userIDAuth.getUserID().getValue()"));
+    pointcut cachedTx(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
+    pointcut tx():       execution(* *..TransactionalDocumentSafeService.*(..));
+    pointcut nonTx():    execution(* *..NonTransactionalDocumentSafeService.*(..));
+    pointcut plain():    execution(* *..DocumentSafeService.*(..));
+    pointcut conn():     execution(* *..ExtendedStoreConnection.*(..));
+    Object around(): cachedTx() || tx() || nonTx() || plain() || conn() {
+        LOGGER.info(String.format("============================================= \"%s\"", thisJoinPointStaticPart.getSignature()));
         long start = System.currentTimeMillis();
         Object result = null;
         RuntimeException throwable = null;
@@ -31,5 +35,4 @@ public aspect AspectWrapperDocumentSafe {
                 (end - start)));
         return result;
     }
-
 }

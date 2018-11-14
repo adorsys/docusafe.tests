@@ -20,9 +20,7 @@ import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.rest.types.TestsResult;
 import org.adorsys.docusafe.service.types.DocumentContent;
-import org.adorsys.docusafe.spring.config.SpringDocusafeStoreconnectionProperties;
-import org.adorsys.docusafe.spring.config.UseExtendedStoreConnectionConfiguration;
-import org.adorsys.docusafe.spring.factory.SimpleSubdirFactory;
+import org.adorsys.docusafe.spring.factory.SpringExtendedStoreConnectionFactory;
 import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
 import org.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
@@ -30,7 +28,6 @@ import org.adorsys.docusafe.transactional.impl.NonTransactionalDocumentSafeServi
 import org.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceImpl;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
-import org.bouncycastle.jcajce.provider.symmetric.ARC4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,32 +66,25 @@ public class TestController {
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
 
     @Autowired
-    ExtendedStoreConnection extended;
-    @Autowired
-    SimpleSubdirFactory factory;
+    SpringExtendedStoreConnectionFactory factory;
 
     private ExtendedStoreConnection plainExtendedStoreConnection = null;
     private ExtendedStoreConnection nonTxExtendedStoreConnection = null;
     private ExtendedStoreConnection txExtendedStoreConnection = null;
     private ExtendedStoreConnection cachedTxExtendedStoreConnection = null;
 
-    public TestController() {
+
+    @PostConstruct
+    public void postconstruct() {
         counter++;
         if (counter > 1) {
             throw new BaseException("did not expect to get more than one controller");
-        }
-        if (extended == null) {
-            throw new BaseException("Affenmist1");
-        }
-        if (factory == null) {
-            throw new BaseException("Affenmist2");
         }
 
         plainExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("plainfolder");
         nonTxExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("nontxfolder");
         txExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("txfolder");
         cachedTxExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("cachedtxfolder");
-
 
         documentSafeService = new DocumentSafeService[3];
         nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeService[3];
