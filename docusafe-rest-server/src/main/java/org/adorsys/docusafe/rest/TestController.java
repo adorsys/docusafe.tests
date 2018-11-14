@@ -20,6 +20,9 @@ import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.rest.types.TestsResult;
 import org.adorsys.docusafe.service.types.DocumentContent;
+import org.adorsys.docusafe.spring.config.SpringDocusafeStoreconnectionProperties;
+import org.adorsys.docusafe.spring.config.UseExtendedStoreConnectionConfiguration;
+import org.adorsys.docusafe.spring.factory.SimpleSubdirFactory;
 import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
 import org.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
@@ -27,6 +30,7 @@ import org.adorsys.docusafe.transactional.impl.NonTransactionalDocumentSafeServi
 import org.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceImpl;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
+import org.bouncycastle.jcajce.provider.symmetric.ARC4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,13 +68,32 @@ public class TestController {
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
 
     @Autowired
-    private ExtendedStoreConnection extendedStoreConnection;
+    ExtendedStoreConnection extended;
+    @Autowired
+    SimpleSubdirFactory factory;
+
+    private ExtendedStoreConnection plainExtendedStoreConnection = null;
+    private ExtendedStoreConnection nonTxExtendedStoreConnection = null;
+    private ExtendedStoreConnection txExtendedStoreConnection = null;
+    private ExtendedStoreConnection cachedTxExtendedStoreConnection = null;
 
     public TestController() {
         counter++;
         if (counter > 1) {
             throw new BaseException("did not expect to get more than one controller");
         }
+        if (extended == null) {
+            throw new BaseException("Affenmist1");
+        }
+        if (factory == null) {
+            throw new BaseException("Affenmist2");
+        }
+
+        plainExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("plainfolder");
+        nonTxExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("nontxfolder");
+        txExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("txfolder");
+        cachedTxExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("cachedtxfolder");
+
 
         documentSafeService = new DocumentSafeService[3];
         nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeService[3];
@@ -91,7 +114,7 @@ public class TestController {
     @ResponseBody
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
-        testsResult.extendedStoreConnection = extendedStoreConnection.getClass().getName();
+        testsResult.extendedStoreConnection = plainExtendedStoreConnection.getClass().getName();
         LOGGER.info("START TEST " + testParameter.testAction);
         try {
             switch (testParameter.testAction) {
@@ -341,7 +364,10 @@ public class TestController {
             case DELETE_DATABASE_AND_CACHES: {
                 LOGGER.info("delete database");
                 stopWatch.start("delete database");
-                extendedStoreConnection.listAllBuckets().forEach(b -> extendedStoreConnection.deleteContainer(b));
+                plainExtendedStoreConnection.listAllBuckets().forEach(b -> plainExtendedStoreConnection.deleteContainer(b));
+                nonTxExtendedStoreConnection.listAllBuckets().forEach(b -> nonTxExtendedStoreConnection.deleteContainer(b));
+                txExtendedStoreConnection.listAllBuckets().forEach(b -> txExtendedStoreConnection.deleteContainer(b));
+                cachedTxExtendedStoreConnection.listAllBuckets().forEach(b -> cachedTxExtendedStoreConnection.deleteContainer(b));
                 stopWatch.stop();
                 break;
             }
@@ -385,21 +411,21 @@ public class TestController {
     }
 
     private void initServices() {
-        documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, extendedStoreConnection);
-        documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, extendedStoreConnection);
-        documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, extendedStoreConnection);
+        documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, plainExtendedStoreConnection);
+        documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, plainExtendedStoreConnection);
+        documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, plainExtendedStoreConnection);
 
-        nonTransactionalDocumentSafeServices[0] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[0]);
-        nonTransactionalDocumentSafeServices[1] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[1]);
-        nonTransactionalDocumentSafeServices[2] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[2]);
+        nonTransactionalDocumentSafeServices[0] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.FALSE, nonTxExtendedStoreConnection));
+        nonTransactionalDocumentSafeServices[1] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, nonTxExtendedStoreConnection));
+        nonTransactionalDocumentSafeServices[2] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, nonTxExtendedStoreConnection));
 
-        transactionalDocumentSafeServices[0] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[0]);
-        transactionalDocumentSafeServices[1] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[1]);
-        transactionalDocumentSafeServices[2] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService[2]);
+        transactionalDocumentSafeServices[0] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.FALSE, txExtendedStoreConnection));
+        transactionalDocumentSafeServices[1] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, txExtendedStoreConnection));
+        transactionalDocumentSafeServices[2] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, txExtendedStoreConnection));
 
-        cachedTransactionalDocumentSafeServices[0] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[0]);
-        cachedTransactionalDocumentSafeServices[1] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[1]);
-        cachedTransactionalDocumentSafeServices[2] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, transactionalDocumentSafeServices[2]);
+        cachedTransactionalDocumentSafeServices[0] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.FALSE, cachedTxExtendedStoreConnection)));
+        cachedTransactionalDocumentSafeServices[1] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, cachedTxExtendedStoreConnection)));
+        cachedTransactionalDocumentSafeServices[2] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, cachedTxExtendedStoreConnection)));
     }
 
 
