@@ -4,5 +4,5 @@ server:
 docusafe:
   storeconnection:
     filesystem:
-      basedir: target/test-filesystem
+      rootbucket: target/test-filesystem
       encryptionpassword: null

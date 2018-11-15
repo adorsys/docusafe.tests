@@ -20,7 +20,7 @@ import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.rest.types.TestsResult;
 import org.adorsys.docusafe.service.types.DocumentContent;
-import org.adorsys.docusafe.spring.factory.SpringExtendedStoreConnectionFactory;
+import org.adorsys.docusafe.spring.factory.SimpleSubdirFactory;
 import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
 import org.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
@@ -66,7 +66,7 @@ public class TestController {
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
 
     @Autowired
-    SpringExtendedStoreConnectionFactory factory;
+    SimpleSubdirFactory factory;
 
     private ExtendedStoreConnection plainExtendedStoreConnection = null;
     private ExtendedStoreConnection nonTxExtendedStoreConnection = null;

@@ -229,14 +229,10 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <complianceLevel>1.8</complianceLevel>
-                    <!--
-                    <Xlint>error</Xlint>
-                    -->
                     <verbose>true</verbose>
                     <forceAjcCompile>true</forceAjcCompile>
                     <showWeaveInfo>true</showWeaveInfo>
                     <verbose>true</verbose>
-
                     <weaveDependencies>
                         <weaveDependency>
                             <groupId>de.adorsys</groupId>

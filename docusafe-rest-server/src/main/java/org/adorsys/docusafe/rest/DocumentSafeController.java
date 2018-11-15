@@ -12,7 +12,6 @@ import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.rest.types.GrantDocument;
 import org.adorsys.docusafe.spring.annotation.UseExtendedStoreConnection;
-import org.adorsys.docusafe.spring.annotation.UseSpringExtendedStoreConnectionFactory;
 import org.adorsys.encobject.complextypes.BucketPath;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
