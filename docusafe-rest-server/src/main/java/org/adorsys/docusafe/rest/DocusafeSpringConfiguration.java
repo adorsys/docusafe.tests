@@ -1,6 +1,5 @@
 package org.adorsys.docusafe.rest;
 
-import org.adorsys.docusafe.spring.annotation.UseCachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.spring.annotation.UseExtendedStoreConnection;
 import org.adorsys.docusafe.spring.annotation.UseSpringExtendedStoreConnectionFactory;
 import org.slf4j.Logger;
@@ -15,11 +14,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @UseExtendedStoreConnection
 @UseSpringExtendedStoreConnectionFactory
-@UseCachedTransactionalDocumentSafeService
+// @UseCachedTransactionalDocumentSafeService
 
 public class DocusafeSpringConfiguration {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocusafeSpringConfiguration.class);
     public DocusafeSpringConfiguration() {
+        for (int i = 0; i<10000; i++)
+            LOGGER.info("*");
         LOGGER.info("docusafe spring config supplies ExtendedStoreConnection and CachedTransactionalDocumentSafeService as spring beans.");
     }
 }

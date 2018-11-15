@@ -12,6 +12,7 @@ import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.rest.types.GrantDocument;
 import org.adorsys.docusafe.spring.annotation.UseExtendedStoreConnection;
+import org.adorsys.docusafe.spring.annotation.UseSpringExtendedStoreConnectionFactory;
 import org.adorsys.encobject.complextypes.BucketPath;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
@@ -19,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.AntPathMatcher;
@@ -42,8 +44,8 @@ import java.io.OutputStream;
  * UserIDAuth wird natürlich kein expliziter Parameter sein. Aber die JWT Logik kommt
  * erst im zweiten Schritt. Jetzt erst mal loslegen mit explizitem Parameter.
  */
-@UseExtendedStoreConnection
 @RestController
+@UseExtendedStoreConnection
 public class DocumentSafeController {
     private final static String APPLICATION_JSON = "application/json";
     private final static String APPLICATION_OCTET_STREAM = "application/octet-stream";
