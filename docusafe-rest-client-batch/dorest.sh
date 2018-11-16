@@ -1,8 +1,5 @@
 #@IgnoreInspection BashAddShebang
 
-# BASE_URL=http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de/
-BASE_URL=http://localhost:9999
-
 trap error ERR
 
 function error () {

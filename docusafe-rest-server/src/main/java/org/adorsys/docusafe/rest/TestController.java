@@ -73,7 +73,6 @@ public class TestController {
     private ExtendedStoreConnection txExtendedStoreConnection = null;
     private ExtendedStoreConnection cachedTxExtendedStoreConnection = null;
 
-
     @PostConstruct
     public void postconstruct() {
         counter++;

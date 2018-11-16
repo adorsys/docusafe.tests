@@ -1,4 +1,7 @@
 #@IgnoreInspection BashAddShebang
+
+source ./test.properties
+
 trap error ERR INT
 
 function error () {
