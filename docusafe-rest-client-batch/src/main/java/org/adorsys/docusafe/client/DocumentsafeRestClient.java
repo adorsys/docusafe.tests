@@ -37,6 +37,7 @@ public class DocumentsafeRestClient {
     private String baseuri;
     private Client client;
     private static final String CREATE_USER = "internal/user";
+    private static final String DELETE_USER = "internal/user";
     private static final String READ_DOCUMENT = "document";
     private static final String READ_DOCUMENT_STREAM = "documentstream";
     private static final String PASSWORD = "password";
@@ -56,6 +57,7 @@ public class DocumentsafeRestClient {
     }
 
     public void createUser(String userID, String password) {
+        LOGGER.debug("create user " + USER_ID);
         CreateUserRequest createUserRequest = new CreateUserRequest(userID, password);
 
         Response response = client.target(baseuri)
@@ -63,6 +65,17 @@ public class DocumentsafeRestClient {
                 .request()
                 .put(Entity.entity(createUserRequest, MediaType.APPLICATION_JSON_TYPE));
         LOGGER.debug("User " + userID + "created: " + response.getStatus());
+    }
+
+    public void destroyUser(String userID, String password) {
+        LOGGER.debug("destroy user " + USER_ID);
+        Response response = client.target(baseuri)
+                .path(DELETE_USER)
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .header(USER_ID, userID)
+                .header(PASSWORD, password)
+                .delete();
+        LOGGER.debug("User " + userID + "deleted: " + response.getStatus());
     }
 
     public void readDocument(String userID, String password, String fqn, String filenameToSave) {

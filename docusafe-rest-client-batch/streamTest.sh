@@ -1,5 +1,6 @@
+#!/bin/bash
 
-BASE_URL=http://localhost:9999
+source ./test.properties
 
 trap error ERR
 
@@ -16,23 +17,50 @@ function print () {
 }
 
 file=./target/dsc
-filetosave=./target/largefile
-rm -f $filetosave
+localfile=./target/largefile
+remotefile=remotefolder/stream/smallfile
+rm -f $localfile
 i="0"
-while (( i<150 ))
+while (( i<2 ))
 do
-	cat $file >> $filetosave
+	cat $file >> $localfile
 	let i=i+1
 done
-size=$(ls -sk $filetosave | cut -f  2 -d " ")
+size=$(ls -sk $localfile | cut -f  2 -d " ")
 
-# write stream and read bytes and stream ===================
+print "$(date) create user"
+java  -DBASE_URL=${BASE_URL} -jar $file -cu
+
+# write data as bytes and stream ===================
 # ==========================================================
 print "$(date) write file stream oriented with size $size"
-java  -DBASE_URL=${BASE_URL} -jar $file -ws $filetosave
+java -DBASE_URL=${BASE_URL} -jar $file -wb $localfile $remotefile
 
 print "$(date) read file stream oriented with size $size"
-java  -DBASE_URL=${BASE_URL} -jar $file -rs $filetosave $file-as-stream2
-diff $filetosave $file-as-stream2
+java -DBASE_URL=${BASE_URL} -jar $file -rs $remotefile $localfile.as.stream
+diff $localfile $localfile.as.stream
+rm $localfile.as.stream
+
+print "$(date) read file byte oriented with size $size"
+java -DBASE_URL=${BASE_URL} -jar $file -rb $remotefile $localfile.as.bytes
+diff $localfile $localfile.as.bytes
+rm $localfile.as.bytes
+
+print "$(date) destroy user"
+java  -DBASE_URL=${BASE_URL} -jar $file -du
+
+print "$(date) create user"
+java  -DBASE_URL=${BASE_URL} -jar $file -cu
+
+print "$(date) write file stream oriented with size $size"
+java  -DBASE_URL=${BASE_URL} -jar $file -wss $localfile $remotefile
+
+print "$(date) read file stream oriented with size $size"
+java  -DBASE_URL=${BASE_URL} -jar $file -rs $remotefile $localfile.loaded
+diff $localfile $localfile.loaded
+rm $localfile.loaded
+
+print "$(date) destroy user"
+java  -DBASE_URL=${BASE_URL} -jar $file -du
 
 print "STREAM TESTING SUCCESSFULL"

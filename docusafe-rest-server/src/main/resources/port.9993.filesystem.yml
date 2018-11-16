@@ -6,3 +6,4 @@ docusafe:
     filesystem:
       rootbucket: target/test-filesystem
       encryptionpassword: null
+

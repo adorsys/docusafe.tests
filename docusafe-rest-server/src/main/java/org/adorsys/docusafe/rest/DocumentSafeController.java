@@ -15,6 +15,7 @@ import org.adorsys.docusafe.spring.annotation.UseDocusafeSpringConfiguration;
 import org.adorsys.docusafe.spring.factory.SpringExtendedStoreConnectionFactory;
 import org.adorsys.encobject.complextypes.BucketPath;
 import org.adorsys.encobject.domain.ReadKeyPassword;
+import org.adorsys.encobject.service.api.ExtendedStoreConnection;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,16 +50,15 @@ public class DocumentSafeController {
     private final static String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentSafeController.class);
-    private DocumentSafeService service;
 
     @Autowired
-    SpringExtendedStoreConnectionFactory factorys;
+    private ExtendedStoreConnection connection;
+    private DocumentSafeService service;
 
     @PostConstruct
-    public void postconstruction() {
-        service = new DocumentSafeServiceImpl(WithCache.TRUE, factorys.getExtendedStoreConnectionWithSubDir(null));
+    private void postconstruction() {
+        service = new DocumentSafeServiceImpl(WithCache.TRUE, connection);
     }
-
     /**
      * USER
      * ===========================================================================================
@@ -70,17 +70,19 @@ public class DocumentSafeController {
             produces = {APPLICATION_JSON}
     )
     public void createUser(@RequestBody UserIDAuth userIDAuth) {
+        LOGGER.debug("create user " + userIDAuth.getUserID());
         service.createUser(userIDAuth);
     }
 
     @RequestMapping(
             value = "/internal/user",
-            method = {RequestMethod.DELETE},
-            consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}
+            method = {RequestMethod.DELETE}
     )
-    public void destroyUser(@RequestBody UserIDAuth userIDAuth) {
-        service.destroyUser(userIDAuth);
+    public void destroyUser(@RequestHeader("userid") String userid,
+                            @RequestHeader("password") String password) {
+        LOGGER.info("************************************************");
+        LOGGER.debug("delete user " + userid);
+        service.destroyUser(new UserIDAuth(new UserID(userid), new ReadKeyPassword(password)));
     }
 
     @RequestMapping(
