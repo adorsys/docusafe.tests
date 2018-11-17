@@ -24,7 +24,7 @@
         <junit.version>4.12</junit.version>
         <guava.version>26.0-jre</guava.version>
         <crypt.version>0.23.5</crypt.version>
-        <docusafe.version>0.5.9-SNAPSHOT</docusafe.version>
+        <docusafe.version>0.5.10</docusafe.version>
         <spring.aop.version>5.1.2.RELEASE</spring.aop.version>
         <aspect.jweaver.version>1.9.2</aspect.jweaver.version>
         <aspectj.maven.plugin.version>1.11</aspectj.maven.plugin.version>
