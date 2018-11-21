@@ -73,6 +73,13 @@ public class TestController {
     private ExtendedStoreConnection txExtendedStoreConnection = null;
     private ExtendedStoreConnection cachedTxExtendedStoreConnection = null;
 
+    @Autowired
+    CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeService1;
+    @Autowired
+    DocusafeConfig.WrapperA cachedTransactionalDocumentSafeService2;
+    @Autowired
+    DocusafeConfig.WrapperB cachedTransactionalDocumentSafeService3;
+
     @PostConstruct
     public void postconstruct() {
         counter++;
@@ -174,6 +181,24 @@ public class TestController {
                         cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
+                    case MY_CACHED_TRANSACTIONAL1:
+                        cachedTransactionalDocumentSafeService1.createUser(userIDAuth);
+                        stopWatch.start("beginTransaction");
+                        cachedTransactionalDocumentSafeService1.beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                    case MY_CACHED_TRANSACTIONAL2:
+                        cachedTransactionalDocumentSafeService2.get().createUser(userIDAuth);
+                        stopWatch.start("beginTransaction");
+                        cachedTransactionalDocumentSafeService2.get().beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                    case MY_CACHED_TRANSACTIONAL3:
+                        cachedTransactionalDocumentSafeService3.get().createUser(userIDAuth);
+                        stopWatch.start("beginTransaction");
+                        cachedTransactionalDocumentSafeService3.get().beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
                     default:
                         throw new BaseException("missing switch");
                 }
@@ -208,6 +233,15 @@ public class TestController {
                         case CACHED_TRANSACTIONAL:
                             cachedTransactionalDocumentSafeServices[index].txStoreDocument(userIDAuth, dsDocument);
                             break;
+                        case MY_CACHED_TRANSACTIONAL1:
+                            cachedTransactionalDocumentSafeService1.txStoreDocument(userIDAuth, dsDocument);
+                            break;
+                        case MY_CACHED_TRANSACTIONAL2:
+                            cachedTransactionalDocumentSafeService2.get().txStoreDocument(userIDAuth, dsDocument);
+                            break;
+                        case MY_CACHED_TRANSACTIONAL3:
+                            cachedTransactionalDocumentSafeService3.get().txStoreDocument(userIDAuth, dsDocument);
+                            break;
                         default:
                             throw new BaseException("missing switch");
                     }
@@ -226,6 +260,21 @@ public class TestController {
                     case CACHED_TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
                         cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                    case MY_CACHED_TRANSACTIONAL1:
+                        stopWatch.start("beginTransaction");
+                        cachedTransactionalDocumentSafeService1.beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                    case MY_CACHED_TRANSACTIONAL2:
+                        stopWatch.start("beginTransaction");
+                        cachedTransactionalDocumentSafeService2.get().beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                    case MY_CACHED_TRANSACTIONAL3:
+                        stopWatch.start("beginTransaction");
+                        cachedTransactionalDocumentSafeService3.get().beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                 }
@@ -251,6 +300,15 @@ public class TestController {
                                         break;
                                     case CACHED_TRANSACTIONAL:
                                         dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(userIDAuth, documentFQN);
+                                        break;
+                                    case MY_CACHED_TRANSACTIONAL1:
+                                        dsDocument = cachedTransactionalDocumentSafeService1.txReadDocument(userIDAuth, documentFQN);
+                                        break;
+                                    case MY_CACHED_TRANSACTIONAL2:
+                                        dsDocument = cachedTransactionalDocumentSafeService2.get().txReadDocument(userIDAuth, documentFQN);
+                                        break;
+                                    case MY_CACHED_TRANSACTIONAL3:
+                                        dsDocument = cachedTransactionalDocumentSafeService2.get().txReadDocument(userIDAuth, documentFQN);
                                         break;
                                     default:
                                         throw new BaseException("missing switch");
@@ -281,6 +339,15 @@ public class TestController {
                                 case CACHED_TRANSACTIONAL:
                                     exists = cachedTransactionalDocumentSafeServices[index].txDocumentExists(userIDAuth, documentFQN);
                                     break;
+                                case MY_CACHED_TRANSACTIONAL1:
+                                    exists = cachedTransactionalDocumentSafeService1.txDocumentExists(userIDAuth, documentFQN);
+                                    break;
+                                case MY_CACHED_TRANSACTIONAL2:
+                                    exists = cachedTransactionalDocumentSafeService2.get().txDocumentExists(userIDAuth, documentFQN);
+                                    break;
+                                case MY_CACHED_TRANSACTIONAL3:
+                                    exists = cachedTransactionalDocumentSafeService3.get().txDocumentExists(userIDAuth, documentFQN);
+                                    break;
                                 default:
                                     throw new BaseException("missing switch");
                             }
@@ -306,6 +373,21 @@ public class TestController {
             case CACHED_TRANSACTIONAL:
                 stopWatch.start("endTransaction");
                 cachedTransactionalDocumentSafeServices[index].endTransaction(userIDAuth);
+                stopWatch.stop();
+                break;
+            case MY_CACHED_TRANSACTIONAL1:
+                stopWatch.start("endTransaction");
+                cachedTransactionalDocumentSafeService1.endTransaction(userIDAuth);
+                stopWatch.stop();
+                break;
+            case MY_CACHED_TRANSACTIONAL2:
+                stopWatch.start("endTransaction");
+                cachedTransactionalDocumentSafeService2.get().endTransaction(userIDAuth);
+                stopWatch.stop();
+                break;
+            case MY_CACHED_TRANSACTIONAL3:
+                stopWatch.start("endTransaction");
+                cachedTransactionalDocumentSafeService3.get().endTransaction(userIDAuth);
                 stopWatch.stop();
                 break;
         }

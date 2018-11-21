@@ -96,6 +96,9 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "DELETE_CACHES"
     ];
     docusafelayer: string[] = [
+        "MY_CACHED_TRANSACTIONAL1",
+        "MY_CACHED_TRANSACTIONAL2",
+        "MY_CACHED_TRANSACTIONAL3",
         "CACHED_TRANSACTIONAL",
         "TRANSACTIONAL",
         "NON_TRANSACTIONAL",

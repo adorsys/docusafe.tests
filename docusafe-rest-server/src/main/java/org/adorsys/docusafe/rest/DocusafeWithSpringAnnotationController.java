@@ -1,6 +1,5 @@
 package org.adorsys.docusafe.rest;
 
-import org.adorsys.docusafe.business.types.complex.BucketContentFQN;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
 import org.adorsys.encobject.complextypes.BucketPathUtil;
