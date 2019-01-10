@@ -18,6 +18,7 @@ import org.adorsys.docusafe.rest.types.ReadDocumentResult;
 import org.adorsys.docusafe.rest.types.ReadResult;
 import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
+import org.adorsys.docusafe.rest.types.TestUtil;
 import org.adorsys.docusafe.rest.types.TestsResult;
 import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.docusafe.spring.factory.SpringExtendedStoreConnectionFactory;
@@ -54,8 +55,6 @@ import java.util.UUID;
  */
 @RestController
 public class TestController {
-
-
     private final static Logger LOGGER = LoggerFactory.getLogger(TestController.class);
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
@@ -73,12 +72,6 @@ public class TestController {
     private ExtendedStoreConnection txExtendedStoreConnection = null;
     private ExtendedStoreConnection cachedTxExtendedStoreConnection = null;
 
-    @Autowired
-    CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeService1;
-    @Autowired
-    DocusafeConfig.WrapperA cachedTransactionalDocumentSafeService2;
-    @Autowired
-    DocusafeConfig.WrapperB cachedTransactionalDocumentSafeService3;
 
     @PostConstruct
     public void postconstruct() {
@@ -181,24 +174,6 @@ public class TestController {
                         cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
-                    case MY_CACHED_TRANSACTIONAL1:
-                        cachedTransactionalDocumentSafeService1.createUser(userIDAuth);
-                        stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeService1.beginTransaction(userIDAuth);
-                        stopWatch.stop();
-                        break;
-                    case MY_CACHED_TRANSACTIONAL2:
-                        cachedTransactionalDocumentSafeService2.get().createUser(userIDAuth);
-                        stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeService2.get().beginTransaction(userIDAuth);
-                        stopWatch.stop();
-                        break;
-                    case MY_CACHED_TRANSACTIONAL3:
-                        cachedTransactionalDocumentSafeService3.get().createUser(userIDAuth);
-                        stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeService3.get().beginTransaction(userIDAuth);
-                        stopWatch.stop();
-                        break;
                     default:
                         throw new BaseException("missing switch");
                 }
@@ -210,7 +185,7 @@ public class TestController {
                     if (i % testParameter.documentsPerDirectory == 0) {
                         folderIndex++;
                     }
-                    String uniqueToken = getUniqueStringForDocument(documentFQN, userIDAuth.getUserID());
+                    String uniqueToken = TestUtil.getUniqueStringForDocument(documentFQN, userIDAuth.getUserID());
                     {
                         DocumentInfo testResultCreatedDocument = new DocumentInfo();
                         testResultCreatedDocument.documentFQN = documentFQN;
@@ -218,7 +193,7 @@ public class TestController {
                         testResultCreatedDocument.size = testParameter.sizeOfDocument;
                         createdDocuments.add(testResultCreatedDocument);
                     }
-                    DSDocument dsDocument = new DSDocument(documentFQN, createDocumentContent(testParameter.sizeOfDocument, documentFQN, uniqueToken), null);
+                    DSDocument dsDocument = new DSDocument(documentFQN, TestUtil.createDocumentContent(testParameter.sizeOfDocument, documentFQN, uniqueToken), null);
                     stopWatch.start("create document " + documentFQN.getValue());
                     switch (testParameter.docusafeLayer) {
                         case DOCUSAFE_BASE:
@@ -232,15 +207,6 @@ public class TestController {
                             break;
                         case CACHED_TRANSACTIONAL:
                             cachedTransactionalDocumentSafeServices[index].txStoreDocument(userIDAuth, dsDocument);
-                            break;
-                        case MY_CACHED_TRANSACTIONAL1:
-                            cachedTransactionalDocumentSafeService1.txStoreDocument(userIDAuth, dsDocument);
-                            break;
-                        case MY_CACHED_TRANSACTIONAL2:
-                            cachedTransactionalDocumentSafeService2.get().txStoreDocument(userIDAuth, dsDocument);
-                            break;
-                        case MY_CACHED_TRANSACTIONAL3:
-                            cachedTransactionalDocumentSafeService3.get().txStoreDocument(userIDAuth, dsDocument);
                             break;
                         default:
                             throw new BaseException("missing switch");
@@ -260,21 +226,6 @@ public class TestController {
                     case CACHED_TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
                         cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
-                        stopWatch.stop();
-                        break;
-                    case MY_CACHED_TRANSACTIONAL1:
-                        stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeService1.beginTransaction(userIDAuth);
-                        stopWatch.stop();
-                        break;
-                    case MY_CACHED_TRANSACTIONAL2:
-                        stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeService2.get().beginTransaction(userIDAuth);
-                        stopWatch.stop();
-                        break;
-                    case MY_CACHED_TRANSACTIONAL3:
-                        stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeService3.get().beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                 }
@@ -301,15 +252,6 @@ public class TestController {
                                     case CACHED_TRANSACTIONAL:
                                         dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(userIDAuth, documentFQN);
                                         break;
-                                    case MY_CACHED_TRANSACTIONAL1:
-                                        dsDocument = cachedTransactionalDocumentSafeService1.txReadDocument(userIDAuth, documentFQN);
-                                        break;
-                                    case MY_CACHED_TRANSACTIONAL2:
-                                        dsDocument = cachedTransactionalDocumentSafeService2.get().txReadDocument(userIDAuth, documentFQN);
-                                        break;
-                                    case MY_CACHED_TRANSACTIONAL3:
-                                        dsDocument = cachedTransactionalDocumentSafeService2.get().txReadDocument(userIDAuth, documentFQN);
-                                        break;
                                     default:
                                         throw new BaseException("missing switch");
                                 }
@@ -317,7 +259,7 @@ public class TestController {
                                 // TODO genauer Typ muss hier noch geprüft werden, nur die FileNotFoundException wird erwartet....
                             }
                             stopWatch.stop();
-                            readDocuments.add(checkDocumentWasRead(dsDocument, documentInfo));
+                            readDocuments.add(TestUtil.checkDocumentWasRead(dsDocument, documentInfo));
                         }
                         break;
                     }
@@ -339,20 +281,11 @@ public class TestController {
                                 case CACHED_TRANSACTIONAL:
                                     exists = cachedTransactionalDocumentSafeServices[index].txDocumentExists(userIDAuth, documentFQN);
                                     break;
-                                case MY_CACHED_TRANSACTIONAL1:
-                                    exists = cachedTransactionalDocumentSafeService1.txDocumentExists(userIDAuth, documentFQN);
-                                    break;
-                                case MY_CACHED_TRANSACTIONAL2:
-                                    exists = cachedTransactionalDocumentSafeService2.get().txDocumentExists(userIDAuth, documentFQN);
-                                    break;
-                                case MY_CACHED_TRANSACTIONAL3:
-                                    exists = cachedTransactionalDocumentSafeService3.get().txDocumentExists(userIDAuth, documentFQN);
-                                    break;
                                 default:
                                     throw new BaseException("missing switch");
                             }
                             stopWatch.stop();
-                            readDocuments.add(checkDocumentExsits(exists, documentInfo));
+                            readDocuments.add(TestUtil.checkDocumentExsits(exists, documentInfo));
                         }
                         break;
                     }
@@ -375,59 +308,13 @@ public class TestController {
                 cachedTransactionalDocumentSafeServices[index].endTransaction(userIDAuth);
                 stopWatch.stop();
                 break;
-            case MY_CACHED_TRANSACTIONAL1:
-                stopWatch.start("endTransaction");
-                cachedTransactionalDocumentSafeService1.endTransaction(userIDAuth);
-                stopWatch.stop();
-                break;
-            case MY_CACHED_TRANSACTIONAL2:
-                stopWatch.start("endTransaction");
-                cachedTransactionalDocumentSafeService2.get().endTransaction(userIDAuth);
-                stopWatch.stop();
-                break;
-            case MY_CACHED_TRANSACTIONAL3:
-                stopWatch.start("endTransaction");
-                cachedTransactionalDocumentSafeService3.get().endTransaction(userIDAuth);
-                stopWatch.stop();
-                break;
         }
-        addStopWatchToTestsResult(stopWatch, testsResult);
-        addCreatedDocumentsToTestResults(createdDocuments, testsResult);
-        addReadDocumentsToTestResults(readDocuments, testsResult);
+        TestUtil.addStopWatchToTestsResult(stopWatch, testsResult);
+        TestUtil.addCreatedDocumentsToTestResults(createdDocuments, testsResult);
+        TestUtil.addReadDocumentsToTestResults(readDocuments, testsResult);
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
-    private ReadDocumentResult checkDocumentWasRead(DSDocument dsDocument, DocumentInfo documentInfo) {
-        ReadDocumentResult readDocumentResult = new ReadDocumentResult();
-        readDocumentResult.documentFQN = documentInfo.documentFQN;
-        if (dsDocument == null) {
-            readDocumentResult.readResult = ReadResult.NOT_FOUND;
-        } else {
-            byte[] foundBytes = dsDocument.getDocumentContent().getValue();
-            if (foundBytes.length != documentInfo.size && documentInfo.size > documentInfo.uniqueToken.length()) {
-                readDocumentResult.readResult = ReadResult.WRONG_SIZE;
-            } else {
-                byte[] expectedBytes = documentInfo.uniqueToken.getBytes();
-                readDocumentResult.readResult = ReadResult.OK;
-                for (int i = 0; i < expectedBytes.length; i++) {
-                    if (expectedBytes[i] != foundBytes[i]) {
-                        readDocumentResult.readResult = ReadResult.WRONG_CONTENT;
-                    }
-                }
-            }
-        }
-        if (readDocumentResult.readResult == null) {
-            throw new BaseException("Programming Error. readResult must not be null");
-        }
-        return readDocumentResult;
-    }
-
-    private ReadDocumentResult checkDocumentExsits(Boolean exists, DocumentInfo documentInfo) {
-        ReadDocumentResult readDocumentResult = new ReadDocumentResult();
-        readDocumentResult.documentFQN = documentInfo.documentFQN;
-        readDocumentResult.readResult = exists ? ReadResult.OK : ReadResult.NOT_FOUND;
-        return readDocumentResult;
-    }
 
     private ResponseEntity<TestsResult> deleteDB(TestParameter testParameter, TestsResult testsResult) {
         StopWatch stopWatch = new StopWatch();
@@ -454,7 +341,7 @@ public class TestController {
                 break;
             }
         }
-        addStopWatchToTestsResult(stopWatch, testsResult);
+        TestUtil.addStopWatchToTestsResult(stopWatch, testsResult);
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
@@ -499,54 +386,4 @@ public class TestController {
         cachedTransactionalDocumentSafeServices[1] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, cachedTxExtendedStoreConnection)));
         cachedTransactionalDocumentSafeServices[2] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, cachedTxExtendedStoreConnection)));
     }
-
-
-    private void addStopWatchToTestsResult(StopWatch stopWatch, TestsResult testsResult) {
-        StopWatch.TaskInfo[] stopWatchTaskInfos = stopWatch.getTaskInfo();
-        testsResult.tasks = new TestsResult.TaskInfo[stopWatchTaskInfos.length];
-        for (int i = 0; i < stopWatchTaskInfos.length; i++) {
-            StopWatch.TaskInfo stopWatchTaskInfo = stopWatchTaskInfos[i];
-            testsResult.tasks[i] = new TestsResult.TaskInfo();
-            testsResult.tasks[i].name = stopWatchTaskInfo.getTaskName();
-            testsResult.tasks[i].time = stopWatchTaskInfo.getTimeMillis();
-        }
-        testsResult.totalTime = stopWatch.getTotalTimeMillis();
-    }
-
-    private void addCreatedDocumentsToTestResults(List<DocumentInfo> createdDocuments, TestsResult testsResult) {
-        testsResult.listOfCreatedDocuments = createdDocuments.toArray(new DocumentInfo[createdDocuments.size()]);
-    }
-
-    private void addReadDocumentsToTestResults(List<ReadDocumentResult> readDocuments, TestsResult testsResult) {
-        testsResult.listOfReadDocuments = readDocuments.toArray(new ReadDocumentResult[readDocuments.size()]);
-    }
-
-    private DocumentContent createDocumentContent(Integer sizeOfDocument, DocumentFQN documentFQN, String uniqueToken) {
-        byte[] uniqueTokenBytes = uniqueToken.getBytes();
-        int uniqueTokenLength = uniqueTokenBytes.length;
-        if (sizeOfDocument < uniqueTokenLength) {
-            sizeOfDocument = uniqueTokenLength;
-        }
-        byte[] bytes = new byte[sizeOfDocument];
-        new Random().nextBytes(bytes);
-
-        for (int i = 0; i < uniqueTokenLength; i++) {
-            bytes[i] = uniqueTokenBytes[i];
-        }
-        return new DocumentContent(bytes);
-    }
-
-    private String getUniqueStringForDocument(DocumentFQN documentFQN, UserID userID) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
-        String timestamp = sdf.format(new Date());
-        String fullName = documentFQN.getValue();
-        String uniqueToken = wrap(userID.getValue()) + wrap(fullName) + wrap(timestamp);
-        return uniqueToken;
-    }
-
-    private String wrap(String content) {
-        return "(" + content + ")";
-    }
-
-
 }

@@ -60,11 +60,9 @@ public class RestApplication {
                                 "-EncOff, " +
                                 "-ERASE_DATABASE, " +
                                 ReadArguments.FILESYSTEM_ARG + ", " +
-                                ReadArguments.MINIO_ARG + ", " +
                                 ReadArguments.MONGO_ARG + " ");
                         LOGGER.error("The StoreConnection to choose can be supplied via Systemproperties too :" +
                                 ReadArguments.FILESYSTEM + ", " +
-                                ReadArguments.MINIO+ ", " +
                                 ReadArguments.MONGO + " ");
 
                         throw new BaseException("Parameter " + arg + " is unknown.");

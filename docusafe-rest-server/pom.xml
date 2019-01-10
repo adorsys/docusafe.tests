@@ -262,10 +262,6 @@
                             <groupId>de.adorsys.cryptoutils</groupId>
                             <artifactId>mongodbstoreconnection</artifactId>
                         </weaveDependency>
-                        <weaveDependency>
-                            <groupId>de.adorsys.cryptoutils</groupId>
-                            <artifactId>miniostoreconnection</artifactId>
-                        </weaveDependency>
                     </weaveDependencies>
                 </configuration>
                 <executions>
