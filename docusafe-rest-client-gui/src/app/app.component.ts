@@ -56,7 +56,7 @@ var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
-    title = 'docusafe-test-client';
+    title = 'docusafe-test-client (2019 02 15)';
     dndForTestSuite: FileContentHolder = null;
     dndForTestResults: FileContentHolder = null;
     testResultOwner: TestResultOwner = null;

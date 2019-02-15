@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PROJECT_NAME=docusafe-rest-client-gui
+PROJECT_NAME=docusafe-gui
 IMAGE_NAME=${PROJECT_NAME}:latest
 LOCAL_IMAGE=local/${IMAGE_NAME}
 
