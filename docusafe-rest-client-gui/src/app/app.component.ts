@@ -86,7 +86,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "http://localhost:9994",
         "http://localhost:9995",
     ];
-    destinationUrl: string = this.destinationUrls[0];
+    destinationUrl: string = this.destinationUrls[4];
     testactions: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",

@@ -374,9 +374,9 @@ public class TestController {
         documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, plainExtendedStoreConnection);
         documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, plainExtendedStoreConnection);
 
-        nonTransactionalDocumentSafeServices[0] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.FALSE, nonTxExtendedStoreConnection));
-        nonTransactionalDocumentSafeServices[1] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, nonTxExtendedStoreConnection));
-        nonTransactionalDocumentSafeServices[2] = new NonTransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, nonTxExtendedStoreConnection));
+        nonTransactionalDocumentSafeServices[0] = new NonTransactionalDocumentSafeServiceImpl(new DocumentSafeServiceImpl(WithCache.FALSE, nonTxExtendedStoreConnection));
+        nonTransactionalDocumentSafeServices[1] = new NonTransactionalDocumentSafeServiceImpl(new DocumentSafeServiceImpl(WithCache.TRUE, nonTxExtendedStoreConnection));
+        nonTransactionalDocumentSafeServices[2] = new NonTransactionalDocumentSafeServiceImpl(new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, nonTxExtendedStoreConnection));
 
         transactionalDocumentSafeServices[0] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.FALSE, txExtendedStoreConnection));
         transactionalDocumentSafeServices[1] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, txExtendedStoreConnection));
