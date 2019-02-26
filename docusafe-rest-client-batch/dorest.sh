@@ -11,7 +11,7 @@ function error () {
 function print () {
 	{
 	echo "$(date) ==================================================================================="
-	echo "$(date) $1"
+	echo "$(date) $*"
 	echo "$(date)  "
 	} | tee -a curl.log
 }
@@ -42,20 +42,20 @@ function checkCurl() {
 	rm -f curl.error
 	if [[ httpStatus -eq "ERROR" ]]
 	then
-		echo "exit now due to previous error with exit code $ret"
+		print "exit now due to previous error with exit code $ret"
 		exit $ret
 	fi
 
 	if [[ status -eq "any" ]]
 	then
-		echo "$httpStatus is ignored" | tee -a curl.log
+		print "$httpStatus is ignored"
 	else
 		if (( httpStatus!=status )) 
 		then
-			echo "expected status $status but was $httpStatus of cmd $@" | tee -a curl.log
+			print "expected status $status but was $httpStatus of cmd $@"
 			exit 1
 		else
-			echo "expected status was $httpStatus of cmd $@" | tee -a curl.log
+			print "as expected status was $httpStatus of cmd $@"
 		fi
 	fi
 }
@@ -96,47 +96,24 @@ function basictest() {
 	print "create user francis"
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}' 
 
-	print "peter grants read permsission for  deeper/and/deeper to francis"
-	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/grant/document --data '{
-	  "documentDirectoryFQN": "deeper/and/deeper",
-	  "receivingUser": "francis",
-	  "accessType" : "READ"
-	}' 
+	print "peter puts document to francis inbox"
+	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/inbox/in --data '{
+	"receivingUser": "francis",
+    "sourceFQN": "deeper/and/deeper/README.txt",
+    "inboxFQN": "deeper/newreame.txt",
+    "moveType": "KEEP_COPY"
+	}'
 
-	print "francis liest deeper Document von Peter"
-	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter/%22/deeper/and/deeper/README.txt%22
+	print "francis verschiebt aus inbox"
+	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/inbox/out --data '{
+    "inboxFQN": "deeper/newreame.txt",
+    "destFQN": "deeper/and/deeper/README.txt",
+    "overwriteFlag" : "TRUE"
+	}'
 
-	print "francis tries to  save peters deeper document"
-	checkCurl 403 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter --data '{
-	  "documentFQN": "deeper/and/deeper/README.txt",
-	  "documentContent": "AFFEFE"
-	}' 
+	print "francis liest neues document"
+	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/document/%22/deeper/and/deeper/README.txt%22
 
-	print "francis liest nicht existentes Document von Peter"
-	checkCurl 409 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter/%22/deeper/and/deeper/README-notexist.txt%22
-
-	print "peter grants write permsission for  deeper/and/deeper to francis"
-	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/grant/document --data '{
-	  "documentDirectoryFQN": "deeper/and/deeper",
-	  "receivingUser": "francis",
-	  "accessType" : "WRITE"
-	}' 
-
-	print "francis tries to  save peters deeper document"
-	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter --data '{
-	  "documentFQN": "deeper/and/deeper/README.txt",
-	  "documentContent": "AFFEFE"
-	}' 
-
-	print "peter removes grant permsission for  deeper/and/deeper from francis"
-	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/grant/document --data '{
-	  "documentDirectoryFQN": "deeper/and/deeper",
-	  "receivingUser": "francis",
-	  "accessType" : "NONE"
-	}' 
-
-	print "francis tries to read deeper Document von Peter"
-	checkCurl 403 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/granted/document/peter/%22/deeper/and/deeper/README.txt%22
 
 	print "peter gets deep document 1"
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/README.txt%22

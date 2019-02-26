@@ -3,16 +3,15 @@ package org.adorsys.docusafe.rest;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
-import org.adorsys.docusafe.business.impl.WithCache;
 import org.adorsys.docusafe.business.types.UserID;
 import org.adorsys.docusafe.business.types.complex.DSDocument;
 import org.adorsys.docusafe.business.types.complex.DSDocumentStream;
 import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
-import org.adorsys.docusafe.rest.types.GrantDocument;
+import org.adorsys.docusafe.rest.types.MoveFromInbox;
+import org.adorsys.docusafe.rest.types.MoveToInboxOfUser;
 import org.adorsys.docusafe.spring.annotation.UseDocusafeSpringConfiguration;
-import org.adorsys.docusafe.spring.factory.SpringExtendedStoreConnectionFactory;
 import org.adorsys.encobject.complextypes.BucketPath;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
@@ -57,7 +56,7 @@ public class DocumentSafeController {
 
     @PostConstruct
     private void postconstruction() {
-        service = new DocumentSafeServiceImpl(WithCache.TRUE, connection);
+        service = new DocumentSafeServiceImpl(connection);
     }
     /**
      * USER
@@ -230,58 +229,33 @@ public class DocumentSafeController {
 
 
     /**
-     * GRANT/DOCUMENT
+     * INBOX STUFF
      * ===========================================================================================
      */
     @RequestMapping(
-            value = "/grant/document",
+            value = "/inbox/in",
             method = {RequestMethod.PUT},
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
-    public void grantAccess(@RequestHeader("userid") String userid,
+    public void moveDocumnetToInboxOfUser(@RequestHeader("userid") String userid,
                             @RequestHeader("password") String password,
-                            @RequestBody GrantDocument grantDocument) {
+                            @RequestBody MoveToInboxOfUser moveRequest) {
         UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
-        service.grantAccessToUserForFolder(userIDAuth, grantDocument.getReceivingUser(), grantDocument.getDocumentDirectoryFQN(), grantDocument.getAccessType());
+        service.moveDocumnetToInboxOfUser(userIDAuth, moveRequest.getReceivingUser(), moveRequest.getSourceFQN(), moveRequest.getInboxFQN(), moveRequest.getMoveType());
     }
 
     @RequestMapping(
-            value = "/granted/document/{ownerUserID}",
+            value = "/inbox/out",
             method = {RequestMethod.PUT},
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
-    public void storeGrantedDocument(@RequestHeader("userid") String userid,
+    public void moveDocumentFromInbox(@RequestHeader("userid") String userid,
                                      @RequestHeader("password") String password,
-                                     @PathVariable("ownerUserID") String ownerUserIDString,
-                                     @RequestBody DSDocument dsDocument) {
-        UserID ownerUserID = new UserID(ownerUserIDString);
+                                     @RequestBody MoveFromInbox moveRequest) {
         UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
-        service.storeGrantedDocument(userIDAuth, ownerUserID, dsDocument);
-    }
-
-    @RequestMapping(
-            value = "/granted/document/{ownerUserID}/**",
-            method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}
-    )
-    public
-    @ResponseBody
-    DSDocument readGrantedDocument(@RequestHeader("userid") String userid,
-                                   @RequestHeader("password") String password,
-                                   @PathVariable("ownerUserID") String ownerUserIDString,
-                                   HttpServletRequest request
-    ) {
-        UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
-        UserID ownerUserID = new UserID(ownerUserIDString);
-
-        final String documentFQNString = getFQN(request);
-
-        DocumentFQN documentFQN = new DocumentFQN(documentFQNString);
-        LOGGER.debug("received:" + userIDAuth + " and " + ownerUserID + " and " + documentFQN);
-        return service.readGrantedDocument(userIDAuth, ownerUserID, documentFQN);
+        service.moveDocumentFromInbox(userIDAuth, moveRequest.getInboxFQN(), moveRequest.getDestFQN(), moveRequest.getOverwriteFlag());
     }
 
     private String getFQN(HttpServletRequest request) {

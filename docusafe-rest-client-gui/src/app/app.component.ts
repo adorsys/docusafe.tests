@@ -28,7 +28,6 @@ var defaultTestSuite: TestSuiteTYPE =
         {
             "testAction": "CREATE_DOCUMENTS",
             "docusafeLayer": "DOCUSAFE_BASE",
-            "cacheType": "GUAVA",
             "userid": "",
             "sizeOfDocument": 50,
             "documentsPerDirectory": 10,
@@ -56,7 +55,7 @@ var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
-    title = 'docusafe-test-client (2019 02 15)';
+    title = 'docusafe-test-client (still under construction)';
     dndForTestSuite: FileContentHolder = null;
     dndForTestResults: FileContentHolder = null;
     testResultOwner: TestResultOwner = null;
@@ -96,18 +95,9 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "DELETE_CACHES"
     ];
     docusafelayer: string[] = [
-        "MY_CACHED_TRANSACTIONAL1",
-        "MY_CACHED_TRANSACTIONAL2",
-        "MY_CACHED_TRANSACTIONAL3",
         "CACHED_TRANSACTIONAL",
         "TRANSACTIONAL",
-        "NON_TRANSACTIONAL",
         "DOCUSAFE_BASE"
-    ];
-    cachetypes: string[] = [
-        "NO_CACHE",
-        "GUAVA",
-        "HASH_MAP"
     ];
 
     constructor(private testService: TestService, private clipboardService: ClipboardService) {
@@ -304,13 +294,13 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     }
 
     continueTesting(response: TestResultAndResponseTYPE, testRequest: TestRequestTYPE): void {
-        this.testResultOwner.add(response);
+        this.numberOfThreadsThatAnswered++;
+        this.testResultOwner.add(response, this.numberOfRepeatsDone, this.numberOfThreadsThatAnswered);
         if (this.doAbort) {
             console.log("abort is true. do not continue");
             this.busy = false;
             return;
         }
-        this.numberOfThreadsThatAnswered++;
         if (this.numberOfThreadsThatAnswered <= testRequest.staticClientInfo.numberOfThreads) {
             console.log("only " + this.numberOfThreadsThatAnswered + " have ansewred yet. continue to wait");
             return;
@@ -368,10 +358,18 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         // this.testResultOwner.loadSubsumedTests(subsumedTests);
     }
     private modifyReadRequest(request: TestRequestTYPE, lastWriteResult: SubsumedTestTYPE) {
+
+
+        console.log("repeats: " + request.dynamicClientInfo.repetitionNumber + " threads:" + request.dynamicClientInfo.threadNumber);
         let result : TestResultAndResponseTYPE = lastWriteResult.repeats[request.dynamicClientInfo.repetitionNumber-1].threads[request.dynamicClientInfo.threadNumber-1];
         if (result.error ==  null) {
             request.documentsToRead = result.result.listOfCreatedDocuments;
         }
-        request.userid = result.result.userID;
+        if (result.result == undefined) {
+            console.error("can not set useid");
+        } else {
+            request.userid = result.result.userID;
+
+        }
     }
 }

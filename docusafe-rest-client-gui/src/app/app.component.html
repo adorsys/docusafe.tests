@@ -13,8 +13,9 @@
             <h1>
                 Test is {{currentTestIndex+1}}/{{numberOfTests}} running .....
             </h1>
-            Repetition {{numberOfRepeatsDone}}
-            <label ngbButtonLabel class="btn-primary full" (click)="abort()">abort</label>
+            Repetition: {{numberOfRepeatsDone}}
+            Number of threads answered: {{numberOfRepeatsDone}}
+            <label ngbButtonLabel class="btn-primary" (click)="abort()">abort</label>
 
             <div style="text-align: left">
                 <pre>{{lastSendTestRequest | json}}</pre>
@@ -76,17 +77,6 @@
                                         <option *ngFor="let dl of docusafelayer"
                                                 [selected]="testSuite.testrequests[currentTestIndex].docusafeLayer == dl">
                                             {{dl}}
-                                        </option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Cache Type</td>
-                                <td>
-                                    <select [(ngModel)]="testSuite.testrequests[currentTestIndex].cacheType">
-                                        <option *ngFor="let ct of cachetypes"
-                                                [selected]="testSuite.testrequests[currentTestIndex].cacheType == ct">
-                                            {{ct}}
                                         </option>
                                     </select>
                                 </td>

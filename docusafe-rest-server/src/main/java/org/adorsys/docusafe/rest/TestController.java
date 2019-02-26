@@ -4,7 +4,6 @@ import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
-import org.adorsys.docusafe.business.impl.WithCache;
 import org.adorsys.docusafe.business.types.UserID;
 import org.adorsys.docusafe.business.types.complex.DSDocument;
 import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
@@ -15,12 +14,10 @@ import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumen
 import org.adorsys.docusafe.rest.impl.SimpleRequestMemoryContextImpl;
 import org.adorsys.docusafe.rest.types.DocumentInfo;
 import org.adorsys.docusafe.rest.types.ReadDocumentResult;
-import org.adorsys.docusafe.rest.types.ReadResult;
 import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.rest.types.TestUtil;
 import org.adorsys.docusafe.rest.types.TestsResult;
-import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.docusafe.spring.factory.SpringExtendedStoreConnectionFactory;
 import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
@@ -43,11 +40,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -58,10 +53,10 @@ public class TestController {
     private final static Logger LOGGER = LoggerFactory.getLogger(TestController.class);
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
-    private DocumentSafeService[] documentSafeService = null;
-    private NonTransactionalDocumentSafeService[] nonTransactionalDocumentSafeServices = null;
-    private TransactionalDocumentSafeService[] transactionalDocumentSafeServices = null;
-    private CachedTransactionalDocumentSafeService[] cachedTransactionalDocumentSafeServices = null;
+    private DocumentSafeService documentSafeService = null;
+    private NonTransactionalDocumentSafeService nonTransactionalDocumentSafeServices = null;
+    private TransactionalDocumentSafeService transactionalDocumentSafeServices = null;
+    private CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeServices = null;
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
 
     @Autowired
@@ -85,10 +80,10 @@ public class TestController {
         txExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("txfolder");
         cachedTxExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("cachedtxfolder");
 
-        documentSafeService = new DocumentSafeService[3];
-        nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeService[3];
-        transactionalDocumentSafeServices = new TransactionalDocumentSafeService[3];
-        cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeService[3];
+        documentSafeService = null;
+        nonTransactionalDocumentSafeServices = null;
+        transactionalDocumentSafeServices = null;
+        cachedTransactionalDocumentSafeServices = null;
 
         initServices();
     }
@@ -134,20 +129,6 @@ public class TestController {
             testParameter.userid = new UserID(UUID.randomUUID().toString());
         }
         testsResult.userID = testParameter.userid;
-        int index = 0;
-        switch (testParameter.cacheType) {
-            case NO_CACHE:
-                index = 0;
-                break;
-            case GUAVA:
-                index = 1;
-                break;
-            case HASH_MAP:
-                index = 2;
-                break;
-            default:
-                throw new BaseException("cacheType not known: " + testParameter.cacheType);
-        }
         UserIDAuth userIDAuth = new UserIDAuth(testParameter.userid, new ReadKeyPassword("password for " + testParameter.userid.getValue()));
         StopWatch stopWatch = new StopWatch();
         List<DocumentInfo> createdDocuments = new ArrayList<>();
@@ -157,21 +138,18 @@ public class TestController {
 
                 switch (testParameter.docusafeLayer) {
                     case DOCUSAFE_BASE:
-                        documentSafeService[index].createUser(userIDAuth);
-                        break;
-                    case NON_TRANSACTIONAL:
-                        nonTransactionalDocumentSafeServices[index].createUser(userIDAuth);
+                        documentSafeService.createUser(userIDAuth);
                         break;
                     case TRANSACTIONAL:
-                        transactionalDocumentSafeServices[index].createUser(userIDAuth);
+                        transactionalDocumentSafeServices.createUser(userIDAuth);
                         stopWatch.start("beginTransaction");
-                        transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        transactionalDocumentSafeServices.beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                     case CACHED_TRANSACTIONAL:
-                        cachedTransactionalDocumentSafeServices[index].createUser(userIDAuth);
+                        cachedTransactionalDocumentSafeServices.createUser(userIDAuth);
                         stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        cachedTransactionalDocumentSafeServices.beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                     default:
@@ -197,16 +175,13 @@ public class TestController {
                     stopWatch.start("create document " + documentFQN.getValue());
                     switch (testParameter.docusafeLayer) {
                         case DOCUSAFE_BASE:
-                            documentSafeService[index].storeDocument(userIDAuth, dsDocument);
-                            break;
-                        case NON_TRANSACTIONAL:
-                            nonTransactionalDocumentSafeServices[index].nonTxStoreDocument(userIDAuth, dsDocument);
+                            documentSafeService.storeDocument(userIDAuth, dsDocument);
                             break;
                         case TRANSACTIONAL:
-                            transactionalDocumentSafeServices[index].txStoreDocument(userIDAuth, dsDocument);
+                            transactionalDocumentSafeServices.txStoreDocument(userIDAuth, dsDocument);
                             break;
                         case CACHED_TRANSACTIONAL:
-                            cachedTransactionalDocumentSafeServices[index].txStoreDocument(userIDAuth, dsDocument);
+                            cachedTransactionalDocumentSafeServices.txStoreDocument(userIDAuth, dsDocument);
                             break;
                         default:
                             throw new BaseException("missing switch");
@@ -220,12 +195,12 @@ public class TestController {
                 switch (testParameter.docusafeLayer) {
                     case TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
-                        transactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        transactionalDocumentSafeServices.beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                     case CACHED_TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
-                        cachedTransactionalDocumentSafeServices[index].beginTransaction(userIDAuth);
+                        cachedTransactionalDocumentSafeServices.beginTransaction(userIDAuth);
                         stopWatch.stop();
                         break;
                 }
@@ -241,16 +216,13 @@ public class TestController {
                             try {
                                 switch (testParameter.docusafeLayer) {
                                     case DOCUSAFE_BASE:
-                                        dsDocument = documentSafeService[index].readDocument(userIDAuth, documentFQN);
-                                        break;
-                                    case NON_TRANSACTIONAL:
-                                        dsDocument = nonTransactionalDocumentSafeServices[index].nonTxReadDocument(userIDAuth, documentFQN);
+                                        dsDocument = documentSafeService.readDocument(userIDAuth, documentFQN);
                                         break;
                                     case TRANSACTIONAL:
-                                        dsDocument = transactionalDocumentSafeServices[index].txReadDocument(userIDAuth, documentFQN);
+                                        dsDocument = transactionalDocumentSafeServices.txReadDocument(userIDAuth, documentFQN);
                                         break;
                                     case CACHED_TRANSACTIONAL:
-                                        dsDocument = cachedTransactionalDocumentSafeServices[index].txReadDocument(userIDAuth, documentFQN);
+                                        dsDocument = cachedTransactionalDocumentSafeServices.txReadDocument(userIDAuth, documentFQN);
                                         break;
                                     default:
                                         throw new BaseException("missing switch");
@@ -270,16 +242,13 @@ public class TestController {
                             stopWatch.start("document exists" + documentFQN.getValue());
                             switch (testParameter.docusafeLayer) {
                                 case DOCUSAFE_BASE:
-                                    exists = documentSafeService[index].documentExists(userIDAuth, documentFQN);
-                                    break;
-                                case NON_TRANSACTIONAL:
-                                    exists = nonTransactionalDocumentSafeServices[index].nonTxDocumentExists(userIDAuth, documentFQN);
+                                    exists = documentSafeService.documentExists(userIDAuth, documentFQN);
                                     break;
                                 case TRANSACTIONAL:
-                                    exists = transactionalDocumentSafeServices[index].txDocumentExists(userIDAuth, documentFQN);
+                                    exists = transactionalDocumentSafeServices.txDocumentExists(userIDAuth, documentFQN);
                                     break;
                                 case CACHED_TRANSACTIONAL:
-                                    exists = cachedTransactionalDocumentSafeServices[index].txDocumentExists(userIDAuth, documentFQN);
+                                    exists = cachedTransactionalDocumentSafeServices.txDocumentExists(userIDAuth, documentFQN);
                                     break;
                                 default:
                                     throw new BaseException("missing switch");
@@ -300,12 +269,12 @@ public class TestController {
         switch (testParameter.docusafeLayer) {
             case TRANSACTIONAL:
                 stopWatch.start("endTransaction");
-                transactionalDocumentSafeServices[index].endTransaction(userIDAuth);
+                transactionalDocumentSafeServices.endTransaction(userIDAuth);
                 stopWatch.stop();
                 break;
             case CACHED_TRANSACTIONAL:
                 stopWatch.start("endTransaction");
-                cachedTransactionalDocumentSafeServices[index].endTransaction(userIDAuth);
+                cachedTransactionalDocumentSafeServices.endTransaction(userIDAuth);
                 stopWatch.stop();
                 break;
         }
@@ -370,20 +339,9 @@ public class TestController {
     }
 
     private void initServices() {
-        documentSafeService[0] = new DocumentSafeServiceImpl(WithCache.FALSE, plainExtendedStoreConnection);
-        documentSafeService[1] = new DocumentSafeServiceImpl(WithCache.TRUE, plainExtendedStoreConnection);
-        documentSafeService[2] = new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, plainExtendedStoreConnection);
-
-        nonTransactionalDocumentSafeServices[0] = new NonTransactionalDocumentSafeServiceImpl(new DocumentSafeServiceImpl(WithCache.FALSE, nonTxExtendedStoreConnection));
-        nonTransactionalDocumentSafeServices[1] = new NonTransactionalDocumentSafeServiceImpl(new DocumentSafeServiceImpl(WithCache.TRUE, nonTxExtendedStoreConnection));
-        nonTransactionalDocumentSafeServices[2] = new NonTransactionalDocumentSafeServiceImpl(new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, nonTxExtendedStoreConnection));
-
-        transactionalDocumentSafeServices[0] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.FALSE, txExtendedStoreConnection));
-        transactionalDocumentSafeServices[1] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, txExtendedStoreConnection));
-        transactionalDocumentSafeServices[2] = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, txExtendedStoreConnection));
-
-        cachedTransactionalDocumentSafeServices[0] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.FALSE, cachedTxExtendedStoreConnection)));
-        cachedTransactionalDocumentSafeServices[1] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE, cachedTxExtendedStoreConnection)));
-        cachedTransactionalDocumentSafeServices[2] = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(WithCache.TRUE_HASH_MAP, cachedTxExtendedStoreConnection)));
+        documentSafeService = new DocumentSafeServiceImpl(plainExtendedStoreConnection);
+        nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeServiceImpl(documentSafeService);
+        transactionalDocumentSafeServices = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService);
+        cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService), documentSafeService);
     }
 }

@@ -9,7 +9,6 @@ import com.google.gson.JsonSerializer;
 import org.adorsys.docusafe.business.types.UserID;
 import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.service.types.AccessType;
 import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.docusafe.service.types.DocumentKeyID;
 import org.adorsys.encobject.domain.ReadKeyPassword;
@@ -46,7 +45,6 @@ public class SpringfoxJsonToGsonAdapter implements JsonSerializer<Json> {
                 .registerTypeAdapter(UserID.class, new UserIDJsonAdapter())
                 .registerTypeAdapter(ReadKeyPassword.class, new ReadKeyPasswordJsonAdapter())
                 .registerTypeAdapter(DocumentFQN.class, new DocumentFQNJsonAdapter())
-                .registerTypeAdapter(AccessType.class, new AccessTypeJsonAdapter())
                 .registerTypeAdapter(DocumentDirectoryFQN.class, new DocumentDirectoryFQNJsonAdapter())
                 .registerTypeAdapter(DocumentContent.class, new DocumentContentJsonAdapter())
                 .create();

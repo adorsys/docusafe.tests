@@ -2,23 +2,25 @@ package org.adorsys.docusafe.rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.adorsys.docusafe.business.types.MoveType;
 import org.adorsys.docusafe.business.types.UserID;
 import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.rest.adapter.AccessTypeJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.BucketNameJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.DocumentContentJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.DocumentDirectoryFQNJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.DocumentFQNJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.DocumentKeyIDJsonAdapter;
+import org.adorsys.docusafe.rest.adapter.MoveTypeAdapter;
+import org.adorsys.docusafe.rest.adapter.OverwriteFlagAdapter;
 import org.adorsys.docusafe.rest.adapter.ReadKeyPasswordJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.SpringfoxJsonToGsonAdapter;
 import org.adorsys.docusafe.rest.adapter.UserIDJsonAdapter;
-import org.adorsys.docusafe.service.types.AccessType;
 import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.docusafe.service.types.DocumentKeyID;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.types.BucketName;
+import org.adorsys.encobject.types.OverwriteFlag;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
@@ -56,10 +58,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .registerTypeAdapter(UserID.class, new UserIDJsonAdapter())
                 .registerTypeAdapter(ReadKeyPassword.class, new ReadKeyPasswordJsonAdapter())
                 .registerTypeAdapter(DocumentFQN.class, new DocumentFQNJsonAdapter())
-                .registerTypeAdapter(AccessType.class, new AccessTypeJsonAdapter())
                 .registerTypeAdapter(DocumentDirectoryFQN.class, new DocumentDirectoryFQNJsonAdapter())
                 .registerTypeAdapter(DocumentContent.class, new DocumentContentJsonAdapter())
                 .registerTypeAdapter(Json.class, new SpringfoxJsonToGsonAdapter())
+                .registerTypeAdapter(OverwriteFlag.class , new OverwriteFlagAdapter())
+                .registerTypeAdapter(MoveType.class, new MoveTypeAdapter())
                 .create();
 
         GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter();

@@ -19,6 +19,8 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     showTable: boolean = true;
     task: string = "";
     singleThread: TestResultAndResponseTYPE = null;
+    numberOfRepeatsDone: number = 0;
+    numberOfThreadsThatAnswered: number = 0;
 
     @Input()
     private testCaseOwner: TestSuiteOwner;
@@ -30,14 +32,15 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         this.testCaseOwner.registerResultsHolder(this);
     }
 
-    add(response: TestResultAndResponseTYPE): void {
+    add(response: TestResultAndResponseTYPE, numberOfRepeatsDone:number , numberOfThreadsThatAnswered: number): void {
         let subsumedTest = this.viewForTests.testMap[response.request.dynamicClientInfo.testID];
+        this.numberOfRepeatsDone = numberOfRepeatsDone;
+        this.numberOfThreadsThatAnswered = numberOfThreadsThatAnswered;
         if (subsumedTest == null) {
             console.log("create new testresult for " + response.request.dynamicClientInfo.testID);
             subsumedTest = new SubsumedTestTYPE();
             subsumedTest.staticClientInfo = response.request.staticClientInfo;
             subsumedTest.testAction = response.request.testAction;
-            subsumedTest.cacheType = response.request.cacheType;
             subsumedTest.layer = response.request.docusafeLayer;
             subsumedTest.testID = response.request.dynamicClientInfo.testID;
             subsumedTest.repeats = new Array<TestResultAndResponseThreadsMapTYPE>(subsumedTest.staticClientInfo.numberOfRepeats);

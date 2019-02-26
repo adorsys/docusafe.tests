@@ -5,6 +5,8 @@
     </div>
     <div *ngIf="showTable">
         <label ngbButtonLabel class="btn-primary full" (click)="toggleView()">show as json</label>
+        numberOfRepeatsDone: {{numberOfRepeatsDone-1}}
+        numberOfThreadsAnwerded: {{numberOfThreadsThatAnswered-1}}<br>
 
         <div class="row no-margin">
             <div>
@@ -29,7 +31,6 @@
                                 {{singleThread.request.dynamicClientInfo.repetitionNumber}}/{{singleThread.request.staticClientInfo.numberOfRepeats}}
                             </td>
                             <td>{{singleThread.request.testAction}}<br>
-                                {{singleThread.request.cacheType}}<br>
                                 {{singleThread.request.docusafeLayer}}
                             </td>
                             <td>{{singleThread.result.totalTime}}</td>
@@ -55,7 +56,6 @@
                                     (mouseover)="showTask(singleThread.error)"
                                     (mouseout)="showTask('&nbsp;')">
                                 {{singleThread.request.testAction}}<br>
-                                {{singleThread.request.cacheType}}<br>
                                 {{singleThread.request.docusafeLayer}}
                             </td>
                         </tr>
@@ -78,7 +78,6 @@
                             <tr class="{{subsumedTest.testOk ? 'okline' : 'errorline'}}">
                                 <td>{{subsumedTest.lastReceivedDate}}</td>
                                 <td>{{subsumedTest.testAction}}<br>
-                                    {{subsumedTest.cacheType}}<br>
                                     {{subsumedTest.layer}}
                                 </td>
                                 <td>{{subsumedTest.averageTime}}</td>

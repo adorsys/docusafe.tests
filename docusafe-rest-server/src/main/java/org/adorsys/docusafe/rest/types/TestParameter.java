@@ -8,7 +8,6 @@ import org.adorsys.docusafe.business.types.UserID;
 public class TestParameter {
     public TestAction testAction;
     public DocusafeLayer docusafeLayer;
-    public CacheType cacheType;
     public UserID userid;
     public Integer numberOfDocuments;
     public Integer sizeOfDocument;
@@ -20,7 +19,6 @@ public class TestParameter {
         return "TestParameter{" +
                 "testAction=" + testAction +
                 ", docusafeLayer=" + docusafeLayer +
-                ", cacheType=" + cacheType +
                 ", userid=" + userid +
                 ", numberOfDocuments=" + numberOfDocuments +
                 ", sizeOfDocument=" + sizeOfDocument +
