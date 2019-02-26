@@ -8,6 +8,7 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 /**
  * Created by peter on 26.02.19 18:58.
  */
+/*
 @Configuration
 public class GsonSwaggerConfig {
 
@@ -18,3 +19,4 @@ public class GsonSwaggerConfig {
         return converter;
     }
 }
+*/
