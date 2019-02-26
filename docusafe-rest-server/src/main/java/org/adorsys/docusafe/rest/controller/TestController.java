@@ -1,4 +1,4 @@
-package org.adorsys.docusafe.rest;
+package org.adorsys.docusafe.rest.controller;
 
 import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;

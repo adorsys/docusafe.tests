@@ -1,4 +1,4 @@
-package org.adorsys.docusafe.rest;
+package org.adorsys.docusafe.rest.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

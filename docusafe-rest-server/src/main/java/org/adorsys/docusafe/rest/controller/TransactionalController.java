@@ -1,4 +1,4 @@
-package org.adorsys.docusafe.rest;
+package org.adorsys.docusafe.rest.controller;
 
 import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
@@ -8,6 +8,7 @@ import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
+import org.adorsys.docusafe.rest.configs.DocusafeConfig;
 import org.adorsys.docusafe.rest.types.DocumentInfo;
 import org.adorsys.docusafe.rest.types.ReadDocumentResult;
 import org.adorsys.docusafe.rest.types.TestAction;

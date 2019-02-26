@@ -1,4 +1,4 @@
-package org.adorsys.docusafe.rest;
+package org.adorsys.docusafe.rest.configs;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
