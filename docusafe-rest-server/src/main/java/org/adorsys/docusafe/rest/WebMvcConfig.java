@@ -11,6 +11,7 @@ import org.adorsys.docusafe.rest.adapter.DocumentContentJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.DocumentDirectoryFQNJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.DocumentFQNJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.DocumentKeyIDJsonAdapter;
+import org.adorsys.docusafe.rest.adapter.GsonAdapters;
 import org.adorsys.docusafe.rest.adapter.MoveTypeAdapter;
 import org.adorsys.docusafe.rest.adapter.OverwriteFlagAdapter;
 import org.adorsys.docusafe.rest.adapter.ReadKeyPasswordJsonAdapter;
@@ -45,30 +46,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(createGsonHttpMessageConverter());
-        RestTemplate r = new RestTemplate();
-        r.setMessageConverters(converters);
-    }
-
-    private GsonHttpMessageConverter createGsonHttpMessageConverter() {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(BucketName.class, new BucketNameJsonAdapter())
-                .registerTypeAdapter(DocumentKeyID.class, new DocumentKeyIDJsonAdapter())
-                .registerTypeAdapter(UserID.class, new UserIDJsonAdapter())
-                .registerTypeAdapter(ReadKeyPassword.class, new ReadKeyPasswordJsonAdapter())
-                .registerTypeAdapter(DocumentFQN.class, new DocumentFQNJsonAdapter())
-                .registerTypeAdapter(DocumentDirectoryFQN.class, new DocumentDirectoryFQNJsonAdapter())
-                .registerTypeAdapter(DocumentContent.class, new DocumentContentJsonAdapter())
-                .registerTypeAdapter(Json.class, new SpringfoxJsonToGsonAdapter())
-                .registerTypeAdapter(OverwriteFlag.class , new OverwriteFlagAdapter())
-                .registerTypeAdapter(MoveType.class, new MoveTypeAdapter())
-                .create();
-
         GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter();
-        gsonConverter.setGson(gson);
-
-        return gsonConverter;
+        gsonConverter.setGson(GsonAdapters.gson());
+        converters.add(gsonConverter);
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setMessageConverters(converters);
     }
 
     @Override

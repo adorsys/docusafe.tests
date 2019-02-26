@@ -33,21 +33,4 @@ public class SpringfoxJsonToGsonAdapter implements JsonSerializer<Json> {
         LOGGER.debug("PARSE:" + json.value());
         return parser.parse(json.value());
     }
-
-    public void b() {
-
-    }
-    public void a() {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(BucketName.class, new BucketNameJsonAdapter())
-                .registerTypeAdapter(DocumentKeyID.class, new DocumentKeyIDJsonAdapter())
-                .registerTypeAdapter(UserID.class, new UserIDJsonAdapter())
-                .registerTypeAdapter(ReadKeyPassword.class, new ReadKeyPasswordJsonAdapter())
-                .registerTypeAdapter(DocumentFQN.class, new DocumentFQNJsonAdapter())
-                .registerTypeAdapter(DocumentDirectoryFQN.class, new DocumentDirectoryFQNJsonAdapter())
-                .registerTypeAdapter(DocumentContent.class, new DocumentContentJsonAdapter())
-                .create();
-
-    }
 }

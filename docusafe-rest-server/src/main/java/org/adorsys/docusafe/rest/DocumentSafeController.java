@@ -258,6 +258,18 @@ public class DocumentSafeController {
         service.moveDocumentFromInbox(userIDAuth, moveRequest.getInboxFQN(), moveRequest.getDestFQN(), moveRequest.getOverwriteFlag());
     }
 
+    @RequestMapping(
+            value = "/inbox/list",
+            method = {RequestMethod.GET},
+            consumes = {APPLICATION_JSON},
+            produces = {APPLICATION_JSON}
+    )
+    public ResponseEntity moveDocumentFromInbox(@RequestHeader("userid") String userid,
+                                      @RequestHeader("password") String password) {
+        UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
+        return new ResponseEntity<>(service.listInbox(userIDAuth), HttpStatus.OK);
+    }
+
     private String getFQN(HttpServletRequest request) {
         final String path = request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE).toString();
         final String bestMatchingPattern = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE).toString();

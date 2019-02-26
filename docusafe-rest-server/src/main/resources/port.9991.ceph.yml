@@ -5,6 +5,6 @@ docusafe:
   storeconnection:
     amazons3:
       url: http://192.168.178.60:8000
-      accesskey: 3C7B1RE5U5BH0TVGSOJD
-      secretkey: tpBp1VtSyrvARCsrOYYDUJC4dsi0yPypn5pA5li9
+      accesskey: EAX8N7HNA28HLYEOHJUF
+      secretkey: Qa9RDffij2cDSxzQBPRz6Q3xwZNMb38nOpywH4CZ
       encryptionpassword: null
