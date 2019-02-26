@@ -1,38 +1,15 @@
 package org.adorsys.docusafe.rest.configs;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.adorsys.docusafe.business.types.MoveType;
-import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.rest.adapter.BucketNameJsonAdapter;
-import org.adorsys.docusafe.rest.adapter.DocumentContentJsonAdapter;
-import org.adorsys.docusafe.rest.adapter.DocumentDirectoryFQNJsonAdapter;
-import org.adorsys.docusafe.rest.adapter.DocumentFQNJsonAdapter;
-import org.adorsys.docusafe.rest.adapter.DocumentKeyIDJsonAdapter;
 import org.adorsys.docusafe.rest.adapter.GsonAdapters;
-import org.adorsys.docusafe.rest.adapter.MoveTypeAdapter;
-import org.adorsys.docusafe.rest.adapter.OverwriteFlagAdapter;
-import org.adorsys.docusafe.rest.adapter.ReadKeyPasswordJsonAdapter;
-import org.adorsys.docusafe.rest.adapter.SpringfoxJsonToGsonAdapter;
-import org.adorsys.docusafe.rest.adapter.UserIDJsonAdapter;
-import org.adorsys.docusafe.service.types.DocumentContent;
-import org.adorsys.docusafe.service.types.DocumentKeyID;
-import org.adorsys.encobject.domain.ReadKeyPassword;
-import org.adorsys.encobject.types.BucketName;
-import org.adorsys.encobject.types.OverwriteFlag;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.List;
 
@@ -49,8 +26,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter();
         gsonConverter.setGson(GsonAdapters.gson());
         converters.add(gsonConverter);
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setMessageConverters(converters);
     }
 
     @Override
