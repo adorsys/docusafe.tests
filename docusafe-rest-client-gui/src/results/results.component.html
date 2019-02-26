@@ -92,8 +92,7 @@
                                             <td>min</td>
                                             <ng-template ngFor let-threadIndex
                                                          [ngForOf]="createRange(subsumedTest.staticClientInfo.numberOfThreads)">
-                                                <td>tt
-                                                    {{threadIndex+1}}/{{subsumedTest.staticClientInfo.numberOfThreads}}
+                                                <td>{{threadIndex+1}}/{{subsumedTest.staticClientInfo.numberOfThreads}}
                                                 </td>
                                             </ng-template>
                                         </tr>

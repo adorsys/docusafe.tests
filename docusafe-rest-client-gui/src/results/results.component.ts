@@ -218,7 +218,12 @@ export class ResultsComponent implements OnInit, TestResultOwner {
     }
 
     createRange(size: number): number[] {
-        return Array.from(new Array(size), (val, index)=>index);
+        var a = new Array(size);
+        for (var i=0; i<size; i++) {
+            a[i] = i;
+        }
+        return a;
+        // return Array.from(new Array(size), (val, index)=>index);
     }
 
 }
