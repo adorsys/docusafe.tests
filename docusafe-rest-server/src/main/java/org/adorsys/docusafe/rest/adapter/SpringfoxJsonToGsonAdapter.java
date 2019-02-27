@@ -36,13 +36,26 @@ public class SpringfoxJsonToGsonAdapter implements JsonSerializer<Json> {
         String d = "\"ReadKeyPassword\":{\"type\":\"string\"}";
         String e = "\"UserID\":{\"type\":\"object\",\"properties\":{\"typeName\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}";
         String f = "\"UserID\":{\"type\":\"string\"}";
+        String g = "\"DocumentFQN\":{\"type\":\"object\",\"properties\":{\"documentDirectory\":{\"$ref\":\"#/definitions/DocumentDirectoryFQN\"},\"plainNameWithoutPath\":{\"$ref\":\"#/definitions/DocumentFQN\"},\"typeName\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}";
+        String h = "\"DocumentFQN\":{\"type\":\"string\"}";
+        String i = "\"DocumentContent\":{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"string\",\"format\":\"byte\"}}}";
+        String j = "\"DocumentContent\":{\"type\":\"string\"}";
         if (value.indexOf(c) == -1) {
             throw new BaseException("expected to find " + a);
         }
         if (value.indexOf(e) == -1) {
             throw new BaseException("expected to find " + a);
         }
+        if (value.indexOf(g) == -1) {
+            throw new BaseException("expected to find " + a);
+        }
+        if (value.indexOf(i) == -1) {
+            throw new BaseException("expected to find " + a);
+        }
         value = value.replace(c,d);
+        value = value.replace(e,f);
+        value = value.replace(g,h);
+        value = value.replace(i,j);
         value = value.replace(e,f);
         LOGGER.debug("after :" + value);
         return value;
