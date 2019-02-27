@@ -1,5 +1,6 @@
 package org.adorsys.docusafe.rest.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
@@ -109,6 +110,7 @@ public class DocumentSafeController {
     /**
      * -- byte orientiert --
      */
+    @ApiOperation(value="creates a document", notes = "The DocumentContent is a string but must be in HEX Digits, et \"AFFE\" is valid, but \"Hello\" isnt.")
     @RequestMapping(
             value = "/document",
             method = {RequestMethod.PUT},
@@ -121,6 +123,7 @@ public class DocumentSafeController {
         service.storeDocument(userIDAuth, dsDocument);
     }
 
+    @ApiOperation(value="reads a document", notes = "the swagger api does not allow a path variable after the document path yet - will be fixed soon.")
     @RequestMapping(
             value = "/document/**",
             method = {RequestMethod.GET},
