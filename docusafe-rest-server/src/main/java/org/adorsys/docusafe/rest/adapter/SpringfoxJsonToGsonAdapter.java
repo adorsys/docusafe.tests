@@ -1,18 +1,10 @@
 package org.adorsys.docusafe.rest.adapter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.service.types.DocumentContent;
-import org.adorsys.docusafe.service.types.DocumentKeyID;
-import org.adorsys.encobject.domain.ReadKeyPassword;
-import org.adorsys.encobject.types.BucketName;
+import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import springfox.documentation.spring.web.json.Json;
@@ -29,8 +21,30 @@ public class SpringfoxJsonToGsonAdapter implements JsonSerializer<Json> {
 
     @Override
     public JsonElement serialize(Json json, Type type, JsonSerializationContext context) {
-        final JsonParser parser = new JsonParser();
         LOGGER.debug("PARSE:" + json.value());
-        return parser.parse(json.value());
+        String s = petersSubstitution(json.value());
+        final JsonParser parser = new JsonParser();
+        JsonElement e = parser.parse(s);
+        return e;
+    }
+
+    private String petersSubstitution(String value) {
+        LOGGER.debug("before:" + value);
+        String a = "\"UserIDAuth\":{\"type\":\"object\",\"properties\":{\"readKeyPassword\":{\"$ref\":\"#/definitions/ReadKeyPassword\"},\"userID\":{\"$ref\":\"#/definitions/UserID\"}}}";
+        String b = "\"UserIDAuth\":{\"type\":\"object\",\"properties\":{\"readKeyPassword\":{\"type\":\"string\"},\"userID\":{\"type\":\"string\"}}}";
+        String c = "\"ReadKeyPassword\":{\"type\":\"object\",\"properties\":{\"typeName\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}";
+        String d = "\"ReadKeyPassword\":{\"type\":\"string\"}";
+        String e = "\"UserID\":{\"type\":\"object\",\"properties\":{\"typeName\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}";
+        String f = "\"UserID\":{\"type\":\"string\"}";
+        if (value.indexOf(c) == -1) {
+            throw new BaseException("expected to find " + a);
+        }
+        if (value.indexOf(e) == -1) {
+            throw new BaseException("expected to find " + a);
+        }
+        value = value.replace(c,d);
+        value = value.replace(e,f);
+        LOGGER.debug("after :" + value);
+        return value;
     }
 }

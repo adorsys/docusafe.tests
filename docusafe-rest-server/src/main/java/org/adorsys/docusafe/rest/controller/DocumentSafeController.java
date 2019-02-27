@@ -86,9 +86,7 @@ public class DocumentSafeController {
 
     @RequestMapping(
             value = "/internal/user/{UserID}",
-            method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}
+            method = {RequestMethod.GET}
     )
     public
     @ResponseBody
