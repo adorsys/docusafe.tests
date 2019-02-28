@@ -21,42 +21,4 @@ public class DocusafeConfig {
         LOGGER.info("return a new " + CachedTransactionalDocumentSafeService.class.getName());
         return factory.getCachedTransactionalDocumentSafeServiceWithSubdir(null);
     }
-
-    @Bean
-    WrapperA wrapperA(SpringCachedTransactionalDocusafeServiceFactory factory) {
-        return new WrapperA(factory.getCachedTransactionalDocumentSafeServiceWithSubdir("folderA"));
-    }
-
-    @Bean
-    WrapperB wrapperB(SpringCachedTransactionalDocusafeServiceFactory factory) {
-        return new WrapperB(factory.getCachedTransactionalDocumentSafeServiceWithSubdir("folderB"));
-    }
-
-    public static interface CachedTransactionalDocumentSafeServiceWrapper {
-        CachedTransactionalDocumentSafeService get();
-    }
-
-    public static class WrapperA implements CachedTransactionalDocumentSafeServiceWrapper {
-        private final CachedTransactionalDocumentSafeService service;
-        public WrapperA(CachedTransactionalDocumentSafeService service) {
-            this.service = service;
-        }
-
-        @Override
-        public CachedTransactionalDocumentSafeService get() {
-            return service;
-        }
-    }
-
-    public static class WrapperB implements CachedTransactionalDocumentSafeServiceWrapper {
-        private final CachedTransactionalDocumentSafeService service;
-        public WrapperB(CachedTransactionalDocumentSafeService service) {
-            this.service = service;
-        }
-
-        @Override
-        public CachedTransactionalDocumentSafeService get() {
-            return service;
-        }
-    }
 }

@@ -8,7 +8,6 @@ import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
 import org.adorsys.docusafe.business.types.complex.UserIDAuth;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
-import org.adorsys.docusafe.rest.configs.DocusafeConfig;
 import org.adorsys.docusafe.rest.types.DocumentInfo;
 import org.adorsys.docusafe.rest.types.ReadDocumentResult;
 import org.adorsys.docusafe.rest.types.TestAction;
@@ -43,10 +42,6 @@ public class TransactionalController {
 
     @Autowired
     CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeService1;
-    @Autowired
-    DocusafeConfig.WrapperA cachedTransactionalDocumentSafeService2;
-    @Autowired
-    DocusafeConfig.WrapperB cachedTransactionalDocumentSafeService3;
 
     @CrossOrigin
     @RequestMapping(

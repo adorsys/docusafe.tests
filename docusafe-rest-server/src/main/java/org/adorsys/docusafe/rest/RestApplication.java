@@ -1,8 +1,6 @@
 package org.adorsys.docusafe.rest;
 
-import org.adorsys.cryptoutils.exceptions.BaseException;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
-import org.adorsys.cryptoutils.storeconnectionfactory.ReadArguments;
 import org.adorsys.cryptoutils.utils.ShowProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -54,18 +52,10 @@ public class RestApplication {
                             throw BaseExceptionHandler.handle(e);
                         }
                     } else {
-                        LOGGER.error("Parameter " + arg + " is unknown.");
+                        LOGGER.error("Parameter " + arg + " is unknown and will be ignored.");
                         LOGGER.error("Knwon Parameters are: " +
                                 "-TurnOffEncPolicy, " +
-                                "-EncOff, " +
-                                "-ERASE_DATABASE, " +
-                                ReadArguments.FILESYSTEM_ARG + ", " +
-                                ReadArguments.MONGO_ARG + " ");
-                        LOGGER.error("The StoreConnection to choose can be supplied via Systemproperties too :" +
-                                ReadArguments.FILESYSTEM + ", " +
-                                ReadArguments.MONGO + " ");
-
-                        throw new BaseException("Parameter " + arg + " is unknown.");
+                                "-EncOff ");
                     }
                 }
         );

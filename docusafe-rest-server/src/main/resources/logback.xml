@@ -7,6 +7,7 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
         </encoder>
     </appender>
+    <!--
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>docusafe-rest-server-log-file.log</file>
         <append>true</append>
@@ -23,36 +24,33 @@
             <MaxFileSize>100MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
+-->
 
 
+    <logger name="org.adorsys.cryptoutils.storeconnectionfactory.ReadArguments" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+<!--        <appender-ref ref="FILE" /> -->
+    </logger>
     <logger name="org.adorsys.docusafe.rest.controller.DocumentSafeController" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </logger>
 
     <logger name="org.adorsys.docusafe" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </logger>
 
     <logger name="org.adorsys.cryptoutils" level="info" additivity="false">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </logger>
     <logger name="org.adorsys.encobject" level="info" additivity="false">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </logger>
-
-
     <logger name="org.adorsys.cryptoutils.extendedstoreconnection.impls.pathencryption" level="trace" additivity="false">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </logger>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </root>
 
 
