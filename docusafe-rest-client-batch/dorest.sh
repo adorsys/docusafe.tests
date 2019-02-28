@@ -100,13 +100,19 @@ function basictest() {
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/inbox/in --data '{
 	"receivingUser": "francis",
     "sourceFQN": "deeper/and/deeper/README.txt",
-    "inboxFQN": "deeper/newreame.txt",
+    "inboxFQN": "deeper/newName.txt",
     "moveType": "KEEP_COPY"
 	}'
 
+	print "francis lists the invox"
+	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/inbox/list 
+
+	print "francis checks that newName.txt exists in the inbox"
+	 tail curl.log | grep -A 1 "\"files\":" | tail -n 1 | grep newName.txt
+
 	print "francis verschiebt aus inbox"
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/inbox/out --data '{
-    "inboxFQN": "deeper/newreame.txt",
+    "inboxFQN": "deeper/newName.txt",
     "destFQN": "deeper/and/deeper/README.txt",
     "overwriteFlag" : "TRUE"
 	}'
