@@ -1,7 +1,6 @@
-package org.adorsys.docusafe.rest;
+package org.adorsys.docusafe.rest.configs;
 
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
-import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
 import org.adorsys.docusafe.spring.annotation.UseDocusafeSpringConfiguration;
 import org.adorsys.docusafe.spring.factory.SpringCachedTransactionalDocusafeServiceFactory;
 import org.slf4j.Logger;

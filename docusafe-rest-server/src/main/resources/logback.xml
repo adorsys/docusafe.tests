@@ -24,6 +24,12 @@
         </triggeringPolicy>
     </appender>
 
+
+    <logger name="org.adorsys.docusafe.rest.controller.DocumentSafeController" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </logger>
+
     <logger name="org.adorsys.docusafe" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />

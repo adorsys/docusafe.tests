@@ -1,5 +1,6 @@
-package org.adorsys.docusafe.rest;
+package org.adorsys.docusafe.rest.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
@@ -86,9 +87,7 @@ public class DocumentSafeController {
 
     @RequestMapping(
             value = "/internal/user/{UserID}",
-            method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}
+            method = {RequestMethod.GET}
     )
     public
     @ResponseBody
@@ -111,6 +110,7 @@ public class DocumentSafeController {
     /**
      * -- byte orientiert --
      */
+    @ApiOperation(value="creates a document", notes = "The DocumentContent is a string but must be in HEX Digits, et \"AFFE\" is valid, but \"Hello\" isnt.")
     @RequestMapping(
             value = "/document",
             method = {RequestMethod.PUT},
@@ -123,6 +123,7 @@ public class DocumentSafeController {
         service.storeDocument(userIDAuth, dsDocument);
     }
 
+    @ApiOperation(value="reads a document", notes = "the swagger api does not allow a path variable after the document path yet - will be fixed soon.")
     @RequestMapping(
             value = "/document/**",
             method = {RequestMethod.GET},
@@ -256,6 +257,18 @@ public class DocumentSafeController {
                                      @RequestBody MoveFromInbox moveRequest) {
         UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
         service.moveDocumentFromInbox(userIDAuth, moveRequest.getInboxFQN(), moveRequest.getDestFQN(), moveRequest.getOverwriteFlag());
+    }
+
+    @RequestMapping(
+            value = "/inbox/list",
+            method = {RequestMethod.GET},
+            consumes = {APPLICATION_JSON},
+            produces = {APPLICATION_JSON}
+    )
+    public ResponseEntity moveDocumentFromInbox(@RequestHeader("userid") String userid,
+                                      @RequestHeader("password") String password) {
+        UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
+        return new ResponseEntity<>(service.listInbox(userIDAuth), HttpStatus.OK);
     }
 
     private String getFQN(HttpServletRequest request) {
