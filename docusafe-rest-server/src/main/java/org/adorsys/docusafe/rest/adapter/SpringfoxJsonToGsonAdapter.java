@@ -29,6 +29,7 @@ public class SpringfoxJsonToGsonAdapter implements JsonSerializer<Json> {
         String value = json.value();
         value = replaceClassAsString(value, ReadKeyPassword.class);
         value = replaceClassAsString(value, DocumentFQN.class);
+        value = replaceClassAsString(value, DocumentDirectoryFQN.class);
         value = replaceClassAsString(value, UserID.class);
         value = replaceClassAsString(value, DocumentContent.class);
         final JsonParser parser = new JsonParser();

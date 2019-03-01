@@ -16,6 +16,7 @@ import org.adorsys.docusafe.spring.annotation.UseDocusafeSpringConfiguration;
 import org.adorsys.encobject.complextypes.BucketPath;
 import org.adorsys.encobject.domain.ReadKeyPassword;
 import org.adorsys.encobject.service.api.ExtendedStoreConnection;
+import org.adorsys.encobject.types.ListRecursiveFlag;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
@@ -123,22 +125,20 @@ public class DocumentSafeController {
         service.storeDocument(userIDAuth, dsDocument);
     }
 
-    @ApiOperation(value="reads a document", notes = "the swagger api does not allow a path variable after the document path yet - will be fixed soon.")
     @RequestMapping(
-            value = "/document/**",
+            value = "/document",
             method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
     public
     @ResponseBody
     ResponseEntity<DSDocument> readDocument(@RequestHeader("userid") String userid,
                                             @RequestHeader("password") String password,
-                                            HttpServletRequest request
+                                            @RequestParam("documentFQN") String documentFQNString
     ) {
-        LOGGER.debug("get document request arrived");
+        DocumentFQN documentFQN = new DocumentFQN(documentFQNString);
+        LOGGER.debug("get document request arrived " + documentFQN);
         UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
-        DocumentFQN documentFQN = new DocumentFQN(getFQN(request));
         if (!service.documentExists(userIDAuth, documentFQN)) {
             LOGGER.debug("document " + documentFQN + " does not exist");
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -157,7 +157,7 @@ public class DocumentSafeController {
     )
     public void storeDocumentStream(@RequestHeader("userid") String userid,
                                     @RequestHeader("password") String password,
-                                    @RequestHeader("documentFQN") String documentFQNString,
+                                    @RequestParam("documentFQN") String documentFQNString,
                                     InputStream inputStream) {
         UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
         DocumentFQN documentFQN = new DocumentFQN(documentFQNString);
@@ -166,20 +166,20 @@ public class DocumentSafeController {
     }
 
     @RequestMapping(
-            value = "/documentstream/**",
+            value = "/documentstream",
             method = {RequestMethod.GET},
             produces = {APPLICATION_OCTET_STREAM}
 
     )
     public ResponseEntity readDocumentStream(@RequestHeader("userid") String userid,
                                              @RequestHeader("password") String password,
-                                             HttpServletRequest request,
+                                             @RequestParam("documentFQN") String documentFQNString,
                                              HttpServletResponse response
     ) {
         try {
-            LOGGER.debug("get stream request arrived1");
+            DocumentFQN documentFQN = new DocumentFQN(documentFQNString);
+            LOGGER.debug("get stream request arrived " + documentFQNString);
             UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
-            DocumentFQN documentFQN = new DocumentFQN(getFQN(request));
             LOGGER.debug("received:" + userIDAuth + " and " + documentFQN);
 
             if (!service.documentExists(userIDAuth, documentFQN)) {
@@ -205,19 +205,18 @@ public class DocumentSafeController {
     /**
      * -- content art unabhängig --
      */
+    @ApiOperation(value="deletes a document or a whole path", notes = "If the documentFQN ends with a slash (/) then it is assumend to delete a path with the name of the documentFQN. Otherwise it is expected to be a single Documents path")
     @RequestMapping(
-            value = "/document/**",
+            value = "/document",
             method = {RequestMethod.DELETE},
-            consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
     public void destroyDocument(@RequestHeader("userid") String userid,
                                 @RequestHeader("password") String password,
-                                HttpServletRequest request
+                                @RequestParam("documentFQN") String pathToDelete
     ) {
         LOGGER.debug("destroy document request arrived");
         UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
-        String pathToDelete = getFQN(request);
         if (pathToDelete.endsWith(BucketPath.BUCKET_SEPARATOR)) {
             DocumentDirectoryFQN documentDirectoryFQN = new DocumentDirectoryFQN(pathToDelete.substring(0,pathToDelete.length()-1));
             LOGGER.debug("destroy document folder " + documentDirectoryFQN);
@@ -228,6 +227,20 @@ public class DocumentSafeController {
         LOGGER.debug("destroy document request finished");
     }
 
+
+    @RequestMapping(
+            value = "/document/list",
+            method = {RequestMethod.GET},
+            produces = {APPLICATION_JSON}
+    )
+    public ResponseEntity listDocuments(@RequestHeader("userid") String userid,
+                                        @RequestHeader("password") String password,
+                                        @RequestParam("documentDirectoryFQN") String documentDirectoryFQNString,
+                                        @RequestParam("listRecursiveFlag") ListRecursiveFlag listRecursiveFlag) {
+        UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
+        DocumentDirectoryFQN documentDirectoryFQN = new DocumentDirectoryFQN(documentDirectoryFQNString);
+        return new ResponseEntity<>(service.list(userIDAuth, documentDirectoryFQN, listRecursiveFlag), HttpStatus.OK);
+    }
 
     /**
      * INBOX STUFF
@@ -262,7 +275,6 @@ public class DocumentSafeController {
     @RequestMapping(
             value = "/inbox/list",
             method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
     public ResponseEntity moveDocumentFromInbox(@RequestHeader("userid") String userid,
