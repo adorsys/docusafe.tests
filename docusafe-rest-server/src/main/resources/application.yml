@@ -1,7 +1,7 @@
 server:
   port: 9999
 
-docusafe:
+adfadocusafe:
   storeconnection:
     filesystem:
       basedir: affe

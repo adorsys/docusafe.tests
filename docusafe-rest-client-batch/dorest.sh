@@ -76,7 +76,7 @@ function basictest() {
 	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user/francis
 
 	print "peter gets README.txt of home dir"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22README.txt%22 >> curl.log
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=README.txt >> curl.log
 
 	print "peter saves deep document"
 	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document --data '{
@@ -91,7 +91,7 @@ function basictest() {
 	}'
 
 	print "peter gets deep document"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22deeper/and/deeper/README.txt%22"
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME.txt"
 
 	print "create user francis"
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}' 
@@ -118,29 +118,29 @@ function basictest() {
 	}'
 
 	print "francis liest neues document"
-	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/document/%22/deeper/and/deeper/README.txt%22
+	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME.txt
 
 
 	print "peter gets deep document 1"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/README.txt%22
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME.txt
 
 	print "peter gets deep document 2"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/README2.txt%22
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME2.txt
 
 	print "peter deletes deep document 2"
-	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/README2.txt%22
+	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME2.txt
 
 	print "peter tries to get deep document 2"
-	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/README2.txt%22
+	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME2.txt
 
 	print "peter still gets deep document 1"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/README.txt%22
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME.txt
 
 	print "peter deletes deep folder" 
-	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/%22
+	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper/
 
 	print "peter trys to get deep document 1"
-	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document/%22deeper/and/deeper/README.txt%22
+	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2FREADME.txt
 
 	if [[ filesystem -eq 1 ]]
 	then
@@ -149,19 +149,19 @@ function basictest() {
 	fi
 
 	print "peter gets README.txt of home dir"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22README.txt%22" >> curl.log
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" >> curl.log
 
 	print "peter gets README.txt as a stream of home dir"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream/%22README.txt%22" >> curl.log
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream?documentFQN=README.txt" >> curl.log
 
 	print "peter deletes README.txt of home dir"
-	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22README.txt%22" >> curl.log
+	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" >> curl.log
 
 	print "peter expects 404 for  README.txt of home dir"
-	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document/%22README.txt%22" >> curl.log
+	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" >> curl.log
 
 	print "peter expects 404 for README.txt as a stream of home dir"
-	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream/%22README.txt%22" >> curl.log
+	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream?documentFQN=README.txt" >> curl.log
 
 
 	print "EVERYTHING WENT FINE so FAR"
