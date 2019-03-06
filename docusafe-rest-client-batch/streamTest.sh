@@ -26,7 +26,7 @@ do
 	cat $file >> $localfile
 	let i=i+1
 done
-size=$(ls -sk $localfile | cut -f  2 -d " ")
+size=$(ls -sk $localfile | cut -f  1 -d " ")
 
 print "$(date) create user"
 java  -DBASE_URL=${BASE_URL} -jar $file -cu

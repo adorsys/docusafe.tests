@@ -78,30 +78,12 @@ public class DocumentsafeRestClient {
         LOGGER.debug("User " + userID + "deleted: " + response.getStatus());
     }
 
-    public void readDocument(String userID, String password, String fqn, String filenameToSave) {
-        LOGGER.debug("lese nun bytes für " + fqn);
-        try {
-            ReadDocumentResponse readDocument = client.target(baseuri)
-                    .path(READ_DOCUMENT)
-                    .path("\"" + fqn + "\"")
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .header(USER_ID, userID)
-                    .header(PASSWORD, password)
-                    .header("Content-Type", MediaType.APPLICATION_JSON)
-                    .get(ReadDocumentResponse.class);
-
-            FileUtils.writeByteArrayToFile(new File(filenameToSave), HexUtil.convertHexStringToBytes(readDocument.getDocumentContent()));
-        } catch (IOException e) {
-            throw BaseExceptionHandler.handle(e);
-        }
-    }
-
     public void readDocumentStream(String userID, String password, String fqn, String filenameToSave) {
-        LOGGER.debug("lese nun stream für " + fqn);
+        LOGGER.debug("read stream");
         try {
             InputStream inputStream = client.target(baseuri)
                     .path(READ_DOCUMENT_STREAM)
-                    .path("\"" + fqn + "\"")
+                    .queryParam(DOCUMENT_FQN, fqn)
                     .request(MediaType.APPLICATION_OCTET_STREAM_TYPE)
                     .header(USER_ID, userID)
                     .header(PASSWORD, password)
@@ -119,19 +101,38 @@ public class DocumentsafeRestClient {
     }
 
     public void writeDocumentStream(String userID, String password, String fqn, InputStream in, long size) {
-        LOGGER.debug("verschicke nun " + size + " bytes");
+        LOGGER.debug("write stream with whole size of " + size);
         String contentDisposition = "attachment; filename=\"" + fqn + "\"";
         Response response = client.target(baseuri)
                 .path(WRITE_DOCUMENT_STREAM1)
+                .queryParam(DOCUMENT_FQN, fqn)
                 .request(MediaType.APPLICATION_OCTET_STREAM_TYPE)
                 .header("Content-Disposition", contentDisposition)
                 .header(USER_ID, userID)
                 .header(PASSWORD, password)
-                .header(DOCUMENT_FQN, fqn)
                 .put(Entity.entity(in, MediaType.APPLICATION_OCTET_STREAM_TYPE));
     }
 
+    public void readDocument(String userID, String password, String fqn, String filenameToSave) {
+        LOGGER.debug("read block of bytes for " + fqn);
+        try {
+            ReadDocumentResponse readDocument = client.target(baseuri)
+                    .path(READ_DOCUMENT)
+                    .queryParam(DOCUMENT_FQN, fqn)
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .header(USER_ID, userID)
+                    .header(PASSWORD, password)
+                    .header("Content-Type", MediaType.APPLICATION_JSON)
+                    .get(ReadDocumentResponse.class);
+
+            FileUtils.writeByteArrayToFile(new File(filenameToSave), HexUtil.convertHexStringToBytes(readDocument.getDocumentContent()));
+        } catch (IOException e) {
+            throw BaseExceptionHandler.handle(e);
+        }
+    }
+
     public void writeDocument(String userID, String password, String fqn, byte[] data) {
+        LOGGER.debug("write block of bytes for " + fqn);
         WriteDocumentRequest writeDocumentRequest = new WriteDocumentRequest();
         writeDocumentRequest.setDocumentFQN(fqn);
         writeDocumentRequest.setDocumentContent(HexUtil.convertBytesToHexString(data));
