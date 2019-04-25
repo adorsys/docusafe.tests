@@ -75,8 +75,14 @@ function basictest() {
 	print "check user francis does not exist yet"
 	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user/francis
 
+	print "peter saves README.txt"
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document --data '{
+	  "documentFQN": "README.txt",
+	  "documentContent": "AFFE"
+	}' 
+
 	print "peter gets README.txt of home dir"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=README.txt >> curl.log
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document?documentFQN=README.txt 
 
 	print "peter saves deep document"
 	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document --data '{

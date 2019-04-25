@@ -3,8 +3,9 @@ package org.adorsys.docusafe.rest.adapter;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import org.adorsys.docusafe.service.api.types.UserID;
+
 import java.io.IOException;
-import org.adorsys.docusafe.business.types.UserID;
 
 /**
  * Created by peter on 22.01.2018 at 20:05:52.

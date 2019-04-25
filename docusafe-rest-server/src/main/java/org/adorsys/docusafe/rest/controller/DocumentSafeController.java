@@ -1,22 +1,22 @@
 package org.adorsys.docusafe.rest.controller;
 
+import de.adorsys.common.exceptions.BaseExceptionHandler;
+import de.adorsys.dfs.connection.api.complextypes.BucketPath;
+import de.adorsys.dfs.connection.api.service.api.DFSConnection;
+import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
 import io.swagger.annotations.ApiOperation;
-import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
-import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DSDocument;
-import org.adorsys.docusafe.business.types.complex.DSDocumentStream;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.business.types.complex.UserIDAuth;
+import org.adorsys.docusafe.business.types.DSDocument;
+import org.adorsys.docusafe.business.types.DSDocumentStream;
+import org.adorsys.docusafe.business.types.DocumentDirectoryFQN;
+import org.adorsys.docusafe.business.types.DocumentFQN;
 import org.adorsys.docusafe.rest.types.MoveFromInbox;
 import org.adorsys.docusafe.rest.types.MoveToInboxOfUser;
+import org.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
+import org.adorsys.docusafe.service.api.types.UserID;
+import org.adorsys.docusafe.service.api.types.UserIDAuth;
 import org.adorsys.docusafe.spring.annotation.UseDocusafeSpringConfiguration;
-import org.adorsys.encobject.complextypes.BucketPath;
-import org.adorsys.encobject.domain.ReadKeyPassword;
-import org.adorsys.encobject.service.api.ExtendedStoreConnection;
-import org.adorsys.encobject.types.ListRecursiveFlag;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class DocumentSafeController {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentSafeController.class);
 
     @Autowired
-    private ExtendedStoreConnection connection;
+    private DFSConnection connection;
     private DocumentSafeService service;
 
     @PostConstruct
@@ -269,7 +269,7 @@ public class DocumentSafeController {
                                      @RequestHeader("password") String password,
                                      @RequestBody MoveFromInbox moveRequest) {
         UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
-        service.moveDocumentFromInbox(userIDAuth, moveRequest.getInboxFQN(), moveRequest.getDestFQN(), moveRequest.getOverwriteFlag());
+        service.moveDocumentFromInbox(userIDAuth, moveRequest.getInboxFQN(), moveRequest.getDestFQN());
     }
 
     @RequestMapping(

@@ -1,9 +1,8 @@
 package org.adorsys.docusafe.rest.types;
 
+import org.adorsys.docusafe.business.types.DocumentFQN;
 import org.adorsys.docusafe.business.types.MoveType;
-import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
+import org.adorsys.docusafe.service.api.types.UserID;
 
 /**
  * Created by peter on 29.01.18 at 20:17.

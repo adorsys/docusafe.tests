@@ -78,14 +78,9 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     destinationUrls: string[] = [
         "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
-        "http://localhost:9999",
         "http://localhost:9991",
-        "http://localhost:9992",
-        "http://localhost:9993",
-        "http://localhost:9994",
-        "http://localhost:9995",
     ];
-    destinationUrl: string = this.destinationUrls[4];
+    destinationUrl: string = this.destinationUrls[0];
     testactions: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",

@@ -1,1 +1,0 @@
-mvn -Dspring.config.location=file:./src/main/resources/port.9992.mongo.yml spring-boot:run

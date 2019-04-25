@@ -1,7 +1,7 @@
 package org.adorsys.docusafe.rest;
 
-import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
-import org.adorsys.cryptoutils.utils.ShowProperties;
+import de.adorsys.common.exceptions.BaseExceptionHandler;
+import de.adorsys.common.utils.ShowProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

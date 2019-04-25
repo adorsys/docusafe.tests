@@ -3,8 +3,7 @@ package org.adorsys.docusafe.rest.adapter;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-import org.adorsys.encobject.types.BucketName;
+import de.adorsys.dfs.connection.api.types.BucketName;
 
 import java.io.IOException;
 

@@ -1,6 +1,6 @@
 package org.adorsys.docusafe.rest.adapter;
 
-import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
+import de.adorsys.common.exceptions.BaseExceptionHandler;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.slf4j.Logger;

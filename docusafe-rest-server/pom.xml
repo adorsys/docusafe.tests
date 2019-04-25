@@ -27,23 +27,16 @@
 
     <dependencies>
 
-        <!-- first to make sure, the correct cryptutils is included -->
         <dependency>
-            <groupId>de.adorsys.cryptoutils</groupId>
-            <artifactId>storeconnectionfactory</artifactId>
-            <version>${crypt.version}</version>
+            <groupId>de.adorsys</groupId>
+            <artifactId>dfs-connection-impl-factory</artifactId>
+            <version>${dfs.connection.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.cryptoutils</groupId>
-            <artifactId>encobject</artifactId>
-            <version>${crypt.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.adorsys.cryptoutils</groupId>
-            <artifactId>basetypes</artifactId>
-            <version>${crypt.version}</version>
+            <groupId>de.adorsys</groupId>
+            <artifactId>common-basetypes</artifactId>
+            <version>${common.basetypes.version}</version>
         </dependency>
 
         <!-- Spring boot -->
@@ -245,22 +238,6 @@
                         <weaveDependency>
                             <groupId>de.adorsys</groupId>
                             <artifactId>docusafe-business</artifactId>
-                        </weaveDependency>
-                        <weaveDependency>
-                            <groupId>de.adorsys.cryptoutils</groupId>
-                            <artifactId>storeconnection-api</artifactId>
-                        </weaveDependency>
-                        <weaveDependency>
-                            <groupId>de.adorsys.cryptoutils</groupId>
-                            <artifactId>amazons3storeconnection</artifactId>
-                        </weaveDependency>
-                        <weaveDependency>
-                            <groupId>de.adorsys.cryptoutils</groupId>
-                            <artifactId>filesystemstoreconnection</artifactId>
-                        </weaveDependency>
-                        <weaveDependency>
-                            <groupId>de.adorsys.cryptoutils</groupId>
-                            <artifactId>mongodbstoreconnection</artifactId>
                         </weaveDependency>
                     </weaveDependencies>
                 </configuration>

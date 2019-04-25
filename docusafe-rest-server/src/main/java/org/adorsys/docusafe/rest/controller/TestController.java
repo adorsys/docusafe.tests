@@ -1,14 +1,13 @@
 package org.adorsys.docusafe.rest.controller;
 
-import org.adorsys.cryptoutils.exceptions.BaseException;
-import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
+import de.adorsys.common.exceptions.BaseException;
+import de.adorsys.common.exceptions.BaseExceptionHandler;
+import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import org.adorsys.docusafe.business.DocumentSafeService;
 import org.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
-import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DSDocument;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.business.types.complex.UserIDAuth;
+import org.adorsys.docusafe.business.types.DSDocument;
+import org.adorsys.docusafe.business.types.DocumentDirectoryFQN;
+import org.adorsys.docusafe.business.types.DocumentFQN;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
 import org.adorsys.docusafe.rest.impl.SimpleRequestMemoryContextImpl;
@@ -18,14 +17,15 @@ import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.rest.types.TestUtil;
 import org.adorsys.docusafe.rest.types.TestsResult;
-import org.adorsys.docusafe.spring.factory.SpringExtendedStoreConnectionFactory;
+import org.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
+import org.adorsys.docusafe.service.api.types.UserID;
+import org.adorsys.docusafe.service.api.types.UserIDAuth;
+import org.adorsys.docusafe.spring.factory.SpringDFSConnectionFactory;
 import org.adorsys.docusafe.transactional.NonTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.RequestMemoryContext;
 import org.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.impl.NonTransactionalDocumentSafeServiceImpl;
 import org.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceImpl;
-import org.adorsys.encobject.domain.ReadKeyPassword;
-import org.adorsys.encobject.service.api.ExtendedStoreConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +60,12 @@ public class TestController {
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
 
     @Autowired
-    SpringExtendedStoreConnectionFactory factory;
+    SpringDFSConnectionFactory factory;
 
-    private ExtendedStoreConnection plainExtendedStoreConnection = null;
-    private ExtendedStoreConnection nonTxExtendedStoreConnection = null;
-    private ExtendedStoreConnection txExtendedStoreConnection = null;
-    private ExtendedStoreConnection cachedTxExtendedStoreConnection = null;
+    private DFSConnection plainDFSConnection = null;
+    private DFSConnection nonTxDFSConnection = null;
+    private DFSConnection txDFSConnection = null;
+    private DFSConnection cachedTxDFSConnection = null;
 
 
     @PostConstruct
@@ -75,10 +75,10 @@ public class TestController {
             throw new BaseException("did not expect to get more than one controller");
         }
 
-        plainExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("plainfolder");
-        nonTxExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("nontxfolder");
-        txExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("txfolder");
-        cachedTxExtendedStoreConnection = factory.getExtendedStoreConnectionWithSubDir("cachedtxfolder");
+        plainDFSConnection = factory.getDFSConnectionWithSubDir("plainfolder");
+        nonTxDFSConnection = factory.getDFSConnectionWithSubDir("nontxfolder");
+        txDFSConnection = factory.getDFSConnectionWithSubDir("txfolder");
+        cachedTxDFSConnection = factory.getDFSConnectionWithSubDir("cachedtxfolder");
 
         documentSafeService = null;
         nonTransactionalDocumentSafeServices = null;
@@ -99,7 +99,7 @@ public class TestController {
     @ResponseBody
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
-        testsResult.extendedStoreConnection = plainExtendedStoreConnection.getClass().getName();
+        testsResult.dfsConnectionString = plainDFSConnection.getClass().getName();
         LOGGER.info("START TEST " + testParameter.testAction);
         try {
             switch (testParameter.testAction) {
@@ -171,7 +171,7 @@ public class TestController {
                         testResultCreatedDocument.size = testParameter.sizeOfDocument;
                         createdDocuments.add(testResultCreatedDocument);
                     }
-                    DSDocument dsDocument = new DSDocument(documentFQN, TestUtil.createDocumentContent(testParameter.sizeOfDocument, documentFQN, uniqueToken), null);
+                    DSDocument dsDocument = new DSDocument(documentFQN, TestUtil.createDocumentContent(testParameter.sizeOfDocument, documentFQN, uniqueToken));
                     stopWatch.start("create document " + documentFQN.getValue());
                     switch (testParameter.docusafeLayer) {
                         case DOCUSAFE_BASE:
@@ -292,10 +292,10 @@ public class TestController {
             case DELETE_DATABASE_AND_CACHES: {
                 LOGGER.info("delete database");
                 stopWatch.start("delete database");
-                plainExtendedStoreConnection.listAllBuckets().forEach(b -> plainExtendedStoreConnection.deleteContainer(b));
-                nonTxExtendedStoreConnection.listAllBuckets().forEach(b -> nonTxExtendedStoreConnection.deleteContainer(b));
-                txExtendedStoreConnection.listAllBuckets().forEach(b -> txExtendedStoreConnection.deleteContainer(b));
-                cachedTxExtendedStoreConnection.listAllBuckets().forEach(b -> cachedTxExtendedStoreConnection.deleteContainer(b));
+                plainDFSConnection.listAllBuckets().forEach(b -> plainDFSConnection.deleteContainer(b));
+                nonTxDFSConnection.listAllBuckets().forEach(b -> nonTxDFSConnection.deleteContainer(b));
+                txDFSConnection.listAllBuckets().forEach(b -> txDFSConnection.deleteContainer(b));
+                cachedTxDFSConnection.listAllBuckets().forEach(b -> cachedTxDFSConnection.deleteContainer(b));
                 stopWatch.stop();
                 break;
             }
@@ -339,7 +339,7 @@ public class TestController {
     }
 
     private void initServices() {
-        documentSafeService = new DocumentSafeServiceImpl(plainExtendedStoreConnection);
+        documentSafeService = new DocumentSafeServiceImpl(plainDFSConnection);
         nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeServiceImpl(documentSafeService);
         transactionalDocumentSafeServices = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService);
         cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService), documentSafeService);

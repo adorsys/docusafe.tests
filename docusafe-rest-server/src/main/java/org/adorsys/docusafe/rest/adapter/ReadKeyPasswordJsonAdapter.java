@@ -3,7 +3,7 @@ package org.adorsys.docusafe.rest.adapter;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import org.adorsys.encobject.domain.ReadKeyPassword;
+import org.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
 
 import java.io.IOException;
 

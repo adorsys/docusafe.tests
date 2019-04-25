@@ -1,4 +1,3 @@
-
 docusafe:
   storeconnection:
     filesystem:
@@ -15,16 +14,4 @@ docusafe:
       rootbucket: (optional)
       encryptionpassword: (optional. null means no ecryption)
       encryptionfilenameonly: (optional. TRUE means, path is not encrypted)
-docusafe:
-  storeconnection:
-    minio:
-      url: (mandatory)
-      accesskey: (mandatory)
-      secretkey: (mandatory)
-      rootbucket: (optional)
-      encryptionpassword: (optional. null means no ecryption)
-      encryptionfilenameonly: (optional. TRUE means, path is not encrypted)
-docusafe:
-  storeconnection:
-    mongo:
-        mongoURI: mongodb://192.168.178.60:27017/adorsys
+

@@ -1,9 +1,8 @@
 package org.adorsys.docusafe.rest.controller;
 
+import de.adorsys.dfs.connection.api.complextypes.BucketPathUtil;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
-import org.adorsys.encobject.complextypes.BucketPathUtil;
-import org.adorsys.encobject.service.api.ExtendedStoreConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class DocusafeWithSpringAnnotationController {
     private final static String APPLICATION_JSON = "application/json";
 
     @Autowired
-    ExtendedStoreConnection extendedStoreConnection;
+    de.adorsys.dfs.connection.api.service.api.DFSConnection DFSConnection;
 
     @Autowired
     CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeService;
@@ -42,7 +41,7 @@ public class DocusafeWithSpringAnnotationController {
         LOGGER.info("springGet");
         StringBuilder sb = new StringBuilder();
         sb.append("extended store connection found :");
-        sb.append(extendedStoreConnection != null ? true : false);
+        sb.append(DFSConnection != null ? true : false);
         sb.append("\n");
 
         sb.append("cacehd transactional docusafe found :");
@@ -53,10 +52,10 @@ public class DocusafeWithSpringAnnotationController {
         sb.append(transactionalDocumentSafeService != null ? true : false);
         sb.append("\n");
 
-        if (extendedStoreConnection != null) {
-            extendedStoreConnection.listAllBuckets().forEach(bucket -> sb.append(BucketPathUtil.getAsString(bucket) + "\n"));
+        if (DFSConnection != null) {
+            DFSConnection.listAllBuckets().forEach(bucket -> sb.append(BucketPathUtil.getAsString(bucket) + "\n"));
             sb.append("\n");
-            sb.append(extendedStoreConnection.getClass().getName());
+            sb.append(DFSConnection.getClass().getName());
             sb.append("\n");
         }
         if (cachedTransactionalDocumentSafeService != null) {

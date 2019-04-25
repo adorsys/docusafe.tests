@@ -19,9 +19,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>de.adorsys.cryptoutils</groupId>
-            <artifactId>basetypes</artifactId>
-            <version>${crypt.version}</version>
+            <groupId>de.adorsys</groupId>
+            <artifactId>common-basetypes</artifactId>
+            <version>${common.basetypes.version}</version>
         </dependency>
 
         <dependency>

@@ -23,8 +23,9 @@
         <catch.exception.version>2.0.0-beta-1</catch.exception.version>
         <junit.version>4.12</junit.version>
         <guava.version>26.0-jre</guava.version>
-        <crypt.version>0.23.12</crypt.version>
-        <docusafe.version>0.5.20</docusafe.version>
+        <dfs.connection.version>0.0.14-SNAPSHOT</dfs.connection.version>
+        <common.basetypes.version>0.0.7</common.basetypes.version>
+        <docusafe.version>0.5.23-SNAPSHOT</docusafe.version>
         <spring.aop.version>5.1.2.RELEASE</spring.aop.version>
         <aspect.jweaver.version>1.9.2</aspect.jweaver.version>
         <aspectj.maven.plugin.version>1.11</aspectj.maven.plugin.version>

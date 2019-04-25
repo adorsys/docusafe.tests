@@ -1,8 +1,8 @@
 package org.adorsys.docusafe.client;
 
 
-import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
-import org.adorsys.cryptoutils.utils.HexUtil;
+import de.adorsys.common.exceptions.BaseExceptionHandler;
+import de.adorsys.common.utils.HexUtil;
 import org.adorsys.docusafe.client.api.CreateUserRequest;
 import org.adorsys.docusafe.client.api.DSDocument;
 import org.adorsys.docusafe.client.api.ReadDocumentResponse;

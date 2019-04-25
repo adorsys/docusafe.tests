@@ -3,7 +3,7 @@ package org.adorsys.docusafe.rest.adapter;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
+import org.adorsys.docusafe.business.types.DocumentDirectoryFQN;
 
 import java.io.IOException;
 

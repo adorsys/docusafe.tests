@@ -1,7 +1,7 @@
 package org.adorsys.docusafe.rest.types;
 
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.encobject.types.OverwriteFlag;
+
+import org.adorsys.docusafe.business.types.DocumentFQN;
 
 /**
  * Created by peter on 25.02.19 16:17.
@@ -9,14 +9,12 @@ import org.adorsys.encobject.types.OverwriteFlag;
 public class MoveFromInbox {
     private DocumentFQN destFQN;
     private DocumentFQN inboxFQN;
-    private OverwriteFlag overwriteFlag;
 
     public MoveFromInbox() {}
 
-    public MoveFromInbox(DocumentFQN inboxFQN, DocumentFQN destFQN, OverwriteFlag overwriteFlag) {
+    public MoveFromInbox(DocumentFQN inboxFQN, DocumentFQN destFQN) {
         this.inboxFQN = inboxFQN;
         this.destFQN = destFQN;
-        this.overwriteFlag = overwriteFlag;
     }
 
     public DocumentFQN getDestFQN() {
@@ -25,9 +23,5 @@ public class MoveFromInbox {
 
     public DocumentFQN getInboxFQN() {
         return inboxFQN;
-    }
-
-    public OverwriteFlag getOverwriteFlag() {
-        return overwriteFlag;
     }
 }

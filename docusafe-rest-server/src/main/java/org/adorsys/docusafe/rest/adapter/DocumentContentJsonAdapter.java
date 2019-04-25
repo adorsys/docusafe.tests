@@ -3,8 +3,8 @@ package org.adorsys.docusafe.rest.adapter;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import org.adorsys.cryptoutils.utils.HexUtil;
-import org.adorsys.docusafe.service.types.DocumentContent;
+import de.adorsys.common.utils.HexUtil;
+import org.adorsys.docusafe.service.api.types.DocumentContent;
 
 import java.io.IOException;
 

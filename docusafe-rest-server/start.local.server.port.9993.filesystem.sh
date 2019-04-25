@@ -1,1 +1,0 @@
-mvn -Dspring.config.location=file:./src/main/resources/port.9993.filesystem.yml spring-boot:run

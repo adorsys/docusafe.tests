@@ -1,7 +1,7 @@
 package org.adorsys.docusafe.rest.types;
 
-import org.adorsys.docusafe.business.types.UserID;
-import org.springframework.lang.Nullable;
+
+import org.adorsys.docusafe.service.api.types.UserID;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class TestsResult {
     public String date;
-    public String extendedStoreConnection;
+    public String dfsConnectionString;
     public String threadName;
     public Long totalTime = null;
     public TaskInfo[] tasks = null;
@@ -43,7 +43,7 @@ public class TestsResult {
     public String toString() {
         return "TestsResult{" +
                 "date='" + date + '\'' +
-                ", extendedStoreConnection='" + extendedStoreConnection + '\'' +
+                ", extendedStoreConnection='" + dfsConnectionString + '\'' +
                 ", threadName='" + threadName + '\'' +
                 ", totalTime=" + totalTime +
                 ", tasks=" + Arrays.toString(tasks) +

@@ -1,5 +1,5 @@
 server:
-  port: 9995
+  port: 9991
 
 docusafe:
   storeconnection:

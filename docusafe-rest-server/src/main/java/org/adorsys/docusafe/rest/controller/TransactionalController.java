@@ -1,12 +1,10 @@
 package org.adorsys.docusafe.rest.controller;
 
-import org.adorsys.cryptoutils.exceptions.BaseException;
-import org.adorsys.cryptoutils.exceptions.BaseExceptionHandler;
-import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DSDocument;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.business.types.complex.UserIDAuth;
+import de.adorsys.common.exceptions.BaseException;
+import de.adorsys.common.exceptions.BaseExceptionHandler;
+import org.adorsys.docusafe.business.types.DSDocument;
+import org.adorsys.docusafe.business.types.DocumentDirectoryFQN;
+import org.adorsys.docusafe.business.types.DocumentFQN;
 import org.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeService;
 import org.adorsys.docusafe.rest.types.DocumentInfo;
 import org.adorsys.docusafe.rest.types.ReadDocumentResult;
@@ -14,7 +12,9 @@ import org.adorsys.docusafe.rest.types.TestAction;
 import org.adorsys.docusafe.rest.types.TestParameter;
 import org.adorsys.docusafe.rest.types.TestUtil;
 import org.adorsys.docusafe.rest.types.TestsResult;
-import org.adorsys.encobject.domain.ReadKeyPassword;
+import org.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
+import org.adorsys.docusafe.service.api.types.UserID;
+import org.adorsys.docusafe.service.api.types.UserIDAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class TransactionalController {
     @ResponseBody
     ResponseEntity<TestsResult> testtx(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
-        testsResult.extendedStoreConnection = cachedTransactionalDocumentSafeService1.getClass().getName();
+        testsResult.dfsConnectionString = cachedTransactionalDocumentSafeService1.getClass().getName();
         LOGGER.info("START TEST " + testParameter.testAction);
         try {
             switch (testParameter.testAction) {
@@ -109,7 +109,7 @@ public class TransactionalController {
                         testResultCreatedDocument.size = testParameter.sizeOfDocument;
                         createdDocuments.add(testResultCreatedDocument);
                     }
-                    DSDocument dsDocument = new DSDocument(documentFQN, TestUtil.createDocumentContent(testParameter.sizeOfDocument, documentFQN, uniqueToken), null);
+                    DSDocument dsDocument = new DSDocument(documentFQN, TestUtil.createDocumentContent(testParameter.sizeOfDocument, documentFQN, uniqueToken));
                     stopWatch.start("create document " + documentFQN.getValue());
                     cachedTransactionalDocumentSafeService1.txStoreDocument(userIDAuth, dsDocument);
                     stopWatch.stop();

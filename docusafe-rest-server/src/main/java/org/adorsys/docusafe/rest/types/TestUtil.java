@@ -1,10 +1,10 @@
 package org.adorsys.docusafe.rest.types;
 
-import org.adorsys.cryptoutils.exceptions.BaseException;
-import org.adorsys.docusafe.business.types.UserID;
-import org.adorsys.docusafe.business.types.complex.DSDocument;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.service.types.DocumentContent;
+import de.adorsys.common.exceptions.BaseException;
+import org.adorsys.docusafe.business.types.DSDocument;
+import org.adorsys.docusafe.business.types.DocumentFQN;
+import org.adorsys.docusafe.service.api.types.DocumentContent;
+import org.adorsys.docusafe.service.api.types.UserID;
 import org.springframework.util.StopWatch;
 
 import java.text.SimpleDateFormat;
