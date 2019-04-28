@@ -2,8 +2,7 @@ docusafe:
   storeconnection:
     filesystem:
       basedir: (mandatory)
-      encryptionpassword: (optional. null means no ecryption)
-      encryptionfilenameonly: (optional. TRUE means, path is not encrypted)
+
 docusafe:
   storeconnection:
     amazons3:
@@ -12,6 +11,5 @@ docusafe:
       secretkey: (mandatory)
       region: (optional)
       rootbucket: (optional)
-      encryptionpassword: (optional. null means no ecryption)
-      encryptionfilenameonly: (optional. TRUE means, path is not encrypted)
+
 

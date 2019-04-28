@@ -53,19 +53,18 @@ public class TestController {
     private final static Logger LOGGER = LoggerFactory.getLogger(TestController.class);
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
-    private DocumentSafeService documentSafeService = null;
-    private NonTransactionalDocumentSafeService nonTransactionalDocumentSafeServices = null;
+    private DocumentSafeService plainDocumentSafeService = null;
     private TransactionalDocumentSafeService transactionalDocumentSafeServices = null;
     private CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeServices = null;
+
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
 
     @Autowired
     SpringDFSConnectionFactory factory;
 
     private DFSConnection plainDFSConnection = null;
-    private DFSConnection nonTxDFSConnection = null;
-    private DFSConnection txDFSConnection = null;
-    private DFSConnection cachedTxDFSConnection = null;
+    private DFSConnection transactionalDFSConnection = null;
+    private DFSConnection cachedTransactionalDFSConnection = null;
 
 
     @PostConstruct
@@ -76,12 +75,10 @@ public class TestController {
         }
 
         plainDFSConnection = factory.getDFSConnectionWithSubDir("plainfolder");
-        nonTxDFSConnection = factory.getDFSConnectionWithSubDir("nontxfolder");
-        txDFSConnection = factory.getDFSConnectionWithSubDir("txfolder");
-        cachedTxDFSConnection = factory.getDFSConnectionWithSubDir("cachedtxfolder");
+        transactionalDFSConnection = factory.getDFSConnectionWithSubDir("txfolder");
+        cachedTransactionalDFSConnection = factory.getDFSConnectionWithSubDir("cachedtxfolder");
 
-        documentSafeService = null;
-        nonTransactionalDocumentSafeServices = null;
+        plainDocumentSafeService = null;
         transactionalDocumentSafeServices = null;
         cachedTransactionalDocumentSafeServices = null;
 
@@ -138,7 +135,7 @@ public class TestController {
 
                 switch (testParameter.docusafeLayer) {
                     case DOCUSAFE_BASE:
-                        documentSafeService.createUser(userIDAuth);
+                        plainDocumentSafeService.createUser(userIDAuth);
                         break;
                     case TRANSACTIONAL:
                         transactionalDocumentSafeServices.createUser(userIDAuth);
@@ -175,7 +172,7 @@ public class TestController {
                     stopWatch.start("create document " + documentFQN.getValue());
                     switch (testParameter.docusafeLayer) {
                         case DOCUSAFE_BASE:
-                            documentSafeService.storeDocument(userIDAuth, dsDocument);
+                            plainDocumentSafeService.storeDocument(userIDAuth, dsDocument);
                             break;
                         case TRANSACTIONAL:
                             transactionalDocumentSafeServices.txStoreDocument(userIDAuth, dsDocument);
@@ -216,7 +213,7 @@ public class TestController {
                             try {
                                 switch (testParameter.docusafeLayer) {
                                     case DOCUSAFE_BASE:
-                                        dsDocument = documentSafeService.readDocument(userIDAuth, documentFQN);
+                                        dsDocument = plainDocumentSafeService.readDocument(userIDAuth, documentFQN);
                                         break;
                                     case TRANSACTIONAL:
                                         dsDocument = transactionalDocumentSafeServices.txReadDocument(userIDAuth, documentFQN);
@@ -242,7 +239,7 @@ public class TestController {
                             stopWatch.start("document exists" + documentFQN.getValue());
                             switch (testParameter.docusafeLayer) {
                                 case DOCUSAFE_BASE:
-                                    exists = documentSafeService.documentExists(userIDAuth, documentFQN);
+                                    exists = plainDocumentSafeService.documentExists(userIDAuth, documentFQN);
                                     break;
                                 case TRANSACTIONAL:
                                     exists = transactionalDocumentSafeServices.txDocumentExists(userIDAuth, documentFQN);
@@ -292,10 +289,9 @@ public class TestController {
             case DELETE_DATABASE_AND_CACHES: {
                 LOGGER.info("delete database");
                 stopWatch.start("delete database");
-                plainDFSConnection.listAllBuckets().forEach(b -> plainDFSConnection.deleteContainer(b));
-                nonTxDFSConnection.listAllBuckets().forEach(b -> nonTxDFSConnection.deleteContainer(b));
-                txDFSConnection.listAllBuckets().forEach(b -> txDFSConnection.deleteContainer(b));
-                cachedTxDFSConnection.listAllBuckets().forEach(b -> cachedTxDFSConnection.deleteContainer(b));
+                plainDFSConnection.deleteDatabase();
+                transactionalDFSConnection.deleteDatabase();
+                cachedTransactionalDFSConnection.deleteDatabase();
                 stopWatch.stop();
                 break;
             }
@@ -339,9 +335,9 @@ public class TestController {
     }
 
     private void initServices() {
-        documentSafeService = new DocumentSafeServiceImpl(plainDFSConnection);
-        nonTransactionalDocumentSafeServices = new NonTransactionalDocumentSafeServiceImpl(documentSafeService);
-        transactionalDocumentSafeServices = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService);
-        cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, documentSafeService), documentSafeService);
+        plainDocumentSafeService = new DocumentSafeServiceImpl(plainDFSConnection);
+        transactionalDocumentSafeServices = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(transactionalDFSConnection));
+        DocumentSafeServiceImpl dss1 = new DocumentSafeServiceImpl(cachedTransactionalDFSConnection);
+        cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, dss1), dss1);
     }
 }

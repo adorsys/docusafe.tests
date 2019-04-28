@@ -8,5 +8,5 @@ docusafe:
       accesskey: simpleAccessKey
       secretkey: simpleSecretKey
       rootbucket: adorsys
-      encryptionpassword: null
+
 

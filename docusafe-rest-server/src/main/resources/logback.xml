@@ -4,48 +4,11 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} lb [%thread] %-5level %logger{5} - %msg%n</pattern>
         </encoder>
     </appender>
-    <!--
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>docusafe-rest-server-log-file.log</file>
-        <append>true</append>
-        <immediateFlush>true</immediateFlush>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>%i.log.zip</FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>10</MaxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>100MB</MaxFileSize>
-        </triggeringPolicy>
-    </appender>
--->
 
-
-    <logger name="org.adorsys.cryptoutils.storeconnectionfactory.ReadArguments" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="FILE" /> -->
-    </logger>
-    <logger name="org.adorsys.docusafe.rest.controller.DocumentSafeController" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-
-    <logger name="org.adorsys.docusafe" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-
-    <logger name="org.adorsys.cryptoutils" level="info" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-    <logger name="org.adorsys.encobject" level="info" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-    <logger name="org.adorsys.cryptoutils.extendedstoreconnection.impls.pathencryption" level="trace" additivity="false">
+    <logger name="de.adorsys.dfs.connection.impl" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 

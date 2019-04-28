@@ -53,7 +53,6 @@ public class DocusafeWithSpringAnnotationController {
         sb.append("\n");
 
         if (DFSConnection != null) {
-            DFSConnection.listAllBuckets().forEach(bucket -> sb.append(BucketPathUtil.getAsString(bucket) + "\n"));
             sb.append("\n");
             sb.append(DFSConnection.getClass().getName());
             sb.append("\n");
