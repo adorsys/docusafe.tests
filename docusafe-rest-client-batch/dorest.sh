@@ -242,6 +242,7 @@ function basictest() {
 	
 	
 
+	rm -f curl.out
 	print "EVERYTHING WENT FINE so FAR"
 }
 
