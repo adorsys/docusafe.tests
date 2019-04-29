@@ -31,7 +31,7 @@
         <aspectj.version>1.9.2</aspectj.version>
         <common.basetypes.version>0.0.7</common.basetypes.version>
         <dfs.connection.version>0.99.0</dfs.connection.version>
-        <docusafe.version>0.99.0</docusafe.version>
+        <docusafe.version>0.99.1-SNAPSHOT</docusafe.version>
     </properties>
 
     <scm>

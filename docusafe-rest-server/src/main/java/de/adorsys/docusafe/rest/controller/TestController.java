@@ -5,6 +5,7 @@ import de.adorsys.common.exceptions.BaseExceptionHandler;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.docusafe.business.DocumentSafeService;
 import de.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
+import de.adorsys.docusafe.business.types.DFSCredentials;
 import de.adorsys.docusafe.business.types.DSDocument;
 import de.adorsys.docusafe.business.types.DocumentDirectoryFQN;
 import de.adorsys.docusafe.business.types.DocumentFQN;
@@ -89,7 +90,7 @@ public class TestController {
     @ResponseBody
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
-        testsResult.dfsConnectionString = plainDFSConnection.getClass().getName();
+        testsResult.dfsConnectionString = plainDFSConnection.getClass().getName() + new DFSCredentials(plainDFSConnection.getConnectionProperties()).toString();
         LOGGER.info("START TEST " + testParameter.testAction);
         try {
             switch (testParameter.testAction) {

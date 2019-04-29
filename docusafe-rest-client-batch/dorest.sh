@@ -38,7 +38,6 @@ function checkCurl() {
 		httpStatus=$(cat curl.error)
                 httpStatus=$(echo ${httpStatus##*The requested URL returned error: })
 	fi
-	rm -f curl.out
 	rm -f curl.error
 	if [[ httpStatus -eq "ERROR" ]]
 	then
@@ -115,6 +114,7 @@ function basictest() {
 
 	print "francis checks that newName.txt exists in the inbox"
 	 tail curl.log | grep -A 1 "\"files\":" | tail -n 1 | grep newName.txt
+	echo "last command was $?"
 
 	print "francis verschiebt aus inbox"
 	checkCurl 200 -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/inbox/out --data '{
@@ -155,20 +155,85 @@ function basictest() {
 	fi
 
 	print "peter gets README.txt of home dir"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" >> curl.log
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" 
 
 	print "peter gets README.txt as a stream of home dir"
-	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream?documentFQN=README.txt" >> curl.log
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream?documentFQN=README.txt" 
 
 	print "peter deletes README.txt of home dir"
-	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" >> curl.log
+	checkCurl 200 -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" 
 
 	print "peter expects 404 for  README.txt of home dir"
-	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" >> curl.log
+	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=README.txt" 
 
 	print "peter expects 404 for README.txt as a stream of home dir"
-	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream?documentFQN=README.txt" >> curl.log
+	checkCurl 404 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/octet-stream' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/documentstream?documentFQN=README.txt" 
 
+	print "peter creates one file, just to be not empty"
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i ${BASE_URL}/document --data '{
+	  "documentFQN": "deeper/and/deeper/file1.txt",
+	  "documentContent": "AFFE"
+	}' 
+
+	print "peter gets this document"
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2Ffile1.txt" 
+
+	print "francis list home directory" 
+	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i "${BASE_URL}/document/list?documentDirectoryFQN=/&listRecursiveFlag=TRUE"
+
+	print "francis saves deep documents"
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/document --data '{
+	  "documentFQN": "deeper/and/deeper/file1.txt",
+	  "documentContent": "AFFE"
+	}' 
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/document --data '{
+	  "documentFQN": "deeper/and/deeper/file2.txt",
+	  "documentContent": "AFFE"
+	}' 
+
+	print "francis list home directory" 
+	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i "${BASE_URL}/document/list?documentDirectoryFQN=/&listRecursiveFlag=TRUE"
+  
+	filesfound=$(grep "\"/" curl.out | wc -l )
+	print "count of found files is $filesfound"
+	if (( filesfound!=3 )) 
+	then	
+		echo "error expected exactly 3 files"
+		exit 1
+	fi
+
+	francisHome="$(pwd)/target/newFrancis"
+	if [ -d $francisHome ] 
+	then
+		echo "error did not expect to have directory $francisHome yet"
+		echo "please execute manually: rm -rf $francisHome"
+		exit 1
+	fi
+
+	print "francis registeres another dfs (temporary on the filesystem $francisHome)"
+	checkCurl 200 -f -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/internal/registerdfs --data '{
+	  "filesystemRootBucketName": "'${francisHome}'"
+	}'
+
+	if [ ! -d $francisHome ] 
+	then
+		echo "error did expect to have directory $francisHome yet"
+		exit 1
+	fi
+
+	print "francis list home directory AGAIN" 
+	checkCurl 200 -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i "${BASE_URL}/document/list?documentDirectoryFQN=/&listRecursiveFlag=TRUE"
+  
+	filesfound=$(grep "\"/" curl.out | wc -l )
+	print "count of found files is $filesfound"
+	if (( filesfound!=3 )) 
+	then	
+		echo "error expected exactly 3 files"
+		exit 1
+	fi
+
+	print "peter gets his document again, just to make sure the the movement of francis did not change peter"
+	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2Ffile1.txt" 
 
 	print "EVERYTHING WENT FINE so FAR"
 
