@@ -235,11 +235,14 @@ function basictest() {
 	print "peter gets his document again, just to make sure the the movement of francis did not change peter"
 	checkCurl 200 -f -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: peter' -H 'password: rkp' -i "${BASE_URL}/document?documentFQN=deeper%2Fand%2Fdeeper%2Ffile1.txt" 
 
-	print "EVERYTHING WENT FINE so FAR"
+	print "delete user francis to remove temporary filesystem dfs"
+	checkCurl -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'userid: francis' -H 'password: passWordXyZ' -i ${BASE_URL}/internal/user 
+	print "delete empty directory now"
+	rmdir ${francisHome}
+	
+	
 
-	# print "delete user"
-	# checkCurl -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"peter", "readKeyPassword":"rkp"}'
-	# checkCurl -f -X DELETE -H 'Content-Type: application/json' -H 'Accept: application/json' -i ${BASE_URL}/internal/user --data '{"userID":"francis", "readKeyPassword":"passWordXyZ"}'
+	print "EVERYTHING WENT FINE so FAR"
 }
 
 basictest
