@@ -2,15 +2,17 @@ package de.adorsys.docusafe.rest.controller;
 
 import de.adorsys.common.exceptions.BaseExceptionHandler;
 import de.adorsys.dfs.connection.api.complextypes.BucketPath;
+import de.adorsys.dfs.connection.api.filesystem.FilesystemConnectionPropertiesImpl;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
+import de.adorsys.dfs.connection.api.types.properties.ConnectionProperties;
+import de.adorsys.dfs.connection.api.types.properties.FilesystemConnectionProperties;
+import de.adorsys.dfs.connection.impl.amazons3.AmazonS3ConnectionProperitesImpl;
 import de.adorsys.docusafe.business.DocumentSafeService;
 import de.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
-import de.adorsys.docusafe.business.types.DSDocument;
-import de.adorsys.docusafe.business.types.DSDocumentStream;
-import de.adorsys.docusafe.business.types.DocumentDirectoryFQN;
-import de.adorsys.docusafe.business.types.DocumentFQN;
+import de.adorsys.docusafe.business.types.*;
 import de.adorsys.docusafe.rest.types.MoveToInboxOfUser;
+import de.adorsys.docusafe.rest.types.RegisterDFSRequest;
 import de.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
 import de.adorsys.docusafe.service.api.types.UserID;
 import de.adorsys.docusafe.service.api.types.UserIDAuth;
@@ -103,6 +105,39 @@ public class DocumentSafeController {
         LOGGER.debug(userID + " exists");
         return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
+
+    @ApiOperation(value="register a new dfs", notes = "The whole user is transferred to another dfs. This method is not synchronized and can cause data corruption if used durinng other interactions with the user")
+    @RequestMapping(
+            value = "/internal/registerdfs",
+            method = {RequestMethod.PUT},
+            consumes = {APPLICATION_JSON}
+    )
+    public void registerDFS(@RequestHeader("userid") String userid,
+                            @RequestHeader("password") String password,
+                            @RequestBody RegisterDFSRequest registerDFSRequest) {
+        UserIDAuth userIDAuth = new UserIDAuth(new UserID(userid), new ReadKeyPassword(password));
+        ConnectionProperties props = null;
+        /* ugly solution, will be corrected soon */
+        LOGGER.info("registerDFCCedentials");
+        if (registerDFSRequest.getFilesystemRootBucketName() != null) {
+            FilesystemConnectionPropertiesImpl p = new FilesystemConnectionPropertiesImpl();
+            p.setFilesystemRootBucketName(registerDFSRequest.getFilesystemRootBucketName());
+            props = p;
+            LOGGER.info("register new filesystem dfs" + registerDFSRequest.getFilesystemRootBucketName());
+        } else {
+            AmazonS3ConnectionProperitesImpl p = new AmazonS3ConnectionProperitesImpl();
+            p.setAmazonS3RootBucketName(registerDFSRequest.getAmazonS3RootBucketName());
+            p.setUrl(registerDFSRequest.getUrl());
+            p.setAmazonS3Region(registerDFSRequest.getAmazonS3Region());
+            p.setAmazonS3SecretKey(registerDFSRequest.getAmazonS3SecretKey());
+            p.setAmazonS3AccessKey(registerDFSRequest.getAmazonS3AccessKey());
+            props = p;
+        }
+        service.registerDFSCredentials(userIDAuth, new DFSCredentials(props));
+    }
+
+
+
 
     /**
      * DOCUMENT

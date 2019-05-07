@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import de.adorsys.common.exceptions.BaseException;
+import de.adorsys.dfs.connection.api.types.connection.*;
 import de.adorsys.docusafe.business.types.DocumentDirectoryFQN;
 import de.adorsys.docusafe.business.types.DocumentFQN;
 import de.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
@@ -15,13 +16,14 @@ import org.slf4j.LoggerFactory;
 import springfox.documentation.spring.web.json.Json;
 
 import java.lang.reflect.Type;
+import java.net.URL;
 
 /** workaround, to run swagger2 with gson
  * THANX TO naXa
  * https://stackoverflow.com/questions/30219946/springfoxswagger2-does-not-work-with-gsonhttpmessageconverterconfig
  */
-public class SpringfoxJsonToGsonAdapter implements JsonSerializer<Json> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(SpringfoxJsonToGsonAdapter.class);
+public class Swagger2JsonWorkaround implements JsonSerializer<Json> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(Swagger2JsonWorkaround.class);
 
     @Override
     public JsonElement serialize(Json json, Type type, JsonSerializationContext context) {
@@ -32,6 +34,12 @@ public class SpringfoxJsonToGsonAdapter implements JsonSerializer<Json> {
         value = replaceClassAsString(value, DocumentDirectoryFQN.class);
         value = replaceClassAsString(value, UserID.class);
         value = replaceClassAsString(value, DocumentContent.class);
+        value = replaceClassAsString(value, AmazonS3AccessKey.class);
+        value = replaceClassAsString(value, AmazonS3SecretKey.class);
+        value = replaceClassAsString(value, AmazonS3Region.class);
+        value = replaceClassAsString(value, AmazonS3RootBucketName.class);
+        value = replaceClassAsString(value, FilesystemRootBucketName.class);
+        value = replaceClassAsString(value, URL.class);
         final JsonParser parser = new JsonParser();
         JsonElement e = parser.parse(value);
         return e;

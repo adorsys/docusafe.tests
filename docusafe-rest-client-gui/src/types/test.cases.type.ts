@@ -8,6 +8,7 @@ export class DynamicClientInfoTYPE {
     threadNumber: number;
     repetitionNumber: number;
     testID: string; // fuer alle threads und repeats gleich
+    requestID: string;
 };
 
 export class TestRequestTYPE {
@@ -20,7 +21,6 @@ export class TestRequestTYPE {
     staticClientInfo: StaticClientInfoTYPE;
     dynamicClientInfo: DynamicClientInfoTYPE;
     documentsToRead : DocumentInfoTYPE[];
-
 };
 
 export class TestSuiteTYPE {

@@ -3,6 +3,7 @@ package de.adorsys.docusafe.rest.adapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.adorsys.dfs.connection.api.types.BucketName;
+import de.adorsys.dfs.connection.api.types.connection.*;
 import de.adorsys.docusafe.business.types.DocumentDirectoryFQN;
 import de.adorsys.docusafe.business.types.DocumentFQN;
 import de.adorsys.docusafe.business.types.MoveType;
@@ -11,6 +12,8 @@ import de.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
 import de.adorsys.docusafe.service.api.types.DocumentContent;
 import de.adorsys.docusafe.service.api.types.UserID;
 import springfox.documentation.spring.web.json.Json;
+
+import java.net.URL;
 
 /**
  * Created by peter on 26.02.19 19:09.
@@ -27,9 +30,17 @@ public class GsonAdapters {
                 .registerTypeAdapter(DocumentDirectoryFQN.class, new DocumentDirectoryFQNJsonAdapter())
                 .registerTypeAdapter(DocumentContent.class, new DocumentContentJsonAdapter())
                 .registerTypeAdapter(MoveType.class, new MoveTypeAdapter())
+                .registerTypeAdapter(AmazonS3AccessKey.class, new AmazonS3AccessKeyJsonAdapter())
+                .registerTypeAdapter(AmazonS3Region.class, new AmazonS3RegionJsonAdapter())
+                .registerTypeAdapter(AmazonS3RootBucketName.class, new AmazonS3RootBucketNameJsonAdapter())
+                .registerTypeAdapter(AmazonS3SecretKey.class, new AmazonS3SecretKeyJsonAdapter())
+                .registerTypeAdapter(FilesystemRootBucketName.class, new FilesystemRootBucketNameJsonAdapter())
+                .registerTypeAdapter(URL.class, new URLJsonAdapter())
 
-                .registerTypeAdapter(Json.class, new SpringfoxJsonToGsonAdapter())
+                .registerTypeAdapter(Json.class, new Swagger2JsonWorkaround())
                 .create();
-
+/*
+IF YOU WONDER ABOUT SWAGGER, PLEASE SEE Swagger2JsonWorkaround
+ */
     }
 }
