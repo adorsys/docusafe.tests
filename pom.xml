@@ -30,7 +30,7 @@
         <aspectj.maven.plugin.version>1.11</aspectj.maven.plugin.version>
         <aspectj.version>1.9.2</aspectj.version>
         <common.basetypes.version>0.0.7</common.basetypes.version>
-        <dfs.connection.version>0.99.0</dfs.connection.version>
+        <dfs.connection.version>0.99.2</dfs.connection.version>
         <docusafe.version>0.99.2</docusafe.version>
     </properties>
 

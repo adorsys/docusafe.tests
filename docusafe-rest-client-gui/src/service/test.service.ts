@@ -18,9 +18,6 @@ export class TestService {
 
     test(urlPrefix: string, testRequeset: TestRequestTYPE, requestSender: RequestSender): void {
         var url = urlPrefix + "/test";
-        if (testRequeset.docusafeLayer.indexOf("MY_CACHED_TRANSACTIONAL") == 0) {
-            url = urlPrefix + "/testtx";
-        }
         console.log("PUT " + JSON.stringify(testRequeset) + " TO " + url);
         this.httpClient.put<TestResultTYPE>(url, testRequeset, httpOptions).subscribe(
             data => requestSender.receiveRequestResult(1, testRequeset, data),

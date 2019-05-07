@@ -91,6 +91,9 @@ public class TestUtil {
         testsResult.listOfReadDocuments = readDocuments.toArray(new ReadDocumentResult[readDocuments.size()]);
     }
 
+    public static  void addFoundDocumentsToTestResults(List<DocumentFQN> foundDocuments, TestsResult testsResult) {
+        testsResult.listOfFoundDocuments = foundDocuments.toArray(new DocumentFQN[foundDocuments.size()]);
+    }
 
     private static String wrap(String content) {
         return "(" + content + ")";

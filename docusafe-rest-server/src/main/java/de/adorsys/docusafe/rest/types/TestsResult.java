@@ -1,6 +1,7 @@
 package de.adorsys.docusafe.rest.types;
 
 
+import de.adorsys.docusafe.business.types.DocumentFQN;
 import de.adorsys.docusafe.service.api.types.UserID;
 
 import java.text.SimpleDateFormat;
@@ -19,6 +20,7 @@ public class TestsResult {
     public UserID userID = null;
     public DocumentInfo[] listOfCreatedDocuments = null;
     public ReadDocumentResult[] listOfReadDocuments = null;
+    public DocumentFQN[] listOfFoundDocuments = null;
 
     public TestsResult() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS");
@@ -50,6 +52,7 @@ public class TestsResult {
                 ", userID=" + userID +
                 ", listOfCreatedDocuments=" + Arrays.toString(listOfCreatedDocuments) +
                 ", listOfReadDocuments=" + Arrays.toString(listOfReadDocuments) +
+                ", listOfFoundDocuments=" + Arrays.toString(listOfFoundDocuments) +
                 '}';
     }
 }

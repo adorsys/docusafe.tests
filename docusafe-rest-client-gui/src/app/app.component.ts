@@ -80,18 +80,22 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
         "http://localhost:9991",
     ];
+
+    READ_DOCUMENT_ACTION_INDEX=1;
+    DOCUMENT_EXISTS_ACTION_INDEX = 2;
+    LIST_DOCUMENTS_INDEX = 3;
     destinationUrl: string = this.destinationUrls[0];
     testactions: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",
         "DOCUMENT_EXISTS",
+        "LIST_DOCUMENTS",
         "DELETE_DATABASE",
         "DELETE_DATABASE_AND_CACHES",
         "DELETE_CACHES"
     ];
     docusafelayer: string[] = [
         "CACHED_TRANSACTIONAL",
-        "TRANSACTIONAL",
         "DOCUSAFE_BASE"
     ];
 
@@ -199,8 +203,9 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     doCurrentTest(): void {
 
-        if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1] ||
-            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[2]
+        if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.LIST_DOCUMENTS_INDEX]
         ) {
             this.lastWriteResult = this.testResultOwner.getLastWriteResult();
             // Anzahl der threads und repeats müssen vom WriteTest übernommen werden.
@@ -227,8 +232,10 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         for (let i = 1; i <= currentTest.staticClientInfo.numberOfThreads; i++) {
             let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
-            if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[1] ||
-                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[2]
+            if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.LIST_DOCUMENTS_INDEX]
+
             ) {
                 this.modifyReadRequest(request, this.lastWriteResult);
             }
@@ -265,8 +272,10 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         response.request = testRequest;
         response.date = testResult.date;
         response.testOk = true;
-        if (testRequest.testAction == this.testactions[1] ||
-            testRequest.testAction == this.testactions[2])
+        if (testRequest.testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
+            testRequest.testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+            testRequest.testAction == this.testactions[this.LIST_DOCUMENTS_INDEX]
+        )
         {
             for (var i = 0; i<testResult.listOfReadDocuments.length; i++) {
                 if (testResult.listOfReadDocuments[i].readResult != "OK") {
@@ -358,7 +367,11 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         console.log("repeats: " + request.dynamicClientInfo.repetitionNumber + " threads:" + request.dynamicClientInfo.threadNumber);
         let result : TestResultAndResponseTYPE = lastWriteResult.repeats[request.dynamicClientInfo.repetitionNumber-1].threads[request.dynamicClientInfo.threadNumber-1];
         if (result.error ==  null) {
-            request.documentsToRead = result.result.listOfCreatedDocuments;
+            if (request.testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
+                request.testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
+            ) {
+                request.documentsToRead = result.result.listOfCreatedDocuments;
+            }
         }
         if (result.result == undefined) {
             console.error("can not set useid");

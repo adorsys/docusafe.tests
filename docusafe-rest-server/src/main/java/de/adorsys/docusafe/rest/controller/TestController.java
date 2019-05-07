@@ -3,6 +3,7 @@ package de.adorsys.docusafe.rest.controller;
 import de.adorsys.common.exceptions.BaseException;
 import de.adorsys.common.exceptions.BaseExceptionHandler;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
+import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
 import de.adorsys.docusafe.business.DocumentSafeService;
 import de.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
 import de.adorsys.docusafe.business.types.DFSCredentials;
@@ -20,6 +21,7 @@ import de.adorsys.docusafe.spring.factory.SpringDFSConnectionFactory;
 import de.adorsys.docusafe.transactional.RequestMemoryContext;
 import de.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
 import de.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceImpl;
+import de.adorsys.docusafe.transactional.types.TxBucketContentFQN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +50,6 @@ public class TestController {
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
     private DocumentSafeService plainDocumentSafeService = null;
-    private TransactionalDocumentSafeService transactionalDocumentSafeServices = null;
     private CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeServices = null;
 
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
@@ -73,7 +74,6 @@ public class TestController {
         cachedTransactionalDFSConnection = factory.getDFSConnectionWithSubDir("cachedtxfolder");
 
         plainDocumentSafeService = null;
-        transactionalDocumentSafeServices = null;
         cachedTransactionalDocumentSafeServices = null;
 
         initServices();
@@ -97,6 +97,7 @@ public class TestController {
                 case READ_DOCUMENTS:
                 case CREATE_DOCUMENTS:
                 case DOCUMENT_EXISTS:
+                case LIST_DOCUMENTS:
                     return regularTest(testParameter, testsResult);
                 case DELETE_DATABASE_AND_CACHES:
                 case DELETE_CACHES:
@@ -124,21 +125,20 @@ public class TestController {
         StopWatch stopWatch = new StopWatch();
         List<DocumentInfo> createdDocuments = new ArrayList<>();
         List<ReadDocumentResult> readDocuments = new ArrayList<>();
+        List<DocumentFQN> foundDocuments = new ArrayList<>();
         switch (testParameter.testAction) {
             case CREATE_DOCUMENTS: {
 
                 switch (testParameter.docusafeLayer) {
                     case DOCUSAFE_BASE:
-                        plainDocumentSafeService.createUser(userIDAuth);
-                        break;
-                    case TRANSACTIONAL:
-                        transactionalDocumentSafeServices.createUser(userIDAuth);
-                        stopWatch.start("beginTransaction");
-                        transactionalDocumentSafeServices.beginTransaction(userIDAuth);
-                        stopWatch.stop();
+                        if (!plainDocumentSafeService.userExists(userIDAuth.getUserID())){
+                            plainDocumentSafeService.createUser(userIDAuth);
+                        }
                         break;
                     case CACHED_TRANSACTIONAL:
-                        cachedTransactionalDocumentSafeServices.createUser(userIDAuth);
+                        if (!cachedTransactionalDocumentSafeServices.userExists(userIDAuth.getUserID())) {
+                            cachedTransactionalDocumentSafeServices.createUser(userIDAuth);
+                        }
                         stopWatch.start("beginTransaction");
                         cachedTransactionalDocumentSafeServices.beginTransaction(userIDAuth);
                         stopWatch.stop();
@@ -168,9 +168,6 @@ public class TestController {
                         case DOCUSAFE_BASE:
                             plainDocumentSafeService.storeDocument(userIDAuth, dsDocument);
                             break;
-                        case TRANSACTIONAL:
-                            transactionalDocumentSafeServices.txStoreDocument(userIDAuth, dsDocument);
-                            break;
                         case CACHED_TRANSACTIONAL:
                             cachedTransactionalDocumentSafeServices.txStoreDocument(userIDAuth, dsDocument);
                             break;
@@ -184,11 +181,6 @@ public class TestController {
             case READ_DOCUMENTS:
             case DOCUMENT_EXISTS: {
                 switch (testParameter.docusafeLayer) {
-                    case TRANSACTIONAL:
-                        stopWatch.start("beginTransaction");
-                        transactionalDocumentSafeServices.beginTransaction(userIDAuth);
-                        stopWatch.stop();
-                        break;
                     case CACHED_TRANSACTIONAL:
                         stopWatch.start("beginTransaction");
                         cachedTransactionalDocumentSafeServices.beginTransaction(userIDAuth);
@@ -208,9 +200,6 @@ public class TestController {
                                 switch (testParameter.docusafeLayer) {
                                     case DOCUSAFE_BASE:
                                         dsDocument = plainDocumentSafeService.readDocument(userIDAuth, documentFQN);
-                                        break;
-                                    case TRANSACTIONAL:
-                                        dsDocument = transactionalDocumentSafeServices.txReadDocument(userIDAuth, documentFQN);
                                         break;
                                     case CACHED_TRANSACTIONAL:
                                         dsDocument = cachedTransactionalDocumentSafeServices.txReadDocument(userIDAuth, documentFQN);
@@ -235,9 +224,6 @@ public class TestController {
                                 case DOCUSAFE_BASE:
                                     exists = plainDocumentSafeService.documentExists(userIDAuth, documentFQN);
                                     break;
-                                case TRANSACTIONAL:
-                                    exists = transactionalDocumentSafeServices.txDocumentExists(userIDAuth, documentFQN);
-                                    break;
                                 case CACHED_TRANSACTIONAL:
                                     exists = cachedTransactionalDocumentSafeServices.txDocumentExists(userIDAuth, documentFQN);
                                     break;
@@ -250,19 +236,46 @@ public class TestController {
                         break;
                     }
                 }
-
                 break;
             }
-            default:
-                throw new BaseException("missing switch for " + testParameter.testAction);
+            case LIST_DOCUMENTS: {
+                switch (testParameter.docusafeLayer) {
+                    case CACHED_TRANSACTIONAL:
+                        stopWatch.start("beginTransaction");
+                        cachedTransactionalDocumentSafeServices.beginTransaction(userIDAuth);
+                        stopWatch.stop();
+                        break;
+                }
 
+                DocumentDirectoryFQN documentFQN = new DocumentDirectoryFQN("/");
+                List<DocumentFQN> list = null;
+                TxBucketContentFQN txBucketContentFQN = null;
+                stopWatch.start("list all documents of " + documentFQN);
+                try {
+                    switch (testParameter.docusafeLayer) {
+                        case DOCUSAFE_BASE:
+                            list = plainDocumentSafeService.list(userIDAuth, documentFQN, ListRecursiveFlag.TRUE);
+                            break;
+                        case CACHED_TRANSACTIONAL:
+                            txBucketContentFQN = cachedTransactionalDocumentSafeServices.txListDocuments(userIDAuth, documentFQN, ListRecursiveFlag.TRUE);
+                            break;
+                        default:
+                            throw new BaseException("missing switch");
+                    }
+                } catch (BaseException e) {
+                    // TODO genauer Typ muss hier noch geprüft werden, nur die FileNotFoundException wird erwartet....
+                }
+                stopWatch.stop();
+                if (list != null) {
+                    foundDocuments.addAll(list);
+                }
+                if (txBucketContentFQN != null) {
+                    foundDocuments.addAll(txBucketContentFQN.getFiles());
+                }
+                break;
+            }
         }
         switch (testParameter.docusafeLayer) {
-            case TRANSACTIONAL:
-                stopWatch.start("endTransaction");
-                transactionalDocumentSafeServices.endTransaction(userIDAuth);
-                stopWatch.stop();
-                break;
             case CACHED_TRANSACTIONAL:
                 stopWatch.start("endTransaction");
                 cachedTransactionalDocumentSafeServices.endTransaction(userIDAuth);
@@ -272,6 +285,7 @@ public class TestController {
         TestUtil.addStopWatchToTestsResult(stopWatch, testsResult);
         TestUtil.addCreatedDocumentsToTestResults(createdDocuments, testsResult);
         TestUtil.addReadDocumentsToTestResults(readDocuments, testsResult);
+        TestUtil.addFoundDocumentsToTestResults(foundDocuments, testsResult);
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
@@ -330,7 +344,6 @@ public class TestController {
 
     private void initServices() {
         plainDocumentSafeService = new DocumentSafeServiceImpl(plainDFSConnection);
-        transactionalDocumentSafeServices = new TransactionalDocumentSafeServiceImpl(requestMemoryContext, new DocumentSafeServiceImpl(transactionalDFSConnection));
         DocumentSafeServiceImpl dss1 = new DocumentSafeServiceImpl(cachedTransactionalDFSConnection);
         cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, dss1), dss1);
     }
