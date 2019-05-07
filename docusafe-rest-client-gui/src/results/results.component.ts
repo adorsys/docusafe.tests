@@ -201,6 +201,7 @@ export class ResultsComponent implements OnInit, TestResultOwner {
                 return subsumendTest;
             }
         }
+        window.alert("did not find last write test");
         throw "did not find last write test";
     }
 

@@ -204,12 +204,19 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     doCurrentTest(): void {
 
         if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
-            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.LIST_DOCUMENTS_INDEX]
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
         ) {
             this.lastWriteResult = this.testResultOwner.getLastWriteResult();
             // Anzahl der threads und repeats müssen vom WriteTest übernommen werden.
             this.testSuite.testrequests[this.currentTestIndex].staticClientInfo = this.lastWriteResult.staticClientInfo;
+        } else {
+            if (this.testSuite.testrequests[this.currentTestIndex].userid == "" &&
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.LIST_DOCUMENTS_INDEX]) {
+                console.log("userid not set and list documents, do getLastWriteResult");
+                this.lastWriteResult = this.testResultOwner.getLastWriteResult();
+                // Anzahl der threads und repeats müssen vom WriteTest übernommen werden.
+                this.testSuite.testrequests[this.currentTestIndex].staticClientInfo = this.lastWriteResult.staticClientInfo;
+            }
         }
 
         this.specialTest = false;
@@ -233,11 +240,15 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
             let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
             if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
-                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.LIST_DOCUMENTS_INDEX]
-
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
             ) {
                 this.modifyReadRequest(request, this.lastWriteResult);
+            } else {
+                if (this.testSuite.testrequests[this.currentTestIndex].userid == "" &&
+                    this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.LIST_DOCUMENTS_INDEX]) {
+                    console.log("userid not set and list documents, do modifyReadRequest");
+                    this.modifyReadRequest(request, this.lastWriteResult);
+                }
             }
 
             this.lastSendTestRequest = request;
