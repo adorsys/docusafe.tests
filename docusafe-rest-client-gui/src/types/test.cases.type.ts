@@ -18,11 +18,9 @@ export class TestRequestTYPE {
     sizeOfDocument: number;
     documentsPerDirectory: number;
     numberOfDocuments: number;
-    fixFilenames: boolean;
     staticClientInfo: StaticClientInfoTYPE;
     dynamicClientInfo: DynamicClientInfoTYPE;
     documentsToRead : DocumentInfoTYPE[];
-
 };
 
 export class TestSuiteTYPE {

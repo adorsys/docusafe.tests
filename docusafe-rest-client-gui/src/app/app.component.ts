@@ -28,20 +28,21 @@ var defaultTestSuite: TestSuiteTYPE =
         {
             "testAction": "CREATE_DOCUMENTS",
             "docusafeLayer": "DOCUSAFE_BASE",
-            "userid": "",
-            "sizeOfDocument": 50,
-            "documentsPerDirectory": 10,
-            "numberOfDocuments": 10,
-            staticClientInfo: {
-                numberOfThreads: 3,
-                numberOfRepeats: 2
+            "userid": "peter",
+            "sizeOfDocument": 100,
+            "documentsPerDirectory": 1,
+            "numberOfDocuments": 1,
+            "staticClientInfo": {
+                "numberOfRepeats": 1,
+                "numberOfThreads": 1
             },
-            dynamicClientInfo: {
-                threadNumber: 0,
-                repetitionNumber: 0,
-                testID: null
+            "dynamicClientInfo": {
+                "threadNumber": 0,
+                "repetitionNumber": 0,
+                "testID": null,
+                "requestID": null
             },
-            documentsToRead: []
+            "documentsToRead": []
         }
     ]
 };
