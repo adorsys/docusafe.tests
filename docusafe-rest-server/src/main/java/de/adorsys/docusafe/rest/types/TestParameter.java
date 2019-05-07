@@ -13,6 +13,7 @@ public class TestParameter {
     public Integer sizeOfDocument;
     public Integer documentsPerDirectory;
     public DocumentInfo[] documentsToRead;
+    public DynamicClientInfo dynamicClientInfo;
 
     @Override
     public String toString() {
@@ -23,6 +24,7 @@ public class TestParameter {
                 ", numberOfDocuments=" + numberOfDocuments +
                 ", sizeOfDocument=" + sizeOfDocument +
                 ", documentsPerDirectory=" + documentsPerDirectory +
+                ", dynamicClientInfo=" + dynamicClientInfo +
                 '}';
     }
 }

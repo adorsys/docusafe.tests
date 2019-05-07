@@ -239,6 +239,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         for (let i = 1; i <= currentTest.staticClientInfo.numberOfThreads; i++) {
             let request: TestRequestTYPE = JSON.parse(JSON.stringify(currentTest));
             request.dynamicClientInfo.threadNumber = i;
+            request.dynamicClientInfo.requestID = uuid();
             if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
                 this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
             ) {

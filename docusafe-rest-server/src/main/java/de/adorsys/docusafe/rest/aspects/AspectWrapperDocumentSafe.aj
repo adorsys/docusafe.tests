@@ -9,11 +9,9 @@ import org.slf4j.LoggerFactory;
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
     pointcut cachedTx(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
-    pointcut tx():       execution(* *..TransactionalDocumentSafeService.*(..));
-    pointcut nonTx():    execution(* *..NonTransactionalDocumentSafeService.*(..));
     pointcut plain():    execution(* *..DocumentSafeService.*(..));
     pointcut conn():     execution(* *..ExtendedStoreConnection.*(..));
-    Object around(): cachedTx() || tx() || nonTx() || plain() || conn() {
+    Object around(): cachedTx() ||  plain() || conn() {
         LOGGER.info(String.format("============================================= \"%s\"", thisJoinPointStaticPart.getSignature()));
         long start = System.currentTimeMillis();
         Object result = null;

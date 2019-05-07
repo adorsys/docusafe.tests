@@ -14,6 +14,8 @@
                     <table border="1" class="small-font">
                         <tr>
                             <td>date</td>
+                            <td>testid</td>
+                            <td>requestid</td>
                             <td>thread</td>
                             <td>repeat</td>
                             <td>test action</td>
@@ -24,6 +26,8 @@
                         <tr *ngIf="singleThread.error == null"
                             class="okline">
                             <td>{{singleThread.date}}</td>
+                            <td>{{singleThread.request.dynamicClientInfo.testID}}</td>
+                            <td>{{singleThread.request.dynamicClientInfo.requestID}}</td>
                             <td>
                                 {{singleThread.request.dynamicClientInfo.threadNumber}}/{{singleThread.request.staticClientInfo.numberOfThreads}}
                             </td>
@@ -46,6 +50,8 @@
                         <tr *ngIf="singleThread.error != null"
                             class="errorline">
                             <td>{{singleThread.date}}</td>
+                            <td>{{singleThread.request.dynamicClientInfo.testID}}</td>
+                            <td>{{singleThread.request.dynamicClientInfo.requestID}}</td>
                             <td>
                                 {{singleThread.request.dynamicClientInfo.threadNumber}}/{{singleThread.request.staticClientInfo.numberOfThreads}}
                             </td>

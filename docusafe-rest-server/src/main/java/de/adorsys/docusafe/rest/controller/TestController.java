@@ -19,7 +19,6 @@ import de.adorsys.docusafe.service.api.types.UserIDAuth;
 import de.adorsys.docusafe.spring.SimpleRequestMemoryContextImpl;
 import de.adorsys.docusafe.spring.factory.SpringDFSConnectionFactory;
 import de.adorsys.docusafe.transactional.RequestMemoryContext;
-import de.adorsys.docusafe.transactional.TransactionalDocumentSafeService;
 import de.adorsys.docusafe.transactional.impl.TransactionalDocumentSafeServiceImpl;
 import de.adorsys.docusafe.transactional.types.TxBucketContentFQN;
 import org.slf4j.Logger;
@@ -28,12 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -91,7 +85,7 @@ public class TestController {
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
         testsResult.dfsConnectionString = plainDFSConnection.getClass().getName() + new DFSCredentials(plainDFSConnection.getConnectionProperties()).toString();
-        LOGGER.info("START TEST " + testParameter.testAction);
+        LOGGER.info("START TEST " + testParameter.testAction + " requestID: " + testParameter.dynamicClientInfo.requestID );
         try {
             switch (testParameter.testAction) {
                 case READ_DOCUMENTS:
@@ -109,7 +103,7 @@ public class TestController {
         } catch (Exception e) {
             throw BaseExceptionHandler.handle(e);
         } finally {
-            LOGGER.info("FINISED TEST " + testParameter.testAction + testsResult);
+            LOGGER.info("FINISHED TEST " + testParameter.testAction + " requestID: " + testParameter.dynamicClientInfo.requestID + " " + testsResult);
         }
     }
 
@@ -149,8 +143,8 @@ public class TestController {
 
                 int folderIndex = 1;
                 for (int i = 1; i <= testParameter.numberOfDocuments; i++) {
-                    DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex));
-                    DocumentFQN documentFQN = folder.addName("file-" + String.format("%03d", i));
+                    DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex)  + "-" + UUID.randomUUID().toString());
+                    DocumentFQN documentFQN = folder.addName("file-" + String.format("%03d", i) + "-" + UUID.randomUUID().toString());
                     if (i % testParameter.documentsPerDirectory == 0) {
                         folderIndex++;
                     }
