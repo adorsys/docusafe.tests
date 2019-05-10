@@ -1,6 +1,24 @@
 {
   "testrequests": [
     {
+      "documentsPerDirectory": 1,
+      "documentsToRead": [],
+      "docusafeLayer": "DOCUSAFE_BASE",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 1,
+      "sizeOfDocument": "500000",
+      "staticClientInfo": {
+        "numberOfRepeats": "1",
+        "numberOfThreads": "1"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": "peter"
+    },
+    {
       "documentsPerDirectory": 10,
       "documentsToRead": [],
       "docusafeLayer": "DOCUSAFE_BASE",
@@ -351,6 +369,24 @@
     },
 
 
+    {
+      "documentsPerDirectory": 1,
+      "documentsToRead": [],
+      "docusafeLayer": "CACHED_TRANSACTIONAL",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 1,
+      "sizeOfDocument": "500000",
+      "staticClientInfo": {
+        "numberOfRepeats": "1",
+        "numberOfThreads": "1"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": "peter"
+    },
     {
       "documentsPerDirectory": 10,
       "documentsToRead": [],

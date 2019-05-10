@@ -8,9 +8,38 @@
         </encoder>
     </appender>
 
-    <logger name="de.adorsys.dfs.connection.impl" level="debug" additivity="false">
+    <!--
+    not valid for deployment to openshift
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>target/LOGBACK.LOG</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} lb [%thread] %-5level %logger{5} - %msg%n</pattern>
+        </encoder>
+    </appender>
+-->
+
+    <logger name="de.adorsys.dfs.connection.impl" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <!--
+        <appender-ref ref="FILE" />
+        -->
+    </logger>
+
+    <logger name="de.adorsys.docusafe.transactional.impl.helper.CleanupLogic" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
+
+
+    <logger name="de.adorsys.docusafe.transactional.impl.TxIDLog" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="de.adorsys.docusafe.transactional.impl.helper.ParallelTransactionLogic" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
