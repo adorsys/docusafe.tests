@@ -7,8 +7,8 @@ logging.level.org.adorsys.docusafe=info
 logging.level.de.adorsys.dfs.connection.impl=info
 
 docusafe.storeconnection.amazons3.url=https://s3.amazonaws.com
-docusafe.storeconnection.amazons3.accesskey: AKIAJG3VIHWESAHJS6OQ
-docusafe.storeconnection.amazons3.secretkey: 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
+docusafe.storeconnection.amazons3.accesskey: *
+docusafe.storeconnection.amazons3.secretkey: *
 docusafe.storeconnection.amazons3.rootbucket: adorsys-docusafe
 docusafe.storeconnection.amazons3.region: eu-central-1
 

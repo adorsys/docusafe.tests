@@ -10,7 +10,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 1,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "1",
         "numberOfThreads": "1"
@@ -28,7 +28,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "10",
         "numberOfThreads": "10"
@@ -46,7 +46,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "5",
         "numberOfThreads": "1"
@@ -115,7 +115,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"
@@ -184,7 +184,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"
@@ -203,7 +203,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "10",
         "numberOfThreads": "10"
@@ -221,7 +221,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "5",
         "numberOfThreads": "1"
@@ -290,7 +290,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"
@@ -359,7 +359,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"
@@ -379,7 +379,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 1,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "1",
         "numberOfThreads": "1"
@@ -397,7 +397,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "10",
         "numberOfThreads": "10"
@@ -415,7 +415,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "5",
         "numberOfThreads": "1"
@@ -484,7 +484,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"
@@ -553,7 +553,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"
@@ -572,7 +572,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "10",
         "numberOfThreads": "10"
@@ -590,7 +590,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "5",
         "numberOfThreads": "1"
@@ -659,7 +659,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"
@@ -728,7 +728,7 @@
         "threadNumber": 0
       },
       "numberOfDocuments": 10,
-      "sizeOfDocument": "500000",
+      "sizeOfDocument": "5000",
       "staticClientInfo": {
         "numberOfRepeats": "100",
         "numberOfThreads": "10"

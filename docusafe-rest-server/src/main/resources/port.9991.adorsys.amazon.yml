@@ -5,7 +5,7 @@ docusafe:
   storeconnection:
     amazons3:
       url: https://s3.amazonaws.com
-      accesskey: AKIAJG3VIHWESAHJS6OQ
-      secretkey: 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
+      accesskey: *
+      secretkey: *
       region: eu-central-1
       rootbucket: adorsys-docusafe

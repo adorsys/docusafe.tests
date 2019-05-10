@@ -27,22 +27,23 @@
         -->
     </logger>
 
+    <logger name="de.adorsys.docusafe.transactional.impl.TxIDLog" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="de.adorsys.docusafe.transactional.impl.helper.ParallelTransactionLogic" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
     <logger name="de.adorsys.docusafe.transactional.impl.helper.CleanupLogic" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <logger name="de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection" level="debug" additivity="false">
+
+    <logger name="de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection" level="info" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
 
-    <logger name="de.adorsys.docusafe.transactional.impl.TxIDLog" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
 
-    <logger name="de.adorsys.docusafe.transactional.impl.helper.ParallelTransactionLogic" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
 
 
     <root level="INFO">
