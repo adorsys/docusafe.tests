@@ -3,6 +3,7 @@ import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
 import {RequestSender} from "../app/request.sender";
 import {TestRequestTYPE} from "../types/test.cases.type";
 import {TestResultTYPE} from "../types/test.result.type";
+import {UrlKeeper} from "./url.keeper";
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -13,11 +14,11 @@ const httpOptions = {
 @Injectable()
 export class TestService {
 
-    constructor(private httpClient: HttpClient) {
+    constructor(private httpClient: HttpClient, private urlKeeper: UrlKeeper) {
     }
 
-    test(urlPrefix: string, testRequeset: TestRequestTYPE, requestSender: RequestSender): void {
-        var url = urlPrefix + "/test";
+    test(testRequeset: TestRequestTYPE, requestSender: RequestSender): void {
+        var url = this.urlKeeper.getUrl() + "/test";
         console.log("PUT " + JSON.stringify(testRequeset) + " TO " + url);
         this.httpClient.put<TestResultTYPE>(url, testRequeset, httpOptions).subscribe(
             data => requestSender.receiveRequestResult(1, testRequeset, data),

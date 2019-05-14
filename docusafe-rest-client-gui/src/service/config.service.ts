@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core"
 import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
 import {DFSCredentialsTYPE} from "../types/dfs.credentials.type";
 import {ConfigComponent} from "../app/config/config.component";
+import {UrlKeeper} from "./url.keeper";
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -12,11 +13,11 @@ const httpOptions = {
 @Injectable()
 export class ConfigService {
 
-    constructor(private httpClient: HttpClient) {
+    constructor(private httpClient: HttpClient, private urlKeeper: UrlKeeper) {
     }
 
-    getConfig(urlPrefix: string, sender: ConfigComponent): void {
-        let url = urlPrefix + "/config/dfs";
+    getConfig(sender: ConfigComponent): void {
+        let url = this.urlKeeper.getUrl() + "/config/dfs";
         console.log("GET dfs credentials FROM " + url);
         this.httpClient.get<DFSCredentialsTYPE>(url, httpOptions).subscribe(
             data => sender.setDFSConfig(data),
@@ -25,8 +26,8 @@ export class ConfigService {
         console.log("sent GET done to " + url);
     }
 
-    setConfig(urlPrefix: string, dfsCredentials : DFSCredentialsTYPE): void {
-        let url = urlPrefix + "/config/dfs";
+    setConfig(dfsCredentials : DFSCredentialsTYPE): void {
+        let url = this.urlKeeper.getUrl() + "/config/dfs";
         console.log("PUT dfs credentials FROM " + url + " " + JSON.stringify(dfsCredentials));
         this.httpClient.put<DFSCredentialsTYPE>(url, dfsCredentials, httpOptions).subscribe(
             data =>,

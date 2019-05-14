@@ -17,6 +17,7 @@ import {RouterModule} from "@angular/router";
 import {routes} from "./router-config";
 import {ConfigComponent} from "../config/config.component";
 import {ConfigService} from "../../service/config.service";
+import {UrlKeeper} from "../../service/url.keeper";
 
 @NgModule({
     declarations: [
@@ -35,7 +36,7 @@ import {ConfigService} from "../../service/config.service";
         FormsModule,
         RouterModule.forRoot(routes)
     ],
-    providers: [TestService, ConfigService, ClipboardService],
+    providers: [TestService, ConfigService, ClipboardService, UrlKeeper],
     bootstrap: [MainComponent]
 })
 export class MainModule {

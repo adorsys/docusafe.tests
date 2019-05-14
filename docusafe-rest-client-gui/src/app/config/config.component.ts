@@ -9,8 +9,6 @@ import {AmazonS3TYPE, DFSCredentialsTYPE, FilesystemTYPE, filesystemTYPE} from "
 })
 export class ConfigComponent implements OnInit {
 
-    destinationUrl: string = "http://localhost:9991";
-
     defaultFilesystemCredentials : DFSCredentialsTYPE;
     defaultAmazonS3Credentials : DFSCredentialsTYPE;
     dfsCredentials: DFSCredentialsTYPE;
@@ -42,11 +40,11 @@ export class ConfigComponent implements OnInit {
     }
 
     read() {
-        this.configService.getConfig(this.destinationUrl, this);
+        this.configService.getConfig(this);
     }
 
     write() {
-        this.configService.setConfig(this.destinationUrl, this.dfsCredentials);
+        this.configService.setConfig(this.dfsCredentials);
     }
 
     public setDFSConfig(dfscredentials : DFSCredentialsTYPE) {
@@ -65,7 +63,6 @@ export class ConfigComponent implements OnInit {
         } else {
             result =  this.dfsCredentials.amazons3 != null;
         }
-        console.log("isDFSType(" + s  + ") -> "  + result);
         return result;
     }
 

@@ -19,6 +19,7 @@ import { saveAs } from "file-saver/FileSaver";
 import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
 import {DocumentInfoTYPE} from "../types/test.result.type";
 import {DndOwner} from "../dnd/dnd.owner";
+import {UrlKeeper} from "../service/url.keeper";
 
 
 var defaultTestSuite: TestSuiteTYPE =
@@ -77,15 +78,10 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
-    destinationUrls: string[] = [
-        "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
-        "http://localhost:9991",
-    ];
 
     READ_DOCUMENT_ACTION_INDEX=1;
     DOCUMENT_EXISTS_ACTION_INDEX = 2;
     LIST_DOCUMENTS_INDEX = 3;
-    destinationUrl: string = this.destinationUrls[0];
     testactions: string[] = [
         "CREATE_DOCUMENTS",
         "READ_DOCUMENTS",
@@ -100,9 +96,11 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "DOCUSAFE_BASE"
     ];
 
-    constructor(private testService: TestService, private clipboardService: ClipboardService) {
+    constructor(private testService: TestService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {
         this.setTests(fullTestSuite);
+        console.log("APP CONSTRUCTION");
     }
+
 
     notifyForChanchedFileContent(id: number): void {
         if (id == 1) {
@@ -194,7 +192,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         deleteTestCase.staticClientInfo.numberOfRepeats = 1;
         deleteTestCase.staticClientInfo.numberOfThreads = 1;
         this.lastSendTestRequest = deleteTestCase;
-        this.testService.test(this.destinationUrl, deleteTestCase, this);
+        this.testService.test(deleteTestCase, this);
     }
 
     doCurrentTestOnly() : void {
@@ -254,7 +252,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
             }
 
             this.lastSendTestRequest = request;
-            this.testService.test(this.destinationUrl, request, this);
+            this.testService.test(request, this);
         }
     }
 

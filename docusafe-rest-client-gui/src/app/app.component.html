@@ -22,16 +22,6 @@
             </div>
         </div>
         <div [hidden]="busy">
-            <div>
-                Destination
-                <select [(ngModel)]="destinationUrl">
-                    <option *ngFor="let du of destinationUrls"
-                            [selected]="destinationUrl == du">{{du}}
-                    </option>
-                </select>
-                <br>
-                <br>
-            </div>
             <div class="row">
                 <div class="col1">
                     <div class="headline">CURRENT TEST</div>

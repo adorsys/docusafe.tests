@@ -1,5 +1,11 @@
 <header>
     <div class="toprow">
+        Destination
+        <select [(ngModel)]="destinationUrl" (change)="selectUrl()">
+            <option *ngFor="let du of destinationUrls"
+                    [selected]="destinationUrl === du">{{du}}
+            </option>
+        </select>
         <span class="filler">&nbsp;</span>
         <span class="{{getType('app')}}" routerLink="app" (click)="doClick('app')">
             <span class="text">app</span>
