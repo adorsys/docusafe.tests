@@ -4,6 +4,11 @@ import de.adorsys.common.exceptions.BaseException;
 import de.adorsys.common.exceptions.BaseExceptionHandler;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
+import de.adorsys.dfs.connection.api.types.connection.AmazonS3AccessKey;
+import de.adorsys.dfs.connection.api.types.connection.AmazonS3RootBucketName;
+import de.adorsys.dfs.connection.api.types.connection.AmazonS3SecretKey;
+import de.adorsys.dfs.connection.api.types.connection.FilesystemRootBucketName;
+import de.adorsys.dfs.connection.impl.factory.DFSConnectionFactory;
 import de.adorsys.docusafe.business.DocumentSafeService;
 import de.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
 import de.adorsys.docusafe.business.types.DFSCredentials;
@@ -52,7 +57,6 @@ public class TestController {
     SpringDFSConnectionFactory factory;
 
     private DFSConnection plainDFSConnection = null;
-    private DFSConnection transactionalDFSConnection = null;
     private DFSConnection cachedTransactionalDFSConnection = null;
 
 
@@ -64,7 +68,6 @@ public class TestController {
         }
 
         plainDFSConnection = factory.getDFSConnectionWithSubDir("plainfolder");
-        transactionalDFSConnection = factory.getDFSConnectionWithSubDir("txfolder");
         cachedTransactionalDFSConnection = factory.getDFSConnectionWithSubDir("cachedtxfolder");
 
         plainDocumentSafeService = null;
@@ -72,6 +75,78 @@ public class TestController {
 
         initServices();
     }
+
+    @CrossOrigin
+    @RequestMapping(
+            value = "/config/dfs",
+            method = {RequestMethod.GET},
+            produces = {APPLICATION_JSON}
+    )
+    public
+    @ResponseBody
+    ResponseEntity<DFSCredentials> getDfsConfiguration() {
+        DFSCredentials credentials = new DFSCredentials(plainDFSConnection.getConnectionProperties());
+        String r;
+        if (credentials.getAmazons3() != null) {
+            r = credentials.getAmazons3().getAmazonS3RootBucketName().getValue();
+        } else {
+            r = credentials.getFilesystem().getFilesystemRootBucketName().getValue();
+        }
+
+        if (! r.endsWith("plainfolder")) {
+            throw new BaseException("can not return credentials due to path problem");
+        }
+        r = r.substring(0, r.length()- "plainfolder".length() -1);
+        if (credentials.getAmazons3() != null) {
+            credentials.getAmazons3().setAmazonS3RootBucketName(new AmazonS3RootBucketName(r));
+
+            // encrypt credentials
+            String p = hide(credentials.getAmazons3().getAmazonS3AccessKey().getValue());
+            credentials.getAmazons3().setAmazonS3AccessKey(new AmazonS3AccessKey(p));
+
+            p = hide((credentials.getAmazons3().getAmazonS3SecretKey().getValue()));
+            credentials.getAmazons3().setAmazonS3SecretKey(new AmazonS3SecretKey(p));
+
+        } else {
+            credentials.getFilesystem().setFilesystemRootBucketName(new FilesystemRootBucketName(r));
+        }
+
+
+        LOGGER.debug("return  " + credentials);
+        return new ResponseEntity<>(credentials, HttpStatus.OK);
+    }
+
+    private static final String hide(String value) {
+        return value.length() > 4 ? value.substring(0, 2) + "***" + value.substring(value.length() - 2) : "***";
+    }
+
+    @CrossOrigin
+    @RequestMapping(
+            value = "/config/dfs",
+            method = {RequestMethod.PUT},
+            consumes = {APPLICATION_JSON},
+            produces = {APPLICATION_JSON}
+    )
+    public
+    @ResponseBody
+    ResponseEntity<String> setDfsConfiguration(@RequestBody DFSCredentials dfsCredentials) {
+        LOGGER.info(dfsCredentials.toString());
+        {
+            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
+            plainCredentials.addSubDirToRoot("plainfolder");
+            DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
+            // if an exception has raised here, the old connection is still available
+            plainDFSConnection = dfsConnection;
+        }
+        {
+            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
+            plainCredentials.addSubDirToRoot("cachedtxfolder");
+            cachedTransactionalDFSConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
+        }
+        initServices();
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+
 
     @CrossOrigin
     @RequestMapping(
@@ -85,7 +160,7 @@ public class TestController {
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
         testsResult.dfsConnectionString = plainDFSConnection.getClass().getName() + new DFSCredentials(plainDFSConnection.getConnectionProperties()).toString();
-        LOGGER.info("START TEST " + testParameter.testAction + " requestID: " + testParameter.dynamicClientInfo.requestID );
+        LOGGER.info("START TEST " + testParameter.testAction + " requestID: " + testParameter.dynamicClientInfo.requestID);
         try {
             switch (testParameter.testAction) {
                 case READ_DOCUMENTS:
@@ -125,7 +200,7 @@ public class TestController {
 
                 switch (testParameter.docusafeLayer) {
                     case DOCUSAFE_BASE:
-                        if (!plainDocumentSafeService.userExists(userIDAuth.getUserID())){
+                        if (!plainDocumentSafeService.userExists(userIDAuth.getUserID())) {
                             plainDocumentSafeService.createUser(userIDAuth);
                         }
                         break;
@@ -143,7 +218,7 @@ public class TestController {
 
                 int folderIndex = 1;
                 for (int i = 1; i <= testParameter.numberOfDocuments; i++) {
-                    DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex)  + "-" + UUID.randomUUID().toString());
+                    DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex) + "-" + UUID.randomUUID().toString());
                     DocumentFQN documentFQN = folder.addName("file-" + String.format("%03d", i) + "-" + UUID.randomUUID().toString());
                     if (i % testParameter.documentsPerDirectory == 0) {
                         folderIndex++;
@@ -292,7 +367,6 @@ public class TestController {
                 LOGGER.info("delete database");
                 stopWatch.start("delete database");
                 plainDFSConnection.deleteDatabase();
-                transactionalDFSConnection.deleteDatabase();
                 cachedTransactionalDFSConnection.deleteDatabase();
                 stopWatch.stop();
                 break;

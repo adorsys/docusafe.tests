@@ -7,20 +7,37 @@
 <div class="main">
     <table>
         <tr>
+            <td colspan="2">
+        <span *ngFor="let value of DFSTypes">
+            <input (change)="onDFSTypeChange($event.target.value)" type="radio" name="DFSType" value="{{ value }}"
+                   checked="{{checkedDFSType(value)}}">{{ value }}
+        </span>
+            </td>
+        </tr>
+
+        <tr *ngIf="isDFSType('amazons3')">
             <td>url</td>
-            <td><input type="text" name="url"></td>
+            <td><input type="text" size="100" name="url" [(ngModel)]="dfsCredentials.amazons3.url"></td>
         </tr>
-        <tr>
+        <tr *ngIf="isDFSType('amazons3')">
             <td>access key</td>
-            <td><input type="text" name="accesskey"></td>
+            <td><input type="text" name="accesskey" [(ngModel)]="dfsCredentials.amazons3.amazonS3AccessKey"></td>
         </tr>
-        <tr>
+        <tr *ngIf="isDFSType('amazons3')">
             <td>secret key</td>
-            <td><input type="text" name="secretkey"></td>
+            <td><input type="text" name="secretkey" [(ngModel)]="dfsCredentials.amazons3.amazonS3SecretKey"></td>
         </tr>
-        <tr>
+        <tr *ngIf="isDFSType('amazons3')">
             <td>root bucket</td>
-            <td><input type="text" name="rootbucket"></td>
+            <td><input type="text" name="region" [(ngModel)]="dfsCredentials.amazons3.amazonS3Region"></td>
+        </tr>
+        <tr *ngIf="isDFSType('amazons3')">
+            <td>root bucket</td>
+            <td><input type="text" size="100" name="root bucket" [(ngModel)]="dfsCredentials.amazons3.amazonS3RootBucketName"></td>
+        </tr>
+        <tr *ngIf="isDFSType('filesystem')">
+            <td>root bucket</td>
+            <td><input type="text" size="100" name="root bucket" [(ngModel)]="dfsCredentials.filesystem.filesystemRootBucketName"></td>
         </tr>
 
         <tr>

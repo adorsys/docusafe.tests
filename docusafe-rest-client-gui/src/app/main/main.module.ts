@@ -16,6 +16,7 @@ import {MainComponent} from "./main.component";
 import {RouterModule} from "@angular/router";
 import {routes} from "./router-config";
 import {ConfigComponent} from "../config/config.component";
+import {ConfigService} from "../../service/config.service";
 
 @NgModule({
     declarations: [
@@ -34,7 +35,7 @@ import {ConfigComponent} from "../config/config.component";
         FormsModule,
         RouterModule.forRoot(routes)
     ],
-    providers: [TestService, ClipboardService],
+    providers: [TestService, ConfigService, ClipboardService],
     bootstrap: [MainComponent]
 })
 export class MainModule {
