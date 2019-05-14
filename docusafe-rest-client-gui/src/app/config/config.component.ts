@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ConfigService} from "../../service/config.service";
-import {AmazonS3TYPE, DFSCredentialsTYPE, FilesystemTYPE, filesystemTYPE} from "../../types/dfs.credentials.type";
+import {AmazonS3TYPE, DFSCredentialsTYPE, FilesystemTYPE} from "../../types/dfs.credentials.type";
 
 @Component({
     selector: 'app-config',

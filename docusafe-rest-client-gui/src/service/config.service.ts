@@ -30,11 +30,15 @@ export class ConfigService {
         let url = this.urlKeeper.getUrl() + "/config/dfs";
         console.log("PUT dfs credentials FROM " + url + " " + JSON.stringify(dfsCredentials));
         this.httpClient.put<DFSCredentialsTYPE>(url, dfsCredentials, httpOptions).subscribe(
-            data =>,
+            data => this.doNothing(),
             error => alert(JSON.stringify(error ) +
                 " YOU PROBABLY DID NOT PROVIDE CORRECT ACCESS AND SECRET KEY")
 
         );
         console.log("sent PUT done to " + url);
+    }
+
+    doNothing() {
+
     }
 }
