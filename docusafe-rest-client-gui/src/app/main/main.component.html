@@ -1,0 +1,16 @@
+<header>
+    <div class="toprow">
+        <span class="filler">&nbsp;</span>
+        <span class="{{getType('app')}}" routerLink="app" (click)="doClick('app')">
+            <span class="text">app</span>
+        </span>
+        <span class="filler">&nbsp;</span>
+        <span class="{{getType('config')}}" routerLink="config" (click)="doClick('config')">
+            <span class="text">config</span>
+        </span>
+        <img src="{{imageURL}}/white.jpg" class="lastfiller">
+    </div>
+</header>
+<main class="main">
+    <router-outlet></router-outlet>
+</main>

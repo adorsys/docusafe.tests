@@ -1,0 +1,41 @@
+.toprow {
+    with:100%;
+    float: right;
+}
+.selected {
+    background-color: white;
+    border-top: solid 1px;
+    border-left: solid 1px;
+    border-right: solid 1px;
+    margin-top:20px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 1px;
+}
+
+.unselected {
+    background-color: white;
+    border-top: solid 1px;
+    border-left: solid 1px;
+    border-right: solid 1px;
+    border-bottom: solid 1px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.selected:focus {outline:0;}
+.unselected:focus {outline:0;}
+
+.filler {
+    border-bottom: solid 1px;
+}
+
+.lastfiller {
+    flex-grow:100;
+    height:17px;
+    border-bottom: solid 1px;
+}
+
+.text {
+    margin:10px;
+}

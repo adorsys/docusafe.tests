@@ -1,0 +1,13 @@
+.main {
+    margin-left:50px;
+    align:center;
+}
+
+table tr td {
+    padding: 4px;
+}
+
+.buttonspace {
+    padding-bottom: 5px;
+    width: 100%
+}
