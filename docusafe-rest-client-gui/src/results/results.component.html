@@ -13,7 +13,7 @@
                 <div *ngIf="singleThread != null">
                     <table border="1" class="small-font">
                         <tr *ngIf="singleThread.error == null">
-                            <td></td>
+                            <td>hide</td>
                             <td>date</td>
                             <td>testid</td>
                             <td>requestid</td>
@@ -27,7 +27,7 @@
                         <tr *ngIf="singleThread.error == null"
                             class="okline">
                             <td>
-                                <input type="checkbox" (click)="unsetSingleThread()">hide
+                                <input type="checkbox" (click)="unsetSingleThread()">
                             </td>
                             <td>{{singleThread.date}}</td>
                             <td>{{singleThread.request.dynamicClientInfo.testID}}</td>
@@ -52,7 +52,7 @@
                         </tr>
 
                         <tr *ngIf="singleThread.error != null">
-                            <td></td>
+                            <td>hide</td>
                             <td>date</td>
                             <td>testid</td>
                             <td>requestid</td>
@@ -64,7 +64,7 @@
                         <tr *ngIf="singleThread.error != null"
                             class="errorline">
                             <td>
-                                <input type="checkbox" (click)="unsetSingleThread()">hide
+                                <input type="checkbox" (click)="unsetSingleThread()">
                             </td>
                             <td>{{singleThread.date}}</td>
                             <td>{{singleThread.request.dynamicClientInfo.testID}}</td>
