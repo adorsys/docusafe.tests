@@ -89,6 +89,11 @@
                                 <td><input [(ngModel)]="testSuite.testrequests[currentTestIndex].documentsPerDirectory">
                                 </td>
                             </tr>
+                            <tr *ngIf="testSuite.testrequests[currentTestIndex].testAction == testactions[0]">
+                                <td>Deterministic Files</td>
+                                <td><input type="checkbox" [(ngModel)]="testSuite.testrequests[currentTestIndex].createDeterministicDocuments">
+                                </td>
+                            </tr>
 
                         </table>
                     </div>

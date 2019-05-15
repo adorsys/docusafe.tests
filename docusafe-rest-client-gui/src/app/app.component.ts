@@ -43,7 +43,8 @@ var defaultTestSuite: TestSuiteTYPE =
                 "testID": null,
                 "requestID": null
             },
-            "documentsToRead": []
+            "documentsToRead": [],
+            "createDeterministicDocuments": true
         }
     ]
 };

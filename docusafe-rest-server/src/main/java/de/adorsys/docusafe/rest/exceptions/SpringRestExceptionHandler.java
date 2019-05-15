@@ -22,6 +22,7 @@ public class SpringRestExceptionHandler  extends ResponseEntityExceptionHandler 
 
     @ExceptionHandler(value = { BaseException.class })
     protected ResponseEntity<Object> handleConflict(BaseException ex, WebRequest request) {
+        LOGGER.info("exception message will be returned: " + ex.getMessage());
         return handleExceptionInternal(ex, new RestError(ex.getClass().getSimpleName() + " " + ex.getMessage()),
                 new HttpHeaders(), HttpStatus.CONFLICT, request);
     }

@@ -218,8 +218,14 @@ public class TestController {
 
                 int folderIndex = 1;
                 for (int i = 1; i <= testParameter.numberOfDocuments; i++) {
-                    DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex) + "-" + UUID.randomUUID().toString());
-                    DocumentFQN documentFQN = folder.addName("file-" + String.format("%03d", i) + "-" + UUID.randomUUID().toString());
+                    DocumentFQN documentFQN;
+                    if (testParameter.createDeterministicDocuments != null && testParameter.createDeterministicDocuments.equals(Boolean.TRUE)) {
+                        DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex));
+                        documentFQN = folder.addName("file-" + String.format("%03d", i));
+                    } else {
+                        DocumentDirectoryFQN folder = new DocumentDirectoryFQN("folder-" + String.format("%03d", folderIndex) + "-" + UUID.randomUUID().toString());
+                        documentFQN = folder.addName("file-" + String.format("%03d", i) + "-" + UUID.randomUUID().toString());
+                    }
                     if (i % testParameter.documentsPerDirectory == 0) {
                         folderIndex++;
                     }

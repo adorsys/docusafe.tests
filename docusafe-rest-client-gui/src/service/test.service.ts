@@ -28,13 +28,12 @@ export class TestService {
     }
 
     private getErrorMessage(error: HttpErrorResponse): string {
-        if (error.error instanceof ErrorEvent) {
-            // A client-side or network error occurred. Handle it accordingly.
-            return error.error.message;
-        } else {
-            // The backend returned an unsuccessful response code.
-            // The response body may contain clues as to what went wrong,
-            return "Backend returned code " + error.status + " message was: " + error.message;
+        if (error.error != null && error.error.message != null) {
+            return "Backend returned code " + error.status + " message was: " + error.error.message;
         }
+        console.log("ERROR of SERVER can not be grabbed from result:" + JSON.stringify(error));
+        // The backend returned an unsuccessful response code.
+        // The response body may contain clues as to what went wrong,
+        return "Backend returned code " + error.status;
     }
 }

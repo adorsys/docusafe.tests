@@ -21,6 +21,7 @@ export class TestRequestTYPE {
     staticClientInfo: StaticClientInfoTYPE;
     dynamicClientInfo: DynamicClientInfoTYPE;
     documentsToRead : DocumentInfoTYPE[];
+    createDeterministicDocuments : boolean;
 };
 
 export class TestSuiteTYPE {
