@@ -18,6 +18,7 @@ import {routes} from "./router-config";
 import {ConfigComponent} from "../config/config.component";
 import {ConfigService} from "../../service/config.service";
 import {UrlKeeper} from "../../service/url.keeper";
+import {SwaggerComponent} from "../../swagger/swagger.component";
 
 @NgModule({
     declarations: [
@@ -27,7 +28,8 @@ import {UrlKeeper} from "../../service/url.keeper";
         DndComponent,
         DndDirective,
         ClipboardDirective,
-        ResultsComponent
+        ResultsComponent,
+        SwaggerComponent
     ],
     imports: [
         BrowserModule,
