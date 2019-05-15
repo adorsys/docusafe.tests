@@ -17,9 +17,6 @@
             Number of threads answered: {{numberOfThreadsThatAnswered}}
             <label ngbButtonLabel class="btn-primary" (click)="abort()">abort</label>
 
-            <div style="text-align: left">
-                <pre>{{lastSendTestRequest | json}}</pre>
-            </div>
         </div>
         <div [hidden]="busy">
             <div class="row">
@@ -121,6 +118,12 @@
             </div>
         </div>
         <results [testCaseOwner]="me"></results>
+        <div [hidden]="!busy">
+            <div style="text-align: left">
+                <pre>{{lastSendTestRequest | json}}</pre>
+            </div>
+        </div>
+
     </div>
 </div>
 

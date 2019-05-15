@@ -12,7 +12,8 @@
             <div>
                 <div *ngIf="singleThread != null">
                     <table border="1" class="small-font">
-                        <tr>
+                        <tr *ngIf="singleThread.error == null">
+                            <td></td>
                             <td>date</td>
                             <td>testid</td>
                             <td>requestid</td>
@@ -25,6 +26,9 @@
 
                         <tr *ngIf="singleThread.error == null"
                             class="okline">
+                            <td>
+                                <input type="checkbox" (click)="unsetSingleThread()">hide
+                            </td>
                             <td>{{singleThread.date}}</td>
                             <td>{{singleThread.request.dynamicClientInfo.testID}}</td>
                             <td>{{singleThread.request.dynamicClientInfo.requestID}}</td>
@@ -45,10 +49,23 @@
                                 >{{t.time}}
                                 </td>
                             </ng-template>
+                        </tr>
 
+                        <tr *ngIf="singleThread.error != null">
+                            <td></td>
+                            <td>date</td>
+                            <td>testid</td>
+                            <td>requestid</td>
+                            <td>thread</td>
+                            <td>repeat</td>
+                            <td>test action</td>
+                            <td>error</td>
                         </tr>
                         <tr *ngIf="singleThread.error != null"
                             class="errorline">
+                            <td>
+                                <input type="checkbox" (click)="unsetSingleThread()">hide
+                            </td>
                             <td>{{singleThread.date}}</td>
                             <td>{{singleThread.request.dynamicClientInfo.testID}}</td>
                             <td>{{singleThread.request.dynamicClientInfo.requestID}}</td>
@@ -64,6 +81,7 @@
                                 {{singleThread.request.testAction}}<br>
                                 {{singleThread.request.docusafeLayer}}
                             </td>
+                            <td colspan="3">{{singleThread.error}}</td>
                         </tr>
                     </table>
                 </div>

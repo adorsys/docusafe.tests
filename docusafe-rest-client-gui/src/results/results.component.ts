@@ -32,6 +32,9 @@ export class ResultsComponent implements OnInit, TestResultOwner {
         this.testCaseOwner.registerResultsHolder(this);
     }
 
+    unsetSingleThread() {
+        this.singleThread = null;
+    }
     add(response: TestResultAndResponseTYPE, numberOfRepeatsDone:number , numberOfThreadsThatAnswered: number): void {
         let subsumedTest = this.viewForTests.testMap[response.request.dynamicClientInfo.testID];
         this.numberOfRepeatsDone = numberOfRepeatsDone;
