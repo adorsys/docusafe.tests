@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ConfigService} from "../../service/config.service";
 import {AmazonS3TYPE, DFSCredentialsTYPE, FilesystemTYPE} from "../../types/dfs.credentials.type";
+import {UrlKeeper} from "../../service/url.keeper";
 
 @Component({
     selector: 'app-config',
@@ -12,10 +13,12 @@ export class ConfigComponent implements OnInit {
     defaultFilesystemCredentials : DFSCredentialsTYPE;
     defaultAmazonS3Credentials : DFSCredentialsTYPE;
     dfsCredentials: DFSCredentialsTYPE;
+    destinationUrl : string;
 
-    constructor(private configService: ConfigService) {
+    constructor(private configService: ConfigService, private urlKeeper : UrlKeeper) {
         console.log("construction");
         this.setupDfsCredentials();
+        this.destinationUrl = this.urlKeeper.getUrl();
     }
 
     ngOnInit() {
@@ -79,6 +82,16 @@ export class ConfigComponent implements OnInit {
         } else {
             this.dfsCredentials = this.defaultFilesystemCredentials;
         }
+    }
+
+
+
+    selectUrl() {
+        this.urlKeeper.setUrl(this.destinationUrl);
+    }
+
+    getUrls() {
+        return this.urlKeeper.getUrls();
     }
 
 }

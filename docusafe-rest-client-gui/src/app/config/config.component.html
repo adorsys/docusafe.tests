@@ -5,6 +5,13 @@
 </div>
 
 <div class="main">
+    Destination
+    <select [(ngModel)]="destinationUrl" (change)="selectUrl()">
+        <option *ngFor="let du of getUrls()"
+                [selected]="destinationUrl === du">{{du}}
+        </option>
+    </select>
+
     <table>
         <tr>
             <td colspan="2">

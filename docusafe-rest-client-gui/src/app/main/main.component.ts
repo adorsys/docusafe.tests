@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Consts} from "../../environments/consts";
+import {ConfigService} from "../../service/config.service";
 import {UrlKeeper} from "../../service/url.keeper";
 
 @Component({
@@ -9,21 +9,9 @@ import {UrlKeeper} from "../../service/url.keeper";
 })
 export class MainComponent implements OnInit {
 
-    destinationUrls: string[] = [
-        "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
-        "http://localhost:9991",
-    ];
-    destinationUrl: string = this.destinationUrls[0];
-
-    selectUrl() {
-        this.urlKeeper.setUrl(this.destinationUrl);
-    }
-
     selected :string = 'app';
-    private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
     constructor(private urlKeeper : UrlKeeper) {
-        this.selectUrl();
     }
 
     ngOnInit() {

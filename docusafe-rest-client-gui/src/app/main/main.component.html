@@ -1,19 +1,13 @@
 <main class="main">
     <div class="toprow">
-        Destination
-        <select [(ngModel)]="destinationUrl" (change)="selectUrl()">
-            <option *ngFor="let du of destinationUrls"
-                    [selected]="destinationUrl === du">{{du}}
-            </option>
-        </select>
         <span class="{{getType('app')}}" routerLink="app" (click)="doClick('app')">
-            <span class="text">app</span>
+            <span class="text">tests</span>
         </span>
         <span class="{{getType('config')}}" routerLink="config" (click)="doClick('config')">
-            <span class="text">config</span>
+            <span class="text">tests configuration</span>
         </span>
         <span class="{{getType('swagger')}}" routerLink="swagger" (click)="doClick('swagger')">
-            <span class="text">swagger</span>
+            <span class="text">swagger link</span>
         </span>
     </div>
 
