@@ -8,22 +8,6 @@ import java.util.HashMap;
 public class DSDocument {
     String documentFQN;
     String documentContent;
-    DocumentMetaInfo dsDocumentMetaInfo;
-
-    public static class DocumentMetaInfo {
-        HashMap<String, String> map;
-        public DocumentMetaInfo() {
-            map = new HashMap<>();
-        }
-
-        public HashMap<String, String> getMap() {
-            return map;
-        }
-
-        public void setMap(HashMap<String, String> map) {
-            this.map = map;
-        }
-    }
 
     public String getDocumentFQN() {
         return documentFQN;
@@ -41,20 +25,12 @@ public class DSDocument {
         this.documentContent = documentContent;
     }
 
-    public DocumentMetaInfo getDsDocumentMetaInfo() {
-        return dsDocumentMetaInfo;
-    }
-
-    public void setDsDocumentMetaInfo(DocumentMetaInfo dsDocumentMetaInfo) {
-        this.dsDocumentMetaInfo = dsDocumentMetaInfo;
-    }
 
     @Override
     public String toString() {
         return "DSDocument{" +
                 "documentFQN='" + documentFQN + '\'' +
                 ", hexBinaryContent='" + documentContent + '\'' +
-                ", metaInfo=" + dsDocumentMetaInfo +
                 '}';
     }
 }

@@ -4,7 +4,7 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} lb [%thread] %-5level %logger{5} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} logback [%thread] %-5level %logger{5} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -27,6 +27,7 @@
         -->
     </logger>
 
+
     <logger name="de.adorsys.docusafe.transactional.impl.TxIDLog" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
@@ -38,7 +39,7 @@
     </logger>
 
 
-    <logger name="de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection" level="info" additivity="false">
+    <logger name="de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 

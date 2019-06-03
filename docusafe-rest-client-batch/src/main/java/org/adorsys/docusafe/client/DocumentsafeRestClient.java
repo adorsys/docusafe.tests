@@ -114,7 +114,7 @@ public class DocumentsafeRestClient {
     }
 
     public void readDocument(String userID, String password, String fqn, String filenameToSave) {
-        LOGGER.debug("read block of bytes for " + fqn);
+        LOGGER.debug("read block of bytes for " + fqn + " to " + filenameToSave);
         try {
             ReadDocumentResponse readDocument = client.target(baseuri)
                     .path(READ_DOCUMENT)
@@ -136,8 +136,6 @@ public class DocumentsafeRestClient {
         WriteDocumentRequest writeDocumentRequest = new WriteDocumentRequest();
         writeDocumentRequest.setDocumentFQN(fqn);
         writeDocumentRequest.setDocumentContent(HexUtil.convertBytesToHexString(data));
-        DSDocument.DocumentMetaInfo documentMetaInfo = new DSDocument.DocumentMetaInfo();
-        writeDocumentRequest.setDsDocumentMetaInfo(documentMetaInfo);
 
         client.target(baseuri)
                 .path(WRITE_DOCUMENT)

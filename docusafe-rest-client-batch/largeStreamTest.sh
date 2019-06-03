@@ -16,7 +16,9 @@ function print () {
 	} | tee -a curl.log
 }
 
-file=./target/dsc
+user="stream-user"
+password="pazzword"
+jarfile=./target/dsc
 localfile=./target/largefile
 remotefile=remotefolder/stream/largefile
 
@@ -24,23 +26,23 @@ rm -f $localfile
 i="0"
 while (( i<150 ))
 do
-	cat $file >> $localfile
+	cat $jarfile >> $localfile
 	let i=i+1
 done
 size=$(ls -sk $localfile | cut -f  2 -d " ")
 
 print "$(date) create user"
-java  -DBASE_URL=${BASE_URL} -jar $file -cu
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -cu $user $password
 
 print "$(date) write file stream oriented with size $size"
-java  -DBASE_URL=${BASE_URL} -jar $file -ws $localfile $remotefile
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -ws $user $password $localfile $remotefile
 
 print "$(date) read file stream oriented with size $size"
-java  -DBASE_URL=${BASE_URL} -jar $file -rs $remotefile $localfile.loaded
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -rs $user $password $remotefile $localfile.loaded
 diff $localfile $localfile.loaded
 rm $localfile.loaded
 
 # print "$(date) destroy user"
-# java  -DBASE_URL=${BASE_URL} -jar $file -du
+# java  -DBASE_URL=${BASE_URL} -jar $jarfile -du $user $password
 
 print "STREAM TESTING SUCCESSFULL"

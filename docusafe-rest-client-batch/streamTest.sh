@@ -16,51 +16,53 @@ function print () {
 	} | tee -a curl.log
 }
 
-file=./target/dsc
+user="stream-user"
+password="pazzword"
+jarfile=./target/dsc
 localfile=./target/largefile
 remotefile=remotefolder/stream/smallfile
 rm -f $localfile
 i="0"
 while (( i<2 ))
 do
-	cat $file >> $localfile
+	cat $jarfile >> $localfile
 	let i=i+1
 done
 size=$(ls -sk $localfile | cut -f  1 -d " ")
 
 print "$(date) create user"
-java  -DBASE_URL=${BASE_URL} -jar $file -cu
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -cu $user $password
 
 # write data as bytes and stream ===================
 # ==========================================================
 print "$(date) write file stream oriented with size $size"
-java -DBASE_URL=${BASE_URL} -jar $file -wb $localfile $remotefile
+java -DBASE_URL=${BASE_URL} -jar $jarfile -wb $user $password $localfile $remotefile
 
 print "$(date) read file stream oriented with size $size"
-java -DBASE_URL=${BASE_URL} -jar $file -rs $remotefile $localfile.as.stream
+java -DBASE_URL=${BASE_URL} -jar $jarfile -rs $user $password $remotefile $localfile.as.stream
 diff $localfile $localfile.as.stream
 rm $localfile.as.stream
 
 print "$(date) read file byte oriented with size $size"
-java -DBASE_URL=${BASE_URL} -jar $file -rb $remotefile $localfile.as.bytes
+java -DBASE_URL=${BASE_URL} -jar $jarfile -rb $user $password $remotefile $localfile.as.bytes
 diff $localfile $localfile.as.bytes
 rm $localfile.as.bytes
 
 print "$(date) destroy user"
-java  -DBASE_URL=${BASE_URL} -jar $file -du
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -du $user $password
 
 print "$(date) create user"
-java  -DBASE_URL=${BASE_URL} -jar $file -cu
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -cu $user $password
 
 print "$(date) write file stream oriented with size $size"
-java  -DBASE_URL=${BASE_URL} -jar $file -wss $localfile $remotefile
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -wss $user $password $localfile $remotefile
 
 print "$(date) read file stream oriented with size $size"
-java  -DBASE_URL=${BASE_URL} -jar $file -rs $remotefile $localfile.loaded
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -rs $user $password $remotefile $localfile.loaded
 diff $localfile $localfile.loaded
 rm $localfile.loaded
 
 print "$(date) destroy user"
-java  -DBASE_URL=${BASE_URL} -jar $file -du
+java  -DBASE_URL=${BASE_URL} -jar $jarfile -du $user $password
 
 print "STREAM TESTING SUCCESSFULL"
