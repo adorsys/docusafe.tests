@@ -60,7 +60,7 @@ function checkCurl() {
 }
 
 function createStuff() {
-    userid="peter-neu1"
+    userid="peter-neu2"
     password="rkp"
     token="{\"userID\":\"${userid}\",\"readKeyPassword\":\"${password}\"}"
     jar=./target/dsc

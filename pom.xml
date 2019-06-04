@@ -64,6 +64,7 @@
     <modules>
         <module>docusafe-rest-server</module>
         <module>docusafe-rest-client-batch</module>
+        <module>docusafe-batch-client</module>
     </modules>
 
     <dependencies>
