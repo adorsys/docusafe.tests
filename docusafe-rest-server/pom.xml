@@ -150,6 +150,17 @@
             <version>${aspectj.version}</version>
         </dependency>
 
+
+        <!-- DATASAFE -->
+
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>datasafe-simple-adapter-impl</artifactId>
+            <version>${datasafe.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+
     </dependencies>
 
 

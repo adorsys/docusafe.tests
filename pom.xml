@@ -32,6 +32,7 @@
         <common.basetypes.version>0.0.7</common.basetypes.version>
         <dfs.connection.version>1.0.0</dfs.connection.version>
         <docusafe.version>1.0.0</docusafe.version>
+        <datasafe.version>0.0.11</datasafe.version>
     </properties>
 
     <scm>

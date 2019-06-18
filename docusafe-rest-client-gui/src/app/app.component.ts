@@ -95,7 +95,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     ];
     docusafelayer: string[] = [
         "CACHED_TRANSACTIONAL",
-        "DOCUSAFE_BASE"
+        "DOCUSAFE_BASE",
+        "SIMPLE_DATASAFE_ADAPTER"
     ];
 
     constructor(private testService: TestService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {

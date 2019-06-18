@@ -2,6 +2,7 @@ package de.adorsys.docusafe.rest.controller;
 
 import de.adorsys.common.exceptions.BaseException;
 import de.adorsys.common.exceptions.BaseExceptionHandler;
+import de.adorsys.datasafe.simple.adapter.api.SimpleDatasafeService;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
 import de.adorsys.dfs.connection.api.types.connection.AmazonS3AccessKey;
@@ -49,6 +50,7 @@ public class TestController {
     private final static String APPLICATION_JSON = "application/json";
     private static int counter = 0;
     private DocumentSafeService plainDocumentSafeService = null;
+    private SimpleDatasafeService simpleDatasafeService = null;
     private CachedTransactionalDocumentSafeService cachedTransactionalDocumentSafeServices = null;
 
     private RequestMemoryContext requestMemoryContext = new SimpleRequestMemoryContextImpl();
