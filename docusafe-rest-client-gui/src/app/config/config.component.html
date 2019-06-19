@@ -35,7 +35,7 @@
             <td><input type="text" name="secretkey" [(ngModel)]="dfsCredentials.amazons3.amazonS3SecretKey"></td>
         </tr>
         <tr *ngIf="isDFSType('amazons3')">
-            <td>root bucket</td>
+            <td>region</td>
             <td><input type="text" name="region" [(ngModel)]="dfsCredentials.amazons3.amazonS3Region"></td>
         </tr>
         <tr *ngIf="isDFSType('amazons3')">

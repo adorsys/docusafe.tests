@@ -168,14 +168,21 @@ public class TestController {
         LOGGER.info(dfsCredentials.toString());
         {
             DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
-            plainCredentials.addSubDirToRoot("plainfolder");
+            plainCredentials.addSubDirToRoot("docusafe/plainfolder");
             DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
             // if an exception has raised here, the old connection is still available
             docusafePlainDFSConnection = dfsConnection;
         }
         {
             DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
-            plainCredentials.addSubDirToRoot("cachedtxfolder");
+            plainCredentials.addSubDirToRoot("datasafe/plainfolder");
+            DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
+            // if an exception has raised here, the old connection is still available
+            datasafePlainDFSConnection = dfsConnection;
+        }
+        {
+            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
+            plainCredentials.addSubDirToRoot("docusafe/cachedtxfolder");
             docusafeCachedTransactionalDFSConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
         }
         initServices();
@@ -437,7 +444,7 @@ public class TestController {
     }
 
     private DocumentFQN c(de.adorsys.datasafe.simple.adapter.api.types.DocumentFQN documentFQN) {
-        return new DocumentFQN(documentFQN.getValue());
+        return new DocumentFQN(documentFQN.getDocusafePath());
     }
 
     private de.adorsys.datasafe.simple.adapter.api.types.DSDocument c(DSDocument dsDocument) {
