@@ -33,6 +33,15 @@
         <dfs.connection.version>1.0.0</dfs.connection.version>
         <docusafe.version>1.0.0</docusafe.version>
         <datasafe.version>0.0.11</datasafe.version>
+
+        <bouncycastle.version>1.58</bouncycastle.version>
+        <amazon.aws.version>1.11.538</amazon.aws.version>
+        <jsr-305.version>3.0.0</jsr-305.version>
+        <dagger.version>2.17</dagger.version>
+
+
+
+
     </properties>
 
     <scm>

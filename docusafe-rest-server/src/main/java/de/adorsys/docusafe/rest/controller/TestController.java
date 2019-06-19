@@ -3,12 +3,18 @@ package de.adorsys.docusafe.rest.controller;
 import de.adorsys.common.exceptions.BaseException;
 import de.adorsys.common.exceptions.BaseExceptionHandler;
 import de.adorsys.datasafe.simple.adapter.api.SimpleDatasafeService;
+import de.adorsys.datasafe.simple.adapter.api.types.AmazonS3DFSCredentials;
+import de.adorsys.datasafe.simple.adapter.api.types.FilesystemDFSCredentials;
+import de.adorsys.datasafe.simple.adapter.impl.SimpleDatasafeServiceImpl;
+import de.adorsys.dfs.connection.api.filesystem.FilesystemConnectionPropertiesImpl;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
 import de.adorsys.dfs.connection.api.types.connection.AmazonS3AccessKey;
 import de.adorsys.dfs.connection.api.types.connection.AmazonS3RootBucketName;
 import de.adorsys.dfs.connection.api.types.connection.AmazonS3SecretKey;
 import de.adorsys.dfs.connection.api.types.connection.FilesystemRootBucketName;
+import de.adorsys.dfs.connection.api.types.properties.ConnectionProperties;
+import de.adorsys.dfs.connection.impl.amazons3.AmazonS3ConnectionProperitesImpl;
 import de.adorsys.dfs.connection.impl.factory.DFSConnectionFactory;
 import de.adorsys.docusafe.business.DocumentSafeService;
 import de.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
@@ -20,6 +26,7 @@ import de.adorsys.docusafe.cached.transactional.CachedTransactionalDocumentSafeS
 import de.adorsys.docusafe.cached.transactional.impl.CachedTransactionalDocumentSafeServiceImpl;
 import de.adorsys.docusafe.rest.types.*;
 import de.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
+import de.adorsys.docusafe.service.api.types.DocumentContent;
 import de.adorsys.docusafe.service.api.types.UserID;
 import de.adorsys.docusafe.service.api.types.UserIDAuth;
 import de.adorsys.docusafe.spring.SimpleRequestMemoryContextImpl;
@@ -36,10 +43,12 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by peter on 15.08.18 at 15:57.
@@ -58,8 +67,10 @@ public class TestController {
     @Autowired
     SpringDFSConnectionFactory factory;
 
-    private DFSConnection plainDFSConnection = null;
-    private DFSConnection cachedTransactionalDFSConnection = null;
+    private DFSConnection docusafePlainDFSConnection = null;
+    private DFSConnection datasafePlainDFSConnection = null;
+    private DFSConnection docusafeCachedTransactionalDFSConnection = null;
+
 
 
     @PostConstruct
@@ -69,10 +80,12 @@ public class TestController {
             throw new BaseException("did not expect to get more than one controller");
         }
 
-        plainDFSConnection = factory.getDFSConnectionWithSubDir("plainfolder");
-        cachedTransactionalDFSConnection = factory.getDFSConnectionWithSubDir("cachedtxfolder");
+        docusafePlainDFSConnection = factory.getDFSConnectionWithSubDir("docusafe/plainfolder");
+        datasafePlainDFSConnection = factory.getDFSConnectionWithSubDir("datasafe/plainfolder");
+        docusafeCachedTransactionalDFSConnection = factory.getDFSConnectionWithSubDir("docusafe/cachedtxfolder");
 
         plainDocumentSafeService = null;
+        simpleDatasafeService = null;
         cachedTransactionalDocumentSafeServices = null;
 
         initServices();
@@ -87,7 +100,7 @@ public class TestController {
     public
     @ResponseBody
     ResponseEntity<DFSCredentials> getDfsConfiguration() {
-        DFSCredentials credentials = new DFSCredentials(plainDFSConnection.getConnectionProperties());
+        DFSCredentials credentials = new DFSCredentials(docusafePlainDFSConnection.getConnectionProperties());
         String r;
         if (credentials.getAmazons3() != null) {
             r = credentials.getAmazons3().getAmazonS3RootBucketName().getValue();
@@ -118,6 +131,26 @@ public class TestController {
         return new ResponseEntity<>(credentials, HttpStatus.OK);
     }
 
+    private de.adorsys.datasafe.simple.adapter.api.types.DFSCredentials getDatasafeDFSCredentials(ConnectionProperties properties) {
+        if (properties instanceof AmazonS3ConnectionProperitesImpl) {
+            AmazonS3ConnectionProperitesImpl props = (AmazonS3ConnectionProperitesImpl) properties;
+            return AmazonS3DFSCredentials.builder()
+                    .url(props.getUrl().toString())
+                    .accessKey(props.getAmazonS3AccessKey().getValue())
+                    .secretKey(props.getAmazonS3SecretKey().getValue())
+                    .region(props.getAmazonS3Region().getValue())
+                    .rootBucket(props.getAmazonS3RootBucketName().getValue())
+                    .build();
+        }
+        if (properties instanceof FilesystemConnectionPropertiesImpl) {
+            FilesystemConnectionPropertiesImpl props = (FilesystemConnectionPropertiesImpl) properties;
+            return FilesystemDFSCredentials.builder()
+                    .root(FileSystems.getDefault().getPath(props.getFilesystemRootBucketName().getValue()))
+                    .build();
+        }
+        throw new BaseException("missing type for ConnectionProperties:" + properties.getClass().getCanonicalName());
+    }
+
     private static final String hide(String value) {
         return value.length() > 4 ? value.substring(0, 2) + "***" + value.substring(value.length() - 2) : "***";
     }
@@ -138,12 +171,12 @@ public class TestController {
             plainCredentials.addSubDirToRoot("plainfolder");
             DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
             // if an exception has raised here, the old connection is still available
-            plainDFSConnection = dfsConnection;
+            docusafePlainDFSConnection = dfsConnection;
         }
         {
             DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
             plainCredentials.addSubDirToRoot("cachedtxfolder");
-            cachedTransactionalDFSConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
+            docusafeCachedTransactionalDFSConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
         }
         initServices();
         return new ResponseEntity<>("ok", HttpStatus.OK);
@@ -161,7 +194,7 @@ public class TestController {
     @ResponseBody
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
-        testsResult.dfsConnectionString = plainDFSConnection.getClass().getName() + new DFSCredentials(plainDFSConnection.getConnectionProperties()).toString();
+        testsResult.dfsConnectionString = docusafePlainDFSConnection.getClass().getName() + new DFSCredentials(docusafePlainDFSConnection.getConnectionProperties()).toString();
         LOGGER.info("START TEST " + testParameter.testAction + " requestID: " + testParameter.dynamicClientInfo.requestID);
         try {
             switch (testParameter.testAction) {
@@ -206,6 +239,11 @@ public class TestController {
                             plainDocumentSafeService.createUser(userIDAuth);
                         }
                         break;
+                    case SIMPLE_DATASAFE_ADAPTER:
+                        if (!simpleDatasafeService.userExists(c(userIDAuth.getUserID()))) {
+                            simpleDatasafeService.createUser(c(userIDAuth));
+                        }
+                        break;
                     case CACHED_TRANSACTIONAL:
                         if (!cachedTransactionalDocumentSafeServices.userExists(userIDAuth.getUserID())) {
                             cachedTransactionalDocumentSafeServices.createUser(userIDAuth);
@@ -245,6 +283,9 @@ public class TestController {
                         case DOCUSAFE_BASE:
                             plainDocumentSafeService.storeDocument(userIDAuth, dsDocument);
                             break;
+                        case SIMPLE_DATASAFE_ADAPTER:
+                            simpleDatasafeService.storeDocument(c(userIDAuth), c(dsDocument));
+                            break;
                         case CACHED_TRANSACTIONAL:
                             cachedTransactionalDocumentSafeServices.txStoreDocument(userIDAuth, dsDocument);
                             break;
@@ -278,6 +319,9 @@ public class TestController {
                                     case DOCUSAFE_BASE:
                                         dsDocument = plainDocumentSafeService.readDocument(userIDAuth, documentFQN);
                                         break;
+                                    case SIMPLE_DATASAFE_ADAPTER:
+                                        dsDocument = c(simpleDatasafeService.readDocument(c(userIDAuth), c(documentFQN)));
+                                        break;
                                     case CACHED_TRANSACTIONAL:
                                         dsDocument = cachedTransactionalDocumentSafeServices.txReadDocument(userIDAuth, documentFQN);
                                         break;
@@ -300,6 +344,9 @@ public class TestController {
                             switch (testParameter.docusafeLayer) {
                                 case DOCUSAFE_BASE:
                                     exists = plainDocumentSafeService.documentExists(userIDAuth, documentFQN);
+                                    break;
+                                case SIMPLE_DATASAFE_ADAPTER:
+                                    exists = simpleDatasafeService.documentExists(c(userIDAuth), c(documentFQN));
                                     break;
                                 case CACHED_TRANSACTIONAL:
                                     exists = cachedTransactionalDocumentSafeServices.txDocumentExists(userIDAuth, documentFQN);
@@ -324,17 +371,20 @@ public class TestController {
                         break;
                 }
 
-                DocumentDirectoryFQN documentFQN = new DocumentDirectoryFQN("/");
+                DocumentDirectoryFQN documentDirectoryFQN = new DocumentDirectoryFQN("/");
                 List<DocumentFQN> list = null;
                 TxBucketContentFQN txBucketContentFQN = null;
-                stopWatch.start("list all documents of " + documentFQN);
+                stopWatch.start("list all documents of " + documentDirectoryFQN);
                 try {
                     switch (testParameter.docusafeLayer) {
                         case DOCUSAFE_BASE:
-                            list = plainDocumentSafeService.list(userIDAuth, documentFQN, ListRecursiveFlag.TRUE);
+                            list = plainDocumentSafeService.list(userIDAuth, documentDirectoryFQN, ListRecursiveFlag.TRUE);
+                            break;
+                        case SIMPLE_DATASAFE_ADAPTER:
+                            list = c(simpleDatasafeService.list(c(userIDAuth), c(documentDirectoryFQN), c(ListRecursiveFlag.TRUE)));
                             break;
                         case CACHED_TRANSACTIONAL:
-                            txBucketContentFQN = cachedTransactionalDocumentSafeServices.txListDocuments(userIDAuth, documentFQN, ListRecursiveFlag.TRUE);
+                            txBucketContentFQN = cachedTransactionalDocumentSafeServices.txListDocuments(userIDAuth, documentDirectoryFQN, ListRecursiveFlag.TRUE);
                             break;
                         default:
                             throw new BaseException("missing switch");
@@ -366,6 +416,54 @@ public class TestController {
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
+    private List<DocumentFQN> c(List<de.adorsys.datasafe.simple.adapter.api.types.DocumentFQN> list) {
+        return list.stream().map(d -> c(d)).collect(Collectors.toList());
+    }
+
+    private de.adorsys.datasafe.simple.adapter.api.types.ListRecursiveFlag c(ListRecursiveFlag aTrue) {
+        return de.adorsys.datasafe.simple.adapter.api.types.ListRecursiveFlag.valueOf(aTrue.name());
+    }
+
+    private de.adorsys.datasafe.simple.adapter.api.types.DocumentDirectoryFQN c(DocumentDirectoryFQN documentDirectoryFQN) {
+        return new de.adorsys.datasafe.simple.adapter.api.types.DocumentDirectoryFQN(documentDirectoryFQN.getValue());
+    }
+
+    private DSDocument c(de.adorsys.datasafe.simple.adapter.api.types.DSDocument readDocument) {
+        return new DSDocument(c(readDocument.getDocumentFQN()), c(readDocument.getDocumentContent()));
+    }
+
+    private DocumentContent c(de.adorsys.datasafe.simple.adapter.api.types.DocumentContent documentContent) {
+        return new DocumentContent(documentContent.getValue());
+    }
+
+    private DocumentFQN c(de.adorsys.datasafe.simple.adapter.api.types.DocumentFQN documentFQN) {
+        return new DocumentFQN(documentFQN.getValue());
+    }
+
+    private de.adorsys.datasafe.simple.adapter.api.types.DSDocument c(DSDocument dsDocument) {
+        return new de.adorsys.datasafe.simple.adapter.api.types.DSDocument(c(dsDocument.getDocumentFQN()), c(dsDocument.getDocumentContent()));
+    }
+
+    private de.adorsys.datasafe.simple.adapter.api.types.DocumentContent c(DocumentContent documentContent) {
+        return new de.adorsys.datasafe.simple.adapter.api.types.DocumentContent(documentContent.getValue());
+    }
+
+    private de.adorsys.datasafe.simple.adapter.api.types.DocumentFQN c(DocumentFQN documentFQN) {
+        return new de.adorsys.datasafe.simple.adapter.api.types.DocumentFQN(documentFQN.getValue());
+    }
+
+    private de.adorsys.datasafe.encrypiton.api.types.UserIDAuth c(UserIDAuth userIDAuth) {
+        return new de.adorsys.datasafe.encrypiton.api.types.UserIDAuth(c(userIDAuth.getUserID()), c(userIDAuth.getReadKeyPassword()));
+    }
+
+    private de.adorsys.datasafe.encrypiton.api.types.keystore.ReadKeyPassword c(ReadKeyPassword readKeyPassword) {
+        return new de.adorsys.datasafe.encrypiton.api.types.keystore.ReadKeyPassword(readKeyPassword.getValue());
+    }
+
+    private de.adorsys.datasafe.encrypiton.api.types.UserID c(UserID userID) {
+        return new de.adorsys.datasafe.encrypiton.api.types.UserID(userID.getValue());
+    }
+
 
     private ResponseEntity<TestsResult> deleteDB(TestParameter testParameter, TestsResult testsResult) {
         StopWatch stopWatch = new StopWatch();
@@ -374,8 +472,8 @@ public class TestController {
             case DELETE_DATABASE_AND_CACHES: {
                 LOGGER.info("delete database");
                 stopWatch.start("delete database");
-                plainDFSConnection.deleteDatabase();
-                cachedTransactionalDFSConnection.deleteDatabase();
+                docusafePlainDFSConnection.deleteDatabase();
+                docusafeCachedTransactionalDFSConnection.deleteDatabase();
                 stopWatch.stop();
                 break;
             }
@@ -419,8 +517,9 @@ public class TestController {
     }
 
     private void initServices() {
-        plainDocumentSafeService = new DocumentSafeServiceImpl(plainDFSConnection);
-        DocumentSafeServiceImpl dss1 = new DocumentSafeServiceImpl(cachedTransactionalDFSConnection);
+        plainDocumentSafeService = new DocumentSafeServiceImpl(docusafePlainDFSConnection);
+        DocumentSafeServiceImpl dss1 = new DocumentSafeServiceImpl(docusafeCachedTransactionalDFSConnection);
         cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, dss1), dss1);
+        simpleDatasafeService = new SimpleDatasafeServiceImpl(getDatasafeDFSCredentials(datasafePlainDFSConnection.getConnectionProperties()));
     }
 }

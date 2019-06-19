@@ -5,6 +5,6 @@ package de.adorsys.docusafe.rest.types;
  */
 public enum DocusafeLayer {
     CACHED_TRANSACTIONAL,
-    TRANSACTIONAL,
+    SIMPLE_DATASAFE_ADAPTER,
     DOCUSAFE_BASE
 }
