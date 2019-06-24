@@ -72,7 +72,6 @@ public class TestController {
     private DFSConnection docusafeCachedTransactionalDFSConnection = null;
 
 
-
     @PostConstruct
     public void postconstruct() {
         counter++;
@@ -108,10 +107,10 @@ public class TestController {
             r = credentials.getFilesystem().getFilesystemRootBucketName().getValue();
         }
 
-        if (! r.endsWith("plainfolder")) {
+        if (!r.endsWith("plainfolder")) {
             throw new BaseException("can not return credentials due to path problem");
         }
-        r = r.substring(0, r.length()- "plainfolder".length() -1);
+        r = r.substring(0, r.length() - "plainfolder".length() - 1);
         if (credentials.getAmazons3() != null) {
             credentials.getAmazons3().setAmazonS3RootBucketName(new AmazonS3RootBucketName(r));
 
@@ -210,8 +209,6 @@ public class TestController {
                 case DOCUMENT_EXISTS:
                 case LIST_DOCUMENTS:
                     return regularTest(testParameter, testsResult);
-                case DELETE_DATABASE_AND_CACHES:
-                case DELETE_CACHES:
                 case DELETE_DATABASE:
                     return deleteDB(testParameter, testsResult);
                 default:
@@ -475,21 +472,23 @@ public class TestController {
     private ResponseEntity<TestsResult> deleteDB(TestParameter testParameter, TestsResult testsResult) {
         StopWatch stopWatch = new StopWatch();
         switch (testParameter.testAction) {
-            case DELETE_DATABASE:
-            case DELETE_DATABASE_AND_CACHES: {
+
+            case DELETE_DATABASE: {
+                stopWatch.start("delete database " + testParameter.docusafeLayer);
+                switch (testParameter.docusafeLayer) {
+                    case SIMPLE_DATASAFE_ADAPTER:
+                        datasafePlainDFSConnection.deleteDatabase();
+                        break;
+                    case CACHED_TRANSACTIONAL:
+                        docusafeCachedTransactionalDFSConnection.deleteDatabase();
+                        break;
+                    case DOCUSAFE_BASE:
+                        docusafePlainDFSConnection.deleteDatabase();
+                        break;
+                    default:
+                        throw new BaseException("missing switch for layer " + testParameter.docusafeLayer);
+                }
                 LOGGER.info("delete database");
-                stopWatch.start("delete database");
-                docusafePlainDFSConnection.deleteDatabase();
-                docusafeCachedTransactionalDFSConnection.deleteDatabase();
-                stopWatch.stop();
-                break;
-            }
-        }
-        switch (testParameter.testAction) {
-            case DELETE_CACHES:
-            case DELETE_DATABASE_AND_CACHES: {
-                LOGGER.info("delete caches");
-                stopWatch.start("delete caches");
                 initServices();
                 stopWatch.stop();
                 break;

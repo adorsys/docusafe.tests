@@ -28,7 +28,7 @@ import {UrlKeeper} from "../service/url.keeper";
 })
 export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     title = 'docusafe-test-client';
-    version = " version 1.0.0 (docusafe 1.0.0, dfs-connection 1.0.0)"
+    version = " version 1.0.0 (docusafe 1.0.0, dfs-connection 1.0.0 datasafe 0.0.14-SNAPSHOT)";
     dndForTestSuite: FileContentHolder = null;
     dndForTestResults: FileContentHolder = null;
     testResultOwner: TestResultOwner = null;
@@ -57,9 +57,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "READ_DOCUMENTS",
         "DOCUMENT_EXISTS",
         "LIST_DOCUMENTS",
-        "DELETE_DATABASE",
-        "DELETE_DATABASE_AND_CACHES",
-        "DELETE_CACHES"
+        "DELETE_DATABASE"
     ];
     docusafelayer: string[] = [
         "CACHED_TRANSACTIONAL",
@@ -73,9 +71,9 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     changeTestSuite () {
         console.log("current test Suite is now:" + this.currentTestSuiteName);
-        for (var i = 0; i<this.testSuites.length; i++) {
+        for (let i = 0; i<this.testSuites.length; i++) {
             if (this.testSuites[i].name == this.currentTestSuiteName) {
-                this.currentTestIndex = i;
+                this.currentTestSuiteIndex = i;
             };
         }
         this.setTests(this.testSuites[this.currentTestSuiteIndex]);
@@ -123,7 +121,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
                 if (isUndefined(subsumendTests)) {
                     throw "dropped element are not json";
                 }
-                var length = subsumendTests.length;
+                let length = subsumendTests.length;
                 console.log("anzahl der neu geladenen testergebnisse:" + length);
                 if (length == 0) {
                     throw "dropped element are not json testactions";
@@ -135,9 +133,13 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         }
     }
 
-    setTests(testSuite: TestSuiteTYPE): void {
-        this.testSuite = testSuite;
-        console.log("received new testsuite: " + testSuite.name);
+    setTests(newTestSuite: TestSuiteTYPE): void {
+        if (this.testSuite == null) {
+            console.log("testsuite initializes to " + newTestSuite.name);;
+        } else {
+            console.log("testsuite changes from : " + this.testSuite.name + " to " + newTestSuite.name);;
+        }
+        this.testSuite = newTestSuite;
         if (this.testSuite != null) {
             this.currentTestIndex = 0;
             this.numberOfTests = this.testSuite.testrequests.length;
@@ -178,13 +180,14 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         this.errormessage = "";
         this.numberOfRepeatsDone = 1;
         this.numberOfThreadsThatAnswered = 1;
-        var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuites[0].testrequests[0]));
-        deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
+        let deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuites[0].testrequests[0]));
+        deleteTestCase.testAction = "DELETE_DATABASE";
         deleteTestCase.dynamicClientInfo.testID = uuid();
         deleteTestCase.dynamicClientInfo.threadNumber = 1;
         deleteTestCase.dynamicClientInfo.repetitionNumber = 1;
         deleteTestCase.staticClientInfo.numberOfRepeats = 1;
         deleteTestCase.staticClientInfo.numberOfThreads = 1;
+        deleteTestCase.docusafeLayer = this.testSuite.testrequests[this.currentTestIndex].docusafeLayer;
         this.lastSendTestRequest = deleteTestCase;
         this.testService.test(deleteTestCase, this);
     }

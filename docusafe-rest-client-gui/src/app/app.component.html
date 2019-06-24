@@ -126,7 +126,7 @@
                                 <td>
                                     <select [(ngModel)]="currentTestSuiteName" (ngModelChange)="changeTestSuite()">
                                         <option *ngFor="let ts of testSuites"
-                                                [selected]="testSuites[currentTestIndex].name == ts.name">
+                                                [selected]="testSuites[currentTestSuiteIndex].name == ts.name">
                                             {{ts.name}}
                                         </option>
                                     </select>
