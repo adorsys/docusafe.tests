@@ -25,6 +25,7 @@ export class TestRequestTYPE {
 };
 
 export class TestSuiteTYPE {
+    name: string;
     testrequests: TestRequestTYPE[];
 };
 

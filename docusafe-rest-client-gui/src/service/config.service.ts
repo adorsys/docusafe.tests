@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core"
-import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
+import {HttpHeaders, HttpClient} from "@angular/common/http"
 import {DFSCredentialsTYPE} from "../types/dfs.credentials.type";
 import {ConfigComponent} from "../app/config/config.component";
 import {UrlKeeper} from "./url.keeper";

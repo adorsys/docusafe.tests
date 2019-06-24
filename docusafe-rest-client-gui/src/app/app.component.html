@@ -117,6 +117,26 @@
                     </div>
                     {{errormessage}}
                 </div>
+                <div class="col3">
+                    <div class="headline">SUITES</div>
+                    <div class="content">
+                        <table class="testtable">
+                            <tr>
+                                <td>Test Suite</td>
+                                <td>
+                                    <select [(ngModel)]="currentTestSuiteName" (ngModelChange)="changeTestSuite()">
+                                        <option *ngFor="let ts of testSuites"
+                                                [selected]="testSuites[currentTestIndex].name == ts.name">
+                                            {{ts.name}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    {{errormessage}}
+                </div>
+
             </div>
         </div>
         <results [testCaseOwner]="me"></results>

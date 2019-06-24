@@ -12,45 +12,14 @@ import {formatDate} from '@angular/common';
 import {isUndefined} from "util";
 import {ClipboardService} from "../clipboard/clipboard.service";
 import {v4 as uuid} from 'uuid';
-import * as fulltestJson from "../testsuites/fulltest.json";
+import * as simpleDatasafeAdapter from "../testsuites/simpleDatasafeAdapter.json";
+import * as docusafeBase from "../testsuites/docusafeBase.json";
+import * as cachedTransactional from "../testsuites/cachedTransactional.json";
 import {SubsumedTestTYPE} from "../types/test.result.type";
 import { saveAs } from "file-saver/FileSaver";
 
-import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
-import {DocumentInfoTYPE} from "../types/test.result.type";
 import {DndOwner} from "../dnd/dnd.owner";
 import {UrlKeeper} from "../service/url.keeper";
-
-
-var defaultTestSuite: TestSuiteTYPE =
-{
-
-    "testrequests": [
-        {
-            "testAction": "CREATE_DOCUMENTS",
-            "docusafeLayer": "DOCUSAFE_BASE",
-            "userid": "peter",
-            "sizeOfDocument": 100,
-            "documentsPerDirectory": 1,
-            "numberOfDocuments": 1,
-            "staticClientInfo": {
-                "numberOfRepeats": 1,
-                "numberOfThreads": 1
-            },
-            "dynamicClientInfo": {
-                "threadNumber": 0,
-                "repetitionNumber": 0,
-                "testID": null,
-                "requestID": null
-            },
-            "documentsToRead": [],
-            "createDeterministicDocuments": true
-        }
-    ]
-};
-
-var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
-// var fullTestSuite = defaultTestSuite;
 
 @Component({
     selector: 'app-root',
@@ -80,7 +49,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
-
     READ_DOCUMENT_ACTION_INDEX=1;
     DOCUMENT_EXISTS_ACTION_INDEX = 2;
     LIST_DOCUMENTS_INDEX = 3;
@@ -99,8 +67,35 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "SIMPLE_DATASAFE_ADAPTER"
     ];
 
+    testSuites: TestSuiteTYPE[] = [<TestSuiteTYPE>simpleDatasafeAdapter.default, <TestSuiteTYPE>docusafeBase.default, <TestSuiteTYPE>cachedTransactional.default];
+    currentTestSuiteIndex = 0;
+    currentTestSuiteName: string = this.testSuites[this.currentTestSuiteIndex].name;
+
+    changeTestSuite2 () {
+        console.log("click2:" + this.currentTestSuiteName);
+    }
+    changeTestSuite () {
+        console.log("current test Suite is now:" + this.currentTestSuiteName);
+        for (var i = 0; i<this.testSuites.length; i++) {
+            if (this.testSuites[i].name == this.currentTestSuiteName) {
+                this.currentTestIndex = i;
+            };
+        }
+        this.setTests(this.testSuites[this.currentTestSuiteIndex]);
+
+
+    }
+
     constructor(private testService: TestService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {
-        this.setTests(fullTestSuite);
+        console.log("ANZAHL DER TEST-SUITES: " +  this.testSuites.length);
+        console.log("INDEX TEST-SUITES: " +  this.currentTestSuiteIndex);
+        for (var i = 0; i<this.testSuites.length; i++) {
+            console.log("NAME DER TESTSUITE: " +  this.testSuites[i].name);
+            console.log("Anzahl der Test   : " +  this.testSuites[i].testrequests.length);
+        }
+        console.log("Curernt TestSuite Name: " +  this.currentTestSuiteName);
+
+        this.setTests(this.testSuites[this.currentTestSuiteIndex]);
         console.log("APP CONSTRUCTION");
     }
 
@@ -146,11 +141,13 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     setTests(testSuite: TestSuiteTYPE): void {
         this.testSuite = testSuite;
-        console.log("received testrequests:");
+        console.log("received new testsuite: " + testSuite.name);
         if (this.testSuite != null) {
             console.log("size is " + this.testSuite.testrequests.length);
             this.currentTestIndex = 0;
             this.numberOfTests = this.testSuite.testrequests.length;
+        } else {
+            console.error("testsuite received is null");
         }
     }
 
@@ -187,7 +184,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         this.numberOfRepeatsDone = 1;
         this.numberOfThreadsThatAnswered = 1;
         // var deleteTestCase: TestRequestTYPE  = new TestRequestTYPE();
-        var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(defaultTestSuite.testrequests[0]));
+        var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuites[0].testrequests[0]));
         deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
         deleteTestCase.dynamicClientInfo.testID = uuid();
         deleteTestCase.dynamicClientInfo.threadNumber = 1;
