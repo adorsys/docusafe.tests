@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import {TestService} from "../service/test.service";
 import {TestRequestTYPE, TestSuiteTYPE} from "../types/test.cases.type";
 import {TestSuiteOwner} from "./test.case.owner";
@@ -71,9 +71,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     currentTestSuiteIndex = 0;
     currentTestSuiteName: string = this.testSuites[this.currentTestSuiteIndex].name;
 
-    changeTestSuite2 () {
-        console.log("click2:" + this.currentTestSuiteName);
-    }
     changeTestSuite () {
         console.log("current test Suite is now:" + this.currentTestSuiteName);
         for (var i = 0; i<this.testSuites.length; i++) {
@@ -82,7 +79,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
             };
         }
         this.setTests(this.testSuites[this.currentTestSuiteIndex]);
-
 
     }
 
@@ -143,7 +139,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         this.testSuite = testSuite;
         console.log("received new testsuite: " + testSuite.name);
         if (this.testSuite != null) {
-            console.log("size is " + this.testSuite.testrequests.length);
             this.currentTestIndex = 0;
             this.numberOfTests = this.testSuite.testrequests.length;
         } else {
@@ -183,7 +178,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         this.errormessage = "";
         this.numberOfRepeatsDone = 1;
         this.numberOfThreadsThatAnswered = 1;
-        // var deleteTestCase: TestRequestTYPE  = new TestRequestTYPE();
         var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuites[0].testrequests[0]));
         deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
         deleteTestCase.dynamicClientInfo.testID = uuid();
