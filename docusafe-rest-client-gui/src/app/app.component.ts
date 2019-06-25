@@ -20,13 +20,16 @@ import { saveAs } from "file-saver/FileSaver";
 
 import {DndOwner} from "../dnd/dnd.owner";
 import {UrlKeeper} from "../service/url.keeper";
+import {SwitchConfigSender} from "./switch.config.sender";
+import {DFSConfigNameTYPE} from "../types/dfs.config.name.type";
+import {DfsSwitchService} from "../service/dfs.switch.service";
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
+export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, SwitchConfigSender {
     title = 'docusafe-test-client';
     version = " version 1.0.0 (docusafe 1.0.0, dfs-connection 1.0.0 datasafe 0.0.14-SNAPSHOT)";
     dndForTestSuite: FileContentHolder = null;
@@ -69,6 +72,13 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     currentTestSuiteIndex = 0;
     currentTestSuiteName: string = this.testSuites[this.currentTestSuiteIndex].name;
 
+    dfsNames: String[] = ["default"];
+    dfsName: String = "affe";
+
+    setNames(dfsConfigNames: DFSConfigNameTYPE): void {
+        this.dfsNames = dfsConfigNames.name;
+    }
+
     changeTestSuite () {
         console.log("current test Suite is now:" + this.currentTestSuiteName);
         for (let i = 0; i<this.testSuites.length; i++) {
@@ -80,7 +90,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     }
 
-    constructor(private testService: TestService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {
+    constructor(private testService: TestService, private dfsSwitchService: DfsSwitchService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {
         console.log("ANZAHL DER TEST-SUITES: " +  this.testSuites.length);
         console.log("INDEX TEST-SUITES: " +  this.currentTestSuiteIndex);
         for (var i = 0; i<this.testSuites.length; i++) {
@@ -388,4 +398,12 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
         }
     }
+
+    getDFSConfigNames() {
+        console.log("ask for available dfs config names");
+        this.dfsSwitchService.getNames(this);
+
+
+    }
+
 }

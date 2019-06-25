@@ -7,7 +7,7 @@ export class UrlKeeper {
         "http://docusafe-rest-server-psp-docusafe-performancetest.cloud.adorsys.de",
         "http://localhost:9991",
     ];
-    private url = this.destinationUrls[1];
+    private url = this.destinationUrls[0];
 
     constructor() {
     }

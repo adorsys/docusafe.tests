@@ -3,16 +3,14 @@ package de.adorsys.docusafe.rest.controller;
 import de.adorsys.common.exceptions.BaseException;
 import de.adorsys.common.exceptions.BaseExceptionHandler;
 import de.adorsys.datasafe.simple.adapter.api.SimpleDatasafeService;
+import de.adorsys.datasafe.simple.adapter.api.exceptions.SimpleAdapterException;
 import de.adorsys.datasafe.simple.adapter.api.types.AmazonS3DFSCredentials;
 import de.adorsys.datasafe.simple.adapter.api.types.FilesystemDFSCredentials;
 import de.adorsys.datasafe.simple.adapter.impl.SimpleDatasafeServiceImpl;
 import de.adorsys.dfs.connection.api.filesystem.FilesystemConnectionPropertiesImpl;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
-import de.adorsys.dfs.connection.api.types.connection.AmazonS3AccessKey;
-import de.adorsys.dfs.connection.api.types.connection.AmazonS3RootBucketName;
-import de.adorsys.dfs.connection.api.types.connection.AmazonS3SecretKey;
-import de.adorsys.dfs.connection.api.types.connection.FilesystemRootBucketName;
+import de.adorsys.dfs.connection.api.types.connection.*;
 import de.adorsys.dfs.connection.api.types.properties.ConnectionProperties;
 import de.adorsys.dfs.connection.impl.amazons3.AmazonS3ConnectionProperitesImpl;
 import de.adorsys.dfs.connection.impl.factory.DFSConnectionFactory;
@@ -43,6 +41,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,12 +91,33 @@ public class TestController {
 
     @CrossOrigin
     @RequestMapping(
+            value = "/switch/dfs",
+            method = {RequestMethod.GET},
+            produces = {APPLICATION_JSON}
+    )
+    public @ResponseBody
+    ResponseEntity<AvailableDFSConfigNames> getAvailableDFS() {
+        return new ResponseEntity<>(getAvailableDFSConfigNames(), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @RequestMapping(
+            value = "/switch/dfs",
+            method = {RequestMethod.PUT},
+            consumes = {APPLICATION_JSON},
+            produces = {APPLICATION_JSON}    )
+    public @ResponseBody
+    void setAvailableDFS(@RequestBody String name) {
+        privateSetDfsConfiguration(getAvailableDFSConfigsFromEnvironmnet().getMap().get(name));
+    }
+
+    @CrossOrigin
+    @RequestMapping(
             value = "/config/dfs",
             method = {RequestMethod.GET},
             produces = {APPLICATION_JSON}
     )
-    public
-    @ResponseBody
+    public @ResponseBody
     ResponseEntity<DFSCredentials> getDfsConfiguration() {
         DFSCredentials credentials = new DFSCredentials(docusafePlainDFSConnection.getConnectionProperties());
         String r;
@@ -130,30 +150,6 @@ public class TestController {
         return new ResponseEntity<>(credentials, HttpStatus.OK);
     }
 
-    private de.adorsys.datasafe.simple.adapter.api.types.DFSCredentials getDatasafeDFSCredentials(ConnectionProperties properties) {
-        if (properties instanceof AmazonS3ConnectionProperitesImpl) {
-            AmazonS3ConnectionProperitesImpl props = (AmazonS3ConnectionProperitesImpl) properties;
-            return AmazonS3DFSCredentials.builder()
-                    .url(props.getUrl().toString())
-                    .accessKey(props.getAmazonS3AccessKey().getValue())
-                    .secretKey(props.getAmazonS3SecretKey().getValue())
-                    .region(props.getAmazonS3Region().getValue())
-                    .rootBucket(props.getAmazonS3RootBucketName().getValue())
-                    .build();
-        }
-        if (properties instanceof FilesystemConnectionPropertiesImpl) {
-            FilesystemConnectionPropertiesImpl props = (FilesystemConnectionPropertiesImpl) properties;
-            return FilesystemDFSCredentials.builder()
-                    .root(FileSystems.getDefault().getPath(props.getFilesystemRootBucketName().getValue()))
-                    .build();
-        }
-        throw new BaseException("missing type for ConnectionProperties:" + properties.getClass().getCanonicalName());
-    }
-
-    private static final String hide(String value) {
-        return value.length() > 4 ? value.substring(0, 2) + "***" + value.substring(value.length() - 2) : "***";
-    }
-
     @CrossOrigin
     @RequestMapping(
             value = "/config/dfs",
@@ -161,33 +157,11 @@ public class TestController {
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
-    public
-    @ResponseBody
+    public @ResponseBody
     ResponseEntity<String> setDfsConfiguration(@RequestBody DFSCredentials dfsCredentials) {
-        LOGGER.info(dfsCredentials.toString());
-        {
-            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
-            plainCredentials.addSubDirToRoot("docusafe/plainfolder");
-            DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
-            // if an exception has raised here, the old connection is still available
-            docusafePlainDFSConnection = dfsConnection;
-        }
-        {
-            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
-            plainCredentials.addSubDirToRoot("datasafe/plainfolder");
-            DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
-            // if an exception has raised here, the old connection is still available
-            datasafePlainDFSConnection = dfsConnection;
-        }
-        {
-            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
-            plainCredentials.addSubDirToRoot("docusafe/cachedtxfolder");
-            docusafeCachedTransactionalDFSConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
-        }
-        initServices();
+        privateSetDfsConfiguration(dfsCredentials);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
-
 
     @CrossOrigin
     @RequestMapping(
@@ -196,8 +170,7 @@ public class TestController {
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}
     )
-    public
-    @ResponseBody
+    public @ResponseBody
     ResponseEntity<TestsResult> test(@RequestBody TestParameter testParameter) {
         TestsResult testsResult = new TestsResult();
         testsResult.dfsConnectionString = docusafePlainDFSConnection.getClass().getName() + new DFSCredentials(docusafePlainDFSConnection.getConnectionProperties()).toString();
@@ -498,34 +471,100 @@ public class TestController {
         return new ResponseEntity<>(testsResult, HttpStatus.OK);
     }
 
-    @RequestMapping(
-            value = "/testContext",
-            method = {RequestMethod.GET},
-            consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}
-    )
-    public
-    @ResponseBody
-    ResponseEntity<String> testContext() {
-        LOGGER.info("testContext");
-        String value = (String) requestMemoryContext.get("affe");
-        LOGGER.info("value for affe is " + value);
-        if (value != null) {
-            return new ResponseEntity<String>("affe ist schon belegt mit !" + value, HttpStatus.OK);
-        }
-        requestMemoryContext.put("affe", new Date().toString());
-        value = (String) requestMemoryContext.get("affe");
-        LOGGER.info("value for affe is " + value);
-        if (value == null) {
-            return new ResponseEntity<String>("affe ist immer noch null", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<String>("affe ist " + value, HttpStatus.OK);
-    }
-
     private void initServices() {
         plainDocumentSafeService = new DocumentSafeServiceImpl(docusafePlainDFSConnection);
         DocumentSafeServiceImpl dss1 = new DocumentSafeServiceImpl(docusafeCachedTransactionalDFSConnection);
         cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, dss1), dss1);
         simpleDatasafeService = new SimpleDatasafeServiceImpl(getDatasafeDFSCredentials(datasafePlainDFSConnection.getConnectionProperties()));
     }
+
+    private de.adorsys.datasafe.simple.adapter.api.types.DFSCredentials getDatasafeDFSCredentials(ConnectionProperties properties) {
+        if (properties instanceof AmazonS3ConnectionProperitesImpl) {
+            AmazonS3ConnectionProperitesImpl props = (AmazonS3ConnectionProperitesImpl) properties;
+            return AmazonS3DFSCredentials.builder()
+                    .url(props.getUrl().toString())
+                    .accessKey(props.getAmazonS3AccessKey().getValue())
+                    .secretKey(props.getAmazonS3SecretKey().getValue())
+                    .region(props.getAmazonS3Region().getValue())
+                    .rootBucket(props.getAmazonS3RootBucketName().getValue())
+                    .build();
+        }
+        if (properties instanceof FilesystemConnectionPropertiesImpl) {
+            FilesystemConnectionPropertiesImpl props = (FilesystemConnectionPropertiesImpl) properties;
+            return FilesystemDFSCredentials.builder()
+                    .root(FileSystems.getDefault().getPath(props.getFilesystemRootBucketName().getValue()))
+                    .build();
+        }
+        throw new BaseException("missing type for ConnectionProperties:" + properties.getClass().getCanonicalName());
+    }
+
+    private static final String hide(String value) {
+        return value.length() > 4 ? value.substring(0, 2) + "***" + value.substring(value.length() - 2) : "***";
+    }
+
+    private AvailableDFSConfigNames getAvailableDFSConfigNames() {
+        AvailableDFSConfigNames availableDFSConfigNames = new AvailableDFSConfigNames();
+        getAvailableDFSConfigsFromEnvironmnet().getMap().keySet().stream().forEach(name -> availableDFSConfigNames.addDFSName(name));
+        return availableDFSConfigNames;
+    }
+
+    public AvailableDFSConfigs getAvailableDFSConfigsFromEnvironmnet() {
+        try {
+            String AMAZON_ENV = "SC-AMAZONS3";
+
+            AvailableDFSConfigs availableDFSConfigs = new AvailableDFSConfigs();
+
+            int i = 0;
+            boolean found = System.getProperty(AMAZON_ENV + "." + i) != null;
+            while (found) {
+                String value = System.getProperty(AMAZON_ENV + "." + i);
+                String[] parts = value.split(",");
+                if (parts.length != 6) {
+                    throw new SimpleAdapterException("expected <name>,<url>,<accesskey>,<secretkey>,<region>,<rootbucket> for " + AMAZON_ENV);
+                }
+                LOGGER.info("create DFSCredentials for S3 to url " + parts[1] + " with root bucket " + parts[5]);
+
+                AmazonS3ConnectionProperitesImpl props = new AmazonS3ConnectionProperitesImpl();
+                props.setUrl(new URL(parts[1]));
+                props.setAmazonS3AccessKey(new AmazonS3AccessKey(parts[2]));
+                props.setAmazonS3SecretKey(new AmazonS3SecretKey(parts[3]));
+                props.setAmazonS3Region(new AmazonS3Region(parts[4]));
+                props.setAmazonS3RootBucketName(new AmazonS3RootBucketName(parts[5]));
+
+                availableDFSConfigs.addDFSConfig(parts[0], new DFSCredentials(props));
+
+                i++;
+                found = System.getProperty(AMAZON_ENV + "." + i) != null;
+            }
+
+            return availableDFSConfigs;
+        } catch (Exception e) {
+            throw BaseExceptionHandler.handle(e);
+        }
+    }
+
+    private void privateSetDfsConfiguration(DFSCredentials dfsCredentials) {
+        LOGGER.info(dfsCredentials.toString());
+        {
+            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
+            plainCredentials.addSubDirToRoot("docusafe/plainfolder");
+            DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
+            // if an exception has raised here, the old connection is still available
+            docusafePlainDFSConnection = dfsConnection;
+        }
+        {
+            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
+            plainCredentials.addSubDirToRoot("datasafe/plainfolder");
+            DFSConnection dfsConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
+            // if an exception has raised here, the old connection is still available
+            datasafePlainDFSConnection = dfsConnection;
+        }
+        {
+            DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
+            plainCredentials.addSubDirToRoot("docusafe/cachedtxfolder");
+            docusafeCachedTransactionalDFSConnection = DFSConnectionFactory.get(plainCredentials.getProperties());
+        }
+        initServices();
+    }
+
 }

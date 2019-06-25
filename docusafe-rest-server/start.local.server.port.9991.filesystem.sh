@@ -1,1 +1,1 @@
-mvn -DSC-NO-BUCKETPATH-ENCRYPTION -Dspring.config.location=file:./src/main/resources/port.9991.filesystem.yml spring-boot:run
+mvn -DSC-NO-BUCKETPATH-ENCRYPTION -Dspring.config.location=file:./src/main/resources/port.9991.filesystem.yml spring-boot:run -DSC-AMAZONS3.0=ceph,http://localhost:9000,a,s,r,root -DSC-AMAZONS3.1=minio,http://localhost:9000,a,s,r,root -DSC-AMAZONS3.2=affe,http://localhost:9000,a,s,r,root 

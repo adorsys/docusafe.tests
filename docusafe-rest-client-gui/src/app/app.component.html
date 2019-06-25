@@ -115,7 +115,6 @@
                         <label ngbButtonLabel class="btn-primary samerow1" (click)="saveTestResults()">save testresults to file</label>
                         <app-dnd class="samerow2" [dndOwner]="me" [id]="2" [labelText]="'drop testResults here'"></app-dnd>
                     </div>
-                    {{errormessage}}
                 </div>
                 <div class="col3">
                     <div class="headline">SUITES</div>
@@ -134,8 +133,26 @@
                             </tr>
                         </table>
                     </div>
-                    {{errormessage}}
+                    <div class="headline">DFS</div>
+                    <div class="content">
+                        <table class="testtable">
+                            <tr>
+                                <td>
+                                    <label ngbButtonLabel class="btn-primary full" (click)="getDFSConfigNames()">get dfs confignames</label>
+                                </td>
+                                <td>
+                                    <select [(ngModel)]="dfsName">
+                                        <option *ngFor="let ts of dfsNames"
+                                                [selected]="dfsName == ts">
+                                            {{ts}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
+                {{errormessage}}
 
             </div>
         </div>
