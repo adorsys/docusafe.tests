@@ -21,7 +21,7 @@ import { saveAs } from "file-saver/FileSaver";
 import {DndOwner} from "../dnd/dnd.owner";
 import {UrlKeeper} from "../service/url.keeper";
 import {SwitchConfigSender} from "./switch.config.sender";
-import {DFSConfigNameTYPE} from "../types/dfs.config.name.type";
+import {DFSConfigNamesResponseTYPE} from "../types/dfs.config.name.type";
 import {DfsSwitchService} from "../service/dfs.switch.service";
 
 @Component({
@@ -72,23 +72,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
     currentTestSuiteIndex = 0;
     currentTestSuiteName: string = this.testSuites[this.currentTestSuiteIndex].name;
 
-    dfsNames: String[] = ["default"];
-    dfsName: String = "affe";
-
-    setNames(dfsConfigNames: DFSConfigNameTYPE): void {
-        this.dfsNames = dfsConfigNames.name;
-    }
-
-    changeTestSuite () {
-        console.log("current test Suite is now:" + this.currentTestSuiteName);
-        for (let i = 0; i<this.testSuites.length; i++) {
-            if (this.testSuites[i].name == this.currentTestSuiteName) {
-                this.currentTestSuiteIndex = i;
-            };
-        }
-        this.setTests(this.testSuites[this.currentTestSuiteIndex]);
-
-    }
+    dfsNames: string[] = ["default"];
+    dfsName: string = "affe";
 
     constructor(private testService: TestService, private dfsSwitchService: DfsSwitchService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {
         console.log("ANZAHL DER TEST-SUITES: " +  this.testSuites.length);
@@ -101,8 +86,20 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
 
         this.setTests(this.testSuites[this.currentTestSuiteIndex]);
         console.log("APP CONSTRUCTION");
+        console.log("try to load confignames");
+        this.getDFSConfigNames();
     }
 
+
+    changeTestSuite () {
+        console.log("current test Suite is now:" + this.currentTestSuiteName);
+        for (let i = 0; i<this.testSuites.length; i++) {
+            if (this.testSuites[i].name == this.currentTestSuiteName) {
+                this.currentTestSuiteIndex = i;
+            };
+        }
+        this.setTests(this.testSuites[this.currentTestSuiteIndex]);
+    }
 
     notifyForChanchedFileContent(id: number): void {
         if (id == 1) {
@@ -356,10 +353,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
         }
     }
 
-    copyTestSuite(): void {
-        this.clipboardService.copy(JSON.stringify(this.testResultOwner.getTestSuite()));
-    }
-
     saveTestSuite(): void {
         var date:string = formatDate(new Date(), 'yyyyMMdd-hhmmSS', 'en');
 
@@ -376,9 +369,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
         saveAs(blob, filename);
     }
 
-    loadTestResults(): void {
-        // this.testResultOwner.loadSubsumedTests(subsumedTests);
-    }
     private modifyReadRequest(request: TestRequestTYPE, lastWriteResult: SubsumedTestTYPE) {
 
 
@@ -402,8 +392,16 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
     getDFSConfigNames() {
         console.log("ask for available dfs config names");
         this.dfsSwitchService.getNames(this);
+        // anser goes to setNames()
+    }
 
+    setNames(dfsConfigNames: DFSConfigNamesResponseTYPE): void {
+        this.dfsNames = dfsConfigNames.avalailabeNames;
+    }
 
+    changeDFSName() : void {
+        console.log("ask to change to dfs:" + this.dfsName);
+        this.dfsSwitchService.setName(this.dfsName);
     }
 
 }

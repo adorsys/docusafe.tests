@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class AvailableDFSConfigNames {
-    List<String> avalialbeNames = new ArrayList<>();
+public class AvailableDFSConfigNamesResponse {
+    List<String> avalailabeNames = new ArrayList<>();
 
     public void addDFSName(String name) {
-        avalialbeNames.add(name);
+        avalailabeNames.add(name);
     }
 }

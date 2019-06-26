@@ -13,7 +13,7 @@
         </div>
         <div [hidden]="!busy">
             <h1>
-                Test is {{currentTestIndex+1}}/{{numberOfTests}} running .....
+                Test is {{currentTestIndex + 1}}/{{numberOfTests}} running .....
             </h1>
             Repetition: {{numberOfRepeatsDone}}
             Number of threads answered: {{numberOfThreadsThatAnswered}}
@@ -31,7 +31,7 @@
                                 <td>
                                     <img alt="arrow-left.png" height="20" (click)="previousTestcase()"
                                          src="{{imageURL}}/arrow-left.png">
-                                    {{currentTestIndex+1}}/{{numberOfTests}}
+                                    {{currentTestIndex + 1}}/{{numberOfTests}}
                                     <img alt="arrow-right.png" height="20" (click)="nextTestcase()"
                                          src="{{imageURL}}/arrow-right.png">
                                 </td>
@@ -90,7 +90,8 @@
                             </tr>
                             <tr *ngIf="testSuite.testrequests[currentTestIndex].testAction == testactions[0]">
                                 <td>Deterministic Files</td>
-                                <td><input type="checkbox" [(ngModel)]="testSuite.testrequests[currentTestIndex].createDeterministicDocuments">
+                                <td><input type="checkbox"
+                                           [(ngModel)]="testSuite.testrequests[currentTestIndex].createDeterministicDocuments">
                                 </td>
                             </tr>
 
@@ -101,19 +102,25 @@
                     <div class="headline">ACTIONS</div>
                     <div class="content">
                         <div>
-                            <label ngbButtonLabel class="btn-primary full" (click)="doCurrentTestOnly()">do current test</label>
+                            <label ngbButtonLabel class="btn-primary full" (click)="doCurrentTestOnly()">do current
+                                test</label>
                         </div>
                         <label ngbButtonLabel class="btn-primary full" (click)="doRemainingTests()">do
                             remaining tests</label>
                         <label ngbButtonLabel class="btn-primary full" (click)="doAllTests()">do all tests</label>
                         <label ngbButtonLabel class="btn-danger full" (click)="doCleanDatabase()">clean database</label>
-                        <label ngbButtonLabel class="btn-primary full" (click)="removeLastTestFromDone()">remove last test from done</label>
+                        <label ngbButtonLabel class="btn-primary full" (click)="removeLastTestFromDone()">remove last
+                            test from done</label>
                         <div class="samerow full">
-                        <label ngbButtonLabel class="btn-primary samerow1" (click)="saveTestSuite()">save testsuite to file</label>
-                        <app-dnd class="samerow2" [dndOwner]="me" [id]="1" [labelText]="'drop testSuite here'"></app-dnd>
-                            </div>
-                        <label ngbButtonLabel class="btn-primary samerow1" (click)="saveTestResults()">save testresults to file</label>
-                        <app-dnd class="samerow2" [dndOwner]="me" [id]="2" [labelText]="'drop testResults here'"></app-dnd>
+                            <label ngbButtonLabel class="btn-primary samerow1" (click)="saveTestSuite()">save testsuite
+                                to file</label>
+                            <app-dnd class="samerow2" [dndOwner]="me" [id]="1"
+                                     [labelText]="'drop testSuite here'"></app-dnd>
+                        </div>
+                        <label ngbButtonLabel class="btn-primary samerow1" (click)="saveTestResults()">save testresults
+                            to file</label>
+                        <app-dnd class="samerow2" [dndOwner]="me" [id]="2"
+                                 [labelText]="'drop testResults here'"></app-dnd>
                     </div>
                 </div>
                 <div class="col3">
@@ -138,13 +145,16 @@
                         <table class="testtable">
                             <tr>
                                 <td>
-                                    <label ngbButtonLabel class="btn-primary full" (click)="getDFSConfigNames()">get dfs confignames</label>
+                                    <label ngbButtonLabel class="btn-primary full" (click)="getDFSConfigNames()">get dfs
+                                        confignames</label>
                                 </td>
+                            </tr>
+                            <tr>
                                 <td>
-                                    <select [(ngModel)]="dfsName">
-                                        <option *ngFor="let ts of dfsNames"
-                                                [selected]="dfsName == ts">
-                                            {{ts}}
+                                    <select [(ngModel)]="dfsName" (ngModelChange)="changeDFSName()">
+                                        <option *ngFor="let dfs of dfsNames"
+                                                [selected]="dfsName == dfs">
+                                            {{dfs}}
                                         </option>
                                     </select>
                                 </td>

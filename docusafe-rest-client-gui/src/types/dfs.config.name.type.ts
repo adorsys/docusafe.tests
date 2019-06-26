@@ -1,3 +1,7 @@
-export class DFSConfigNameTYPE {
-    name: string[];
+export class DFSConfigNamesResponseTYPE {
+    avalailabeNames: string[];
+}
+
+export class DFSConfigNameRequestTYPE {
+    name: string;
 }

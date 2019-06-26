@@ -44,7 +44,6 @@ import javax.annotation.PostConstruct;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -78,15 +77,7 @@ public class TestController {
             throw new BaseException("did not expect to get more than one controller");
         }
 
-        docusafePlainDFSConnection = factory.getDFSConnectionWithSubDir("docusafe/plainfolder");
-        datasafePlainDFSConnection = factory.getDFSConnectionWithSubDir("datasafe/plainfolder");
-        docusafeCachedTransactionalDFSConnection = factory.getDFSConnectionWithSubDir("docusafe/cachedtxfolder");
-
-        plainDocumentSafeService = null;
-        simpleDatasafeService = null;
-        cachedTransactionalDocumentSafeServices = null;
-
-        initServices();
+        setDFSFromFactory();
     }
 
     @CrossOrigin
@@ -96,7 +87,8 @@ public class TestController {
             produces = {APPLICATION_JSON}
     )
     public @ResponseBody
-    ResponseEntity<AvailableDFSConfigNames> getAvailableDFS() {
+    ResponseEntity<AvailableDFSConfigNamesResponse> getAvailableDFS() {
+        LOGGER.info("switch DFS GET");
         return new ResponseEntity<>(getAvailableDFSConfigNames(), HttpStatus.OK);
     }
 
@@ -107,8 +99,14 @@ public class TestController {
             consumes = {APPLICATION_JSON},
             produces = {APPLICATION_JSON}    )
     public @ResponseBody
-    void setAvailableDFS(@RequestBody String name) {
-        privateSetDfsConfiguration(getAvailableDFSConfigsFromEnvironmnet().getMap().get(name));
+    void setAvailableDFS(@RequestBody DFSConfigNameReqeust nameReqeust) {
+        LOGGER.info("switch DFS to " + nameReqeust.getName());
+        DFSCredentials dfsCredentials = getAvailableDFSConfigsFromEnvironmnet().getMap().get(nameReqeust.getName());
+        if (dfsCredentials != null) {
+            privateSetDfsConfiguration(dfsCredentials);
+        } else {
+            setDFSFromFactory();
+        }
     }
 
     @CrossOrigin
@@ -502,10 +500,10 @@ public class TestController {
         return value.length() > 4 ? value.substring(0, 2) + "***" + value.substring(value.length() - 2) : "***";
     }
 
-    private AvailableDFSConfigNames getAvailableDFSConfigNames() {
-        AvailableDFSConfigNames availableDFSConfigNames = new AvailableDFSConfigNames();
-        getAvailableDFSConfigsFromEnvironmnet().getMap().keySet().stream().forEach(name -> availableDFSConfigNames.addDFSName(name));
-        return availableDFSConfigNames;
+    private AvailableDFSConfigNamesResponse getAvailableDFSConfigNames() {
+        AvailableDFSConfigNamesResponse availableDFSConfigNamesResponse = new AvailableDFSConfigNamesResponse();
+        getAvailableDFSConfigsFromEnvironmnet().getMap().keySet().stream().forEach(name -> availableDFSConfigNamesResponse.addDFSName(name));
+        return availableDFSConfigNamesResponse;
     }
 
     public AvailableDFSConfigs getAvailableDFSConfigsFromEnvironmnet() {
@@ -513,6 +511,19 @@ public class TestController {
             String AMAZON_ENV = "SC-AMAZONS3";
 
             AvailableDFSConfigs availableDFSConfigs = new AvailableDFSConfigs();
+
+            {
+                // Add default from Factory
+
+                ConnectionProperties prop = factory.getDFSConnectionWithSubDir("").getConnectionProperties();
+                String name = "DEFAULT";
+                if (prop instanceof  AmazonS3ConnectionProperitesImpl) {
+                    name += " (AmazonS3: rootbucket:" + ((AmazonS3ConnectionProperitesImpl) prop).getAmazonS3RootBucketName().getValue() + ")";
+                } else {
+                    name += " (Filesystem: rootbucket:" + ((FilesystemConnectionPropertiesImpl) prop).getFilesystemRootBucketName().getValue() + ")";
+                }
+                availableDFSConfigs.addDFSConfig(name, null);
+            }
 
             int i = 0;
             boolean found = System.getProperty(AMAZON_ENV + "." + i) != null;
@@ -566,5 +577,19 @@ public class TestController {
         }
         initServices();
     }
+
+    private void setDFSFromFactory() {
+        docusafePlainDFSConnection = factory.getDFSConnectionWithSubDir("docusafe/plainfolder");
+        datasafePlainDFSConnection = factory.getDFSConnectionWithSubDir("datasafe/plainfolder");
+        docusafeCachedTransactionalDFSConnection = factory.getDFSConnectionWithSubDir("docusafe/cachedtxfolder");
+
+        plainDocumentSafeService = null;
+        simpleDatasafeService = null;
+        cachedTransactionalDocumentSafeServices = null;
+
+        initServices();
+    }
+
+
 
 }

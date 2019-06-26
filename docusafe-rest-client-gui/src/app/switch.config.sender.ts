@@ -1,5 +1,5 @@
-import {DFSConfigNameTYPE} from "../types/dfs.config.name.type";
+import {DFSConfigNamesResponseTYPE} from "../types/dfs.config.name.type";
 
 export interface SwitchConfigSender {
-    setNames( dfsConfigNames : DFSConfigNameTYPE) : void;
+    setNames( dfsConfigNames : DFSConfigNamesResponseTYPE) : void;
 }
