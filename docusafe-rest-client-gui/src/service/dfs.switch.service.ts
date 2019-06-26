@@ -33,7 +33,7 @@ export class DfsSwitchService {
         console.log("PUT DFS NAME TO " + url + " " + JSON.stringify(request));
         this.httpClient.put<DFSConfigNameRequestTYPE>(url, request, httpOptions).subscribe(
             data => this.doNothing(),
-            error => alert(JSON.stringify(error ) +
+            error => alert("ERROR " + JSON.stringify(error ) +
                 " can not set DFS Name in server ")
 
         );

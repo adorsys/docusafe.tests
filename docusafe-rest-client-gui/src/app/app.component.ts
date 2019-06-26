@@ -392,11 +392,17 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
     getDFSConfigNames() {
         console.log("ask for available dfs config names");
         this.dfsSwitchService.getNames(this);
-        // anser goes to setNames()
+        // answer goes to setNames()
     }
 
     setNames(dfsConfigNames: DFSConfigNamesResponseTYPE): void {
         this.dfsNames = dfsConfigNames.avalailabeNames;
+
+        for (var i = 0; i<this.dfsNames.length; i++) {
+            if (this.dfsNames[i].startsWith("DEFAULT")) {
+                this.dfsName = this.dfsNames[i];
+            }
+        }
     }
 
     changeDFSName() : void {
