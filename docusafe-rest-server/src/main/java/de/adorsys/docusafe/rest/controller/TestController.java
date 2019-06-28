@@ -470,6 +470,7 @@ public class TestController {
     }
 
     private void initServices() {
+        LOGGER.info("init services");
         plainDocumentSafeService = new DocumentSafeServiceImpl(docusafePlainDFSConnection);
         DocumentSafeServiceImpl dss1 = new DocumentSafeServiceImpl(docusafeCachedTransactionalDFSConnection);
         cachedTransactionalDocumentSafeServices = new CachedTransactionalDocumentSafeServiceImpl(requestMemoryContext, new TransactionalDocumentSafeServiceImpl(requestMemoryContext, dss1), dss1);

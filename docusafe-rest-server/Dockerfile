@@ -1,4 +1,4 @@
-FROM adorsys/openjdk-jre-base:8-minideb
+FROM adorsys/java:8
 ENV JAVA_OPTS -Xmx512m
 WORKDIR /home/docusafe
 COPY target/docusafe-rest-server.jar .
