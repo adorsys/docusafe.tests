@@ -31,7 +31,7 @@ import {DfsSwitchService} from "../service/dfs.switch.service";
 })
 export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, SwitchConfigSender {
     title = 'docusafe-test-client';
-    version = " version 1.0.0 (docusafe 1.0.0, dfs-connection 1.0.0 datasafe 0.0.14-SNAPSHOT)";
+    version = " version 1.0.1-SNAPSHOT (docusafe 1.0.1-SNAPSHOT, dfs-connection 1.0.0 datasafe 0.1.0)";
     dndForTestSuite: FileContentHolder = null;
     dndForTestResults: FileContentHolder = null;
     testResultOwner: TestResultOwner = null;

@@ -155,6 +155,12 @@
 
         <dependency>
             <groupId>de.adorsys</groupId>
+            <artifactId>datasafe-simple-adapter-spring</artifactId>
+            <version>${datasafe.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.adorsys</groupId>
             <artifactId>datasafe-simple-adapter-impl</artifactId>
             <version>${datasafe.version}</version>
             <scope>compile</scope>

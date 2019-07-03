@@ -1,5 +1,6 @@
 package de.adorsys.docusafe.rest.aspects;
 
+import de.adorsys.datasafe.simple.adapter.api.SimpleDatasafeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,9 +10,10 @@ import org.slf4j.LoggerFactory;
 public aspect AspectWrapperDocumentSafe {
     private final static Logger LOGGER = LoggerFactory.getLogger(AspectWrapperDocumentSafe.class);
     pointcut cachedTx(): execution(* *..CachedTransactionalDocumentSafeService.*(..));
+    pointcut datasafe(): execution(* *..SimpleDatasafeService .*(..));
     pointcut plain():    execution(* *..DocumentSafeService.*(..));
     pointcut conn():     execution(* *..ExtendedStoreConnection.*(..));
-    Object around(): cachedTx() ||  plain() || conn() {
+    Object around(): cachedTx() ||  plain() || conn() || datasafe() {
         LOGGER.info(String.format("============================================= \"%s\"", thisJoinPointStaticPart.getSignature()));
         long start = System.currentTimeMillis();
         Object result = null;

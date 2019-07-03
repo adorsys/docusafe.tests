@@ -1,9 +1,0 @@
-server:
-  port: 9991
-
-docusafe:
-  storeconnection:
-    filesystem:
-      rootbucket: target/test-filesystem
-
-

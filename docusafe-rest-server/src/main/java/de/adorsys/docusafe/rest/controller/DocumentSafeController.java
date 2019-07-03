@@ -6,11 +6,11 @@ import de.adorsys.dfs.connection.api.filesystem.FilesystemConnectionPropertiesIm
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.dfs.connection.api.types.ListRecursiveFlag;
 import de.adorsys.dfs.connection.api.types.properties.ConnectionProperties;
-import de.adorsys.dfs.connection.api.types.properties.FilesystemConnectionProperties;
 import de.adorsys.dfs.connection.impl.amazons3.AmazonS3ConnectionProperitesImpl;
 import de.adorsys.docusafe.business.DocumentSafeService;
 import de.adorsys.docusafe.business.impl.DocumentSafeServiceImpl;
 import de.adorsys.docusafe.business.types.*;
+import de.adorsys.docusafe.rest.types.MoveFromInbox;
 import de.adorsys.docusafe.rest.types.MoveToInboxOfUser;
 import de.adorsys.docusafe.rest.types.RegisterDFSRequest;
 import de.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
@@ -18,7 +18,6 @@ import de.adorsys.docusafe.service.api.types.UserID;
 import de.adorsys.docusafe.service.api.types.UserIDAuth;
 import de.adorsys.docusafe.spring.annotation.UseDocusafeSpringConfiguration;
 import io.swagger.annotations.ApiOperation;
-import de.adorsys.docusafe.rest.types.MoveFromInbox;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.annotation.PostConstruct;
@@ -48,6 +40,7 @@ import java.io.OutputStream;
  * erst im zweiten Schritt. Jetzt erst mal loslegen mit explizitem Parameter.
  */
 @RestController
+@RequestMapping("/docusafe")
 @UseDocusafeSpringConfiguration
 public class DocumentSafeController {
     private final static String APPLICATION_JSON = "application/json";

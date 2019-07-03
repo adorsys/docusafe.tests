@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -65,6 +64,7 @@ public class TestController {
     @Autowired
     SpringDFSConnectionFactory factory;
 
+
     private DFSConnection docusafePlainDFSConnection = null;
     private DFSConnection datasafePlainDFSConnection = null;
     private DFSConnection docusafeCachedTransactionalDFSConnection = null;
@@ -78,6 +78,8 @@ public class TestController {
         }
 
         setDFSFromFactory();
+
+
     }
 
     @CrossOrigin
@@ -157,6 +159,7 @@ public class TestController {
     )
     public @ResponseBody
     ResponseEntity<String> setDfsConfiguration(@RequestBody DFSCredentials dfsCredentials) {
+        LOGGER.info("set dfs credentials to " + dfsCredentials.toString());
         privateSetDfsConfiguration(dfsCredentials);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
@@ -490,7 +493,7 @@ public class TestController {
         if (properties instanceof FilesystemConnectionPropertiesImpl) {
             FilesystemConnectionPropertiesImpl props = (FilesystemConnectionPropertiesImpl) properties;
             return FilesystemDFSCredentials.builder()
-                    .root(FileSystems.getDefault().getPath(props.getFilesystemRootBucketName().getValue()))
+                    .root(props.getFilesystemRootBucketName().getValue())
                     .build();
         }
         throw new BaseException("missing type for ConnectionProperties:" + properties.getClass().getCanonicalName());
@@ -555,7 +558,7 @@ public class TestController {
     }
 
     private void privateSetDfsConfiguration(DFSCredentials dfsCredentials) {
-        LOGGER.info(dfsCredentials.toString());
+        LOGGER.info("set DFSConfig to " + dfsCredentials.toString());
         {
             DFSCredentials plainCredentials = new DFSCredentials(dfsCredentials);
             plainCredentials.addSubDirToRoot("docusafe/plainfolder");

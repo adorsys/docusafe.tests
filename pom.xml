@@ -31,10 +31,10 @@
         <aspectj.version>1.9.2</aspectj.version>
         <common.basetypes.version>0.0.7</common.basetypes.version>
         <dfs.connection.version>1.0.0</dfs.connection.version>
-        <docusafe.version>1.0.0</docusafe.version>
+        <docusafe.version>1.0.1-SNAPSHOT</docusafe.version>
 
 
-        <datasafe.version>0.0.15-SNAPSHOT</datasafe.version>
+        <datasafe.version>0.1.1-SNAPSHOT</datasafe.version>
         <bouncycastle.version>1.58</bouncycastle.version>
         <amazon.aws.version>1.11.538</amazon.aws.version>
         <jsr-305.version>3.0.0</jsr-305.version>

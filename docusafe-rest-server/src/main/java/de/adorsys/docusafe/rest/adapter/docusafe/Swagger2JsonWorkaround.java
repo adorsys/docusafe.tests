@@ -1,4 +1,4 @@
-package de.adorsys.docusafe.rest.adapter;
+package de.adorsys.docusafe.rest.adapter.docusafe;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
