@@ -41,7 +41,6 @@ import java.io.OutputStream;
  */
 @RestController
 @RequestMapping("/docusafe")
-@UseDocusafeSpringConfiguration
 public class DocumentSafeController {
     private final static String APPLICATION_JSON = "application/json";
     private final static String APPLICATION_OCTET_STREAM = "application/octet-stream";
@@ -49,13 +48,8 @@ public class DocumentSafeController {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentSafeController.class);
 
     @Autowired
-    private DFSConnection connection;
     private DocumentSafeService service;
 
-    @PostConstruct
-    private void postconstruction() {
-        service = new DocumentSafeServiceImpl(connection);
-    }
     /**
      * USER
      * ===========================================================================================

@@ -9,7 +9,6 @@ import de.adorsys.datasafe.simple.adapter.api.types.DSDocument;
 import de.adorsys.datasafe.simple.adapter.api.types.DocumentDirectoryFQN;
 import de.adorsys.datasafe.simple.adapter.api.types.DocumentFQN;
 import de.adorsys.datasafe.simple.adapter.api.types.ListRecursiveFlag;
-import de.adorsys.datasafe.simple.adapter.spring.annotations.UseDatasafeSpringConfiguration;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/datasafe")
-@UseDatasafeSpringConfiguration
 public class SimpleDatasafeController {
         private final static String APPLICATION_JSON = "application/json";
 
