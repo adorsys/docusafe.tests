@@ -8,7 +8,7 @@
         </encoder>
     </appender>
 
-    <logger name="de.adorsys.docusafe.rest.controller" level="debug" additivity="false">
+    <logger name="de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 

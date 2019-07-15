@@ -99,7 +99,7 @@ public class TestController {
             value = "/switch/dfs",
             method = {RequestMethod.PUT},
             consumes = {APPLICATION_JSON},
-            produces = {APPLICATION_JSON}    )
+            produces = {APPLICATION_JSON})
     public @ResponseBody
     void setAvailableDFS(@RequestBody DFSConfigNameReqeust nameReqeust) {
         LOGGER.info("switch DFS to " + nameReqeust.getName());
@@ -120,7 +120,7 @@ public class TestController {
     public @ResponseBody
     ResponseEntity<DFSCredentials> getDfsConfiguration() {
         DFSCredentials credentials = new DFSCredentials(docusafePlainDFSConnection.getConnectionProperties());
-        String r;
+        String r = null;
         if (credentials.getAmazons3() != null) {
             r = credentials.getAmazons3().getAmazonS3RootBucketName().getValue();
         } else {
@@ -144,7 +144,6 @@ public class TestController {
         } else {
             credentials.getFilesystem().setFilesystemRootBucketName(new FilesystemRootBucketName(r));
         }
-
 
         LOGGER.debug("return  " + credentials);
         return new ResponseEntity<>(credentials, HttpStatus.OK);
@@ -180,6 +179,7 @@ public class TestController {
             switch (testParameter.testAction) {
                 case READ_DOCUMENTS:
                 case CREATE_DOCUMENTS:
+                case DELETE_DOCUMENTS:
                 case DOCUMENT_EXISTS:
                 case LIST_DOCUMENTS:
                     return regularTest(testParameter, testsResult);
@@ -275,6 +275,7 @@ public class TestController {
                 break;
             }
             case READ_DOCUMENTS:
+            case DELETE_DOCUMENTS:
             case DOCUMENT_EXISTS: {
                 switch (testParameter.docusafeLayer) {
                     case CACHED_TRANSACTIONAL:
@@ -311,6 +312,32 @@ public class TestController {
                             }
                             stopWatch.stop();
                             readDocuments.add(TestUtil.checkDocumentWasRead(dsDocument, documentInfo));
+                        }
+                        break;
+                    }
+                    case DELETE_DOCUMENTS: {
+                        for (DocumentInfo documentInfo : testParameter.documentsToRead) {
+                            DocumentFQN documentFQN = documentInfo.documentFQN;
+                            stopWatch.start("delete document " + documentFQN.getValue());
+                            try {
+                                switch (testParameter.docusafeLayer) {
+                                    case DOCUSAFE_BASE:
+                                        plainDocumentSafeService.deleteDocument(userIDAuth, documentFQN);
+                                        break;
+                                    case SIMPLE_DATASAFE_ADAPTER:
+                                        simpleDatasafeService.deleteDocument(c(userIDAuth), c(documentFQN));
+                                        break;
+                                    case CACHED_TRANSACTIONAL:
+                                        cachedTransactionalDocumentSafeServices.txReadDocument(userIDAuth, documentFQN);
+                                        break;
+                                    default:
+                                        throw new BaseException("missing switch");
+                                }
+                            } catch (BaseException e) {
+                                // TODO genauer Typ muss hier noch geprüft werden, nur die FileNotFoundException wird erwartet....
+                            }
+                            stopWatch.stop();
+                            readDocuments.add(TestUtil.checkDocumentDeleted(documentInfo));
                         }
                         break;
                     }
@@ -447,6 +474,9 @@ public class TestController {
         StopWatch stopWatch = new StopWatch();
         switch (testParameter.testAction) {
 
+
+            // deleteDatabaseFromRoot();
+
             case DELETE_DATABASE: {
                 stopWatch.start("delete database " + testParameter.docusafeLayer);
                 switch (testParameter.docusafeLayer) {
@@ -520,7 +550,7 @@ public class TestController {
 
                 ConnectionProperties prop = factory.getDFSConnectionWithSubDir("").getConnectionProperties();
                 String name = "DEFAULT";
-                if (prop instanceof  AmazonS3ConnectionProperitesImpl) {
+                if (prop instanceof AmazonS3ConnectionProperitesImpl) {
                     name += " (AmazonS3: rootbucket:" + ((AmazonS3ConnectionProperitesImpl) prop).getAmazonS3RootBucketName().getValue() + ")";
                 } else {
                     name += " (Filesystem: rootbucket:" + ((FilesystemConnectionPropertiesImpl) prop).getFilesystemRootBucketName().getValue() + ")";
@@ -594,5 +624,18 @@ public class TestController {
     }
 
 
-
+    private void deleteDatabaseFromRoot() {
+        DFSCredentials dfsCredentials = new DFSCredentials(docusafePlainDFSConnection.getConnectionProperties());
+        if (dfsCredentials.getAmazons3() != null) {
+            AmazonS3ConnectionProperitesImpl amazons3 = dfsCredentials.getAmazons3();
+            AmazonS3RootBucketName amazonS3RootBucketName = amazons3.getAmazonS3RootBucketName();
+            String path = amazonS3RootBucketName.getValue().split("/")[0];
+            LOGGER.info("DELETE FROM ROOT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            LOGGER.info("set root from " + amazonS3RootBucketName.getValue() + " to " + path);
+            amazons3.setAmazonS3RootBucketName(new AmazonS3RootBucketName(path));
+            DFSConnection dfsConnection = DFSConnectionFactory.get(amazons3);
+            dfsConnection.deleteDatabase();
+        }
+    }
 }
+

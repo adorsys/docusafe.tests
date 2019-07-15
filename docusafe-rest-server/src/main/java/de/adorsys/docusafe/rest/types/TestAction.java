@@ -5,6 +5,7 @@ package de.adorsys.docusafe.rest.types;
  */
 public enum TestAction {
     CREATE_DOCUMENTS,
+    DELETE_DOCUMENTS,
     READ_DOCUMENTS,
     DOCUMENT_EXISTS,
     LIST_DOCUMENTS,

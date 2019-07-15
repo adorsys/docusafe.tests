@@ -4,12 +4,12 @@ server:
 docusafe:
   storeconnection:
     filesystem:
-      rootbucket: target/docusafe-files
+      rootbucket: ./target/docusafe-files
 
 
 datasafe:
   storeconnection:
     filesystem:
-      rootbucket: target/datasafe-files
+      rootbucket: ./target/datasafe-files
 
 

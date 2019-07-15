@@ -71,6 +71,13 @@ public class TestUtil {
         return readDocumentResult;
     }
 
+    public static ReadDocumentResult checkDocumentDeleted(DocumentInfo documentInfo) {
+        ReadDocumentResult readDocumentResult = new ReadDocumentResult();
+        readDocumentResult.documentFQN = documentInfo.documentFQN;
+        readDocumentResult.readResult = ReadResult.OK;
+        return readDocumentResult;
+    }
+
     public static  void addStopWatchToTestsResult(StopWatch stopWatch, TestsResult testsResult) {
         StopWatch.TaskInfo[] stopWatchTaskInfos = stopWatch.getTaskInfo();
         testsResult.tasks = new TestsResult.TaskInfo[stopWatchTaskInfos.length];

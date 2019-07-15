@@ -52,11 +52,13 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
-    READ_DOCUMENT_ACTION_INDEX=1;
-    DOCUMENT_EXISTS_ACTION_INDEX = 2;
-    LIST_DOCUMENTS_INDEX = 3;
+    DELETE_DOCUMENT_ACTION_INDEX=1;
+    READ_DOCUMENT_ACTION_INDEX=2;
+    DOCUMENT_EXISTS_ACTION_INDEX = 3;
+    LIST_DOCUMENTS_INDEX = 4;
     testactions: string[] = [
         "CREATE_DOCUMENTS",
+        "DELETE_DOCUMENTS",
         "READ_DOCUMENTS",
         "DOCUMENT_EXISTS",
         "LIST_DOCUMENTS",
@@ -207,7 +209,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
     doCurrentTest(): void {
 
         if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DELETE_DOCUMENT_ACTION_INDEX]
         ) {
             this.lastWriteResult = this.testResultOwner.getLastWriteResult();
             // Anzahl der threads und repeats müssen vom WriteTest übernommen werden.
@@ -244,7 +247,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
             request.dynamicClientInfo.threadNumber = i;
             request.dynamicClientInfo.requestID = uuid();
             if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DELETE_DOCUMENT_ACTION_INDEX]
             ) {
                 this.modifyReadRequest(request, this.lastWriteResult);
             } else {
@@ -376,7 +380,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
         let result : TestResultAndResponseTYPE = lastWriteResult.repeats[request.dynamicClientInfo.repetitionNumber-1].threads[request.dynamicClientInfo.threadNumber-1];
         if (result.error ==  null) {
             if (request.testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-                request.testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
+                request.testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+                request.testAction == this.testactions[this.DELETE_DOCUMENT_ACTION_INDEX]
             ) {
                 request.documentsToRead = result.result.listOfCreatedDocuments;
             }
