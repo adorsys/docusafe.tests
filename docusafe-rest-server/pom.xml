@@ -56,6 +56,12 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>2.7.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -83,18 +89,6 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>encobject</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>basetypes</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>jkeyutils</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -105,18 +99,6 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>encobject</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>basetypes</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>jkeyutils</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -159,6 +141,7 @@
             <version>${datasafe.version}</version>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
@@ -189,7 +172,7 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-
+-->
 
 
     </dependencies>
