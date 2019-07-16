@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import {TestService} from "../service/test.service";
 import {TestRequestTYPE, TestSuiteTYPE} from "../types/test.cases.type";
 import {TestSuiteOwner} from "./test.case.owner";
@@ -12,54 +12,26 @@ import {formatDate} from '@angular/common';
 import {isUndefined} from "util";
 import {ClipboardService} from "../clipboard/clipboard.service";
 import {v4 as uuid} from 'uuid';
-import * as fulltestJson from "../testsuites/fulltest.json";
+import * as simpleDatasafeAdapter from "../testsuites/simpleDatasafeAdapter.json";
+import * as docusafeBase from "../testsuites/docusafeBase.json";
+import * as cachedTransactional from "../testsuites/cachedTransactional.json";
 import {SubsumedTestTYPE} from "../types/test.result.type";
 import { saveAs } from "file-saver/FileSaver";
 
-import {TestResultAndResponseThreadsMapTYPE} from "../types/test.result.type";
-import {DocumentInfoTYPE} from "../types/test.result.type";
 import {DndOwner} from "../dnd/dnd.owner";
 import {UrlKeeper} from "../service/url.keeper";
-
-
-var defaultTestSuite: TestSuiteTYPE =
-{
-
-    "testrequests": [
-        {
-            "testAction": "CREATE_DOCUMENTS",
-            "docusafeLayer": "DOCUSAFE_BASE",
-            "userid": "peter",
-            "sizeOfDocument": 100,
-            "documentsPerDirectory": 1,
-            "numberOfDocuments": 1,
-            "staticClientInfo": {
-                "numberOfRepeats": 1,
-                "numberOfThreads": 1
-            },
-            "dynamicClientInfo": {
-                "threadNumber": 0,
-                "repetitionNumber": 0,
-                "testID": null,
-                "requestID": null
-            },
-            "documentsToRead": [],
-            "createDeterministicDocuments": true
-        }
-    ]
-};
-
-var fullTestSuite = <TestSuiteTYPE> fulltestJson.default;
-// var fullTestSuite = defaultTestSuite;
+import {SwitchConfigSender} from "./switch.config.sender";
+import {DFSConfigNamesResponseTYPE} from "../types/dfs.config.name.type";
+import {DfsSwitchService} from "../service/dfs.switch.service";
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
+export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, SwitchConfigSender {
     title = 'docusafe-test-client';
-    version = " version 1.0.0 (docusafe 1.0.0, dfs-connection 1.0.0)"
+    version = " version 1.1.0 (docusafe 1.1.0, dfs-connection 1.0.0 datasafe 0.3.0)";
     dndForTestSuite: FileContentHolder = null;
     dndForTestResults: FileContentHolder = null;
     testResultOwner: TestResultOwner = null;
@@ -80,18 +52,17 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
     private imageURL: string = Consts.INSTANCE.ASSETS_URL_PREFIX + "images/";
 
-
-    READ_DOCUMENT_ACTION_INDEX=1;
-    DOCUMENT_EXISTS_ACTION_INDEX = 2;
-    LIST_DOCUMENTS_INDEX = 3;
+    DELETE_DOCUMENT_ACTION_INDEX=1;
+    READ_DOCUMENT_ACTION_INDEX=2;
+    DOCUMENT_EXISTS_ACTION_INDEX = 3;
+    LIST_DOCUMENTS_INDEX = 4;
     testactions: string[] = [
         "CREATE_DOCUMENTS",
+        "DELETE_DOCUMENTS",
         "READ_DOCUMENTS",
         "DOCUMENT_EXISTS",
         "LIST_DOCUMENTS",
-        "DELETE_DATABASE",
-        "DELETE_DATABASE_AND_CACHES",
-        "DELETE_CACHES"
+        "DELETE_DATABASE"
     ];
     docusafelayer: string[] = [
         "CACHED_TRANSACTIONAL",
@@ -99,11 +70,38 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         "SIMPLE_DATASAFE_ADAPTER"
     ];
 
-    constructor(private testService: TestService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {
-        this.setTests(fullTestSuite);
+    testSuites: TestSuiteTYPE[] = [<TestSuiteTYPE>simpleDatasafeAdapter.default, <TestSuiteTYPE>docusafeBase.default, <TestSuiteTYPE>cachedTransactional.default];
+    currentTestSuiteIndex = 0;
+    currentTestSuiteName: string = this.testSuites[this.currentTestSuiteIndex].name;
+
+    dfsNames: string[] = ["default"];
+    dfsName: string = "affe";
+
+    constructor(private testService: TestService, private dfsSwitchService: DfsSwitchService, private clipboardService: ClipboardService, private urlKeeper: UrlKeeper) {
+        console.log("ANZAHL DER TEST-SUITES: " +  this.testSuites.length);
+        console.log("INDEX TEST-SUITES: " +  this.currentTestSuiteIndex);
+        for (var i = 0; i<this.testSuites.length; i++) {
+            console.log("NAME DER TESTSUITE: " +  this.testSuites[i].name);
+            console.log("Anzahl der Test   : " +  this.testSuites[i].testrequests.length);
+        }
+        console.log("Curernt TestSuite Name: " +  this.currentTestSuiteName);
+
+        this.setTests(this.testSuites[this.currentTestSuiteIndex]);
         console.log("APP CONSTRUCTION");
+        console.log("try to load confignames");
+        this.getDFSConfigNames();
     }
 
+
+    changeTestSuite () {
+        console.log("current test Suite is now:" + this.currentTestSuiteName);
+        for (let i = 0; i<this.testSuites.length; i++) {
+            if (this.testSuites[i].name == this.currentTestSuiteName) {
+                this.currentTestSuiteIndex = i;
+            };
+        }
+        this.setTests(this.testSuites[this.currentTestSuiteIndex]);
+    }
 
     notifyForChanchedFileContent(id: number): void {
         if (id == 1) {
@@ -132,7 +130,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
                 if (isUndefined(subsumendTests)) {
                     throw "dropped element are not json";
                 }
-                var length = subsumendTests.length;
+                let length = subsumendTests.length;
                 console.log("anzahl der neu geladenen testergebnisse:" + length);
                 if (length == 0) {
                     throw "dropped element are not json testactions";
@@ -144,13 +142,18 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         }
     }
 
-    setTests(testSuite: TestSuiteTYPE): void {
-        this.testSuite = testSuite;
-        console.log("received testrequests:");
+    setTests(newTestSuite: TestSuiteTYPE): void {
+        if (this.testSuite == null) {
+            console.log("testsuite initializes to " + newTestSuite.name);;
+        } else {
+            console.log("testsuite changes from : " + this.testSuite.name + " to " + newTestSuite.name);;
+        }
+        this.testSuite = newTestSuite;
         if (this.testSuite != null) {
-            console.log("size is " + this.testSuite.testrequests.length);
             this.currentTestIndex = 0;
             this.numberOfTests = this.testSuite.testrequests.length;
+        } else {
+            console.error("testsuite received is null");
         }
     }
 
@@ -186,14 +189,14 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         this.errormessage = "";
         this.numberOfRepeatsDone = 1;
         this.numberOfThreadsThatAnswered = 1;
-        // var deleteTestCase: TestRequestTYPE  = new TestRequestTYPE();
-        var deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(defaultTestSuite.testrequests[0]));
-        deleteTestCase.testAction = "DELETE_DATABASE_AND_CACHES";
+        let deleteTestCase: TestRequestTYPE = JSON.parse(JSON.stringify(this.testSuites[0].testrequests[0]));
+        deleteTestCase.testAction = "DELETE_DATABASE";
         deleteTestCase.dynamicClientInfo.testID = uuid();
         deleteTestCase.dynamicClientInfo.threadNumber = 1;
         deleteTestCase.dynamicClientInfo.repetitionNumber = 1;
         deleteTestCase.staticClientInfo.numberOfRepeats = 1;
         deleteTestCase.staticClientInfo.numberOfThreads = 1;
+        deleteTestCase.docusafeLayer = this.testSuite.testrequests[this.currentTestIndex].docusafeLayer;
         this.lastSendTestRequest = deleteTestCase;
         this.testService.test(deleteTestCase, this);
     }
@@ -206,7 +209,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
     doCurrentTest(): void {
 
         if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+            this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DELETE_DOCUMENT_ACTION_INDEX]
         ) {
             this.lastWriteResult = this.testResultOwner.getLastWriteResult();
             // Anzahl der threads und repeats müssen vom WriteTest übernommen werden.
@@ -243,7 +247,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
             request.dynamicClientInfo.threadNumber = i;
             request.dynamicClientInfo.requestID = uuid();
             if (this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+                this.testSuite.testrequests[this.currentTestIndex].testAction == this.testactions[this.DELETE_DOCUMENT_ACTION_INDEX]
             ) {
                 this.modifyReadRequest(request, this.lastWriteResult);
             } else {
@@ -352,10 +357,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         }
     }
 
-    copyTestSuite(): void {
-        this.clipboardService.copy(JSON.stringify(this.testResultOwner.getTestSuite()));
-    }
-
     saveTestSuite(): void {
         var date:string = formatDate(new Date(), 'yyyyMMdd-hhmmSS', 'en');
 
@@ -372,9 +373,6 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         saveAs(blob, filename);
     }
 
-    loadTestResults(): void {
-        // this.testResultOwner.loadSubsumedTests(subsumedTests);
-    }
     private modifyReadRequest(request: TestRequestTYPE, lastWriteResult: SubsumedTestTYPE) {
 
 
@@ -382,7 +380,8 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
         let result : TestResultAndResponseTYPE = lastWriteResult.repeats[request.dynamicClientInfo.repetitionNumber-1].threads[request.dynamicClientInfo.threadNumber-1];
         if (result.error ==  null) {
             if (request.testAction == this.testactions[this.READ_DOCUMENT_ACTION_INDEX] ||
-                request.testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX]
+                request.testAction == this.testactions[this.DOCUMENT_EXISTS_ACTION_INDEX] ||
+                request.testAction == this.testactions[this.DELETE_DOCUMENT_ACTION_INDEX]
             ) {
                 request.documentsToRead = result.result.listOfCreatedDocuments;
             }
@@ -394,4 +393,26 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender {
 
         }
     }
+
+    getDFSConfigNames() {
+        console.log("ask for available dfs config names");
+        this.dfsSwitchService.getNames(this);
+        // answer goes to setNames()
+    }
+
+    setNames(dfsConfigNames: DFSConfigNamesResponseTYPE): void {
+        this.dfsNames = dfsConfigNames.avalailabeNames;
+
+        for (var i = 0; i<this.dfsNames.length; i++) {
+            if (this.dfsNames[i].startsWith("DEFAULT")) {
+                this.dfsName = this.dfsNames[i];
+            }
+        }
+    }
+
+    changeDFSName() : void {
+        console.log("ask to change to dfs:" + this.dfsName);
+        this.dfsSwitchService.setName(this.dfsName);
+    }
+
 }

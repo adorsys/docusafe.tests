@@ -1,0 +1,15 @@
+server:
+  port: 9991
+
+docusafe:
+  storeconnection:
+    filesystem:
+      rootbucket: ./target/docusafe-files
+
+
+datasafe:
+  storeconnection:
+    filesystem:
+      rootbucket: ./target/datasafe-files
+
+

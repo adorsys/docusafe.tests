@@ -56,6 +56,12 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>2.7.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -83,18 +89,6 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>encobject</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>basetypes</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>jkeyutils</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -105,18 +99,6 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>encobject</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>basetypes</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>de.adorsys.cryptoutils</groupId>
-                    <artifactId>jkeyutils</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -155,78 +137,15 @@
 
         <dependency>
             <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-simple-adapter-impl</artifactId>
+            <artifactId>datasafe-simple-adapter-spring</artifactId>
             <version>${datasafe.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-simple-adapter-api</artifactId>
-            <version>${datasafe.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-business</artifactId>
-            <version>${datasafe.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-storage-impl-fs</artifactId>
-            <version>${datasafe.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-simple.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-encryption-impl</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-inbox-impl</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-privatestore-impl</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-directory-api</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-encryption-api</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-storage-api</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
+        <!--
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>${bouncycastle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-types-api</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-directory-impl</artifactId>
-            <version>${datasafe.version}</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -239,19 +158,9 @@
             <version>${amazon.aws.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-privatestore-api</artifactId>
-            <version>${datasafe.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>${jsr-305.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-inbox-api</artifactId>
-            <version>${datasafe.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.dagger</groupId>
@@ -263,14 +172,7 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-        <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>datasafe-storage-impl-s3</artifactId>
-            <version>${datasafe.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-
+-->
 
 
     </dependencies>

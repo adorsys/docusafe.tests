@@ -7,6 +7,8 @@ import de.adorsys.dfs.connection.api.types.connection.*;
 import de.adorsys.docusafe.business.types.DocumentDirectoryFQN;
 import de.adorsys.docusafe.business.types.DocumentFQN;
 import de.adorsys.docusafe.business.types.MoveType;
+import de.adorsys.docusafe.rest.adapter.docusafe.*;
+import de.adorsys.docusafe.rest.adapter.datasafe.*;
 import de.adorsys.docusafe.service.api.keystore.types.KeyID;
 import de.adorsys.docusafe.service.api.keystore.types.ReadKeyPassword;
 import de.adorsys.docusafe.service.api.types.DocumentContent;
@@ -36,6 +38,12 @@ public class GsonAdapters {
                 .registerTypeAdapter(AmazonS3SecretKey.class, new AmazonS3SecretKeyJsonAdapter())
                 .registerTypeAdapter(FilesystemRootBucketName.class, new FilesystemRootBucketNameJsonAdapter())
                 .registerTypeAdapter(URL.class, new URLJsonAdapter())
+
+                .registerTypeAdapter(de.adorsys.datasafe.encrypiton.api.types.UserID.class, new DatasafeUserIDJsonAdapter())
+                .registerTypeAdapter(de.adorsys.datasafe.encrypiton.api.types.keystore.ReadKeyPassword.class, new DatasafeReadKeyPasswordJsonAdapter())
+                .registerTypeAdapter(de.adorsys.datasafe.simple.adapter.api.types.DocumentFQN.class, new DatasafeDocumentFQNJsonAdapter())
+                .registerTypeAdapter(de.adorsys.datasafe.simple.adapter.api.types.DocumentDirectoryFQN.class, new DatasafeDocumentDirectoryFQNJsonAdapter())
+                .registerTypeAdapter(de.adorsys.datasafe.simple.adapter.api.types.DocumentContent.class, new DatasafeDocumentContentJsonAdapter())
 
                 .registerTypeAdapter(Json.class, new Swagger2JsonWorkaround())
                 .create();

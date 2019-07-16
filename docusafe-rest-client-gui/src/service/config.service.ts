@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core"
-import {HttpHeaders, HttpClient, HttpErrorResponse} from "@angular/common/http"
+import {HttpHeaders, HttpClient} from "@angular/common/http"
 import {DFSCredentialsTYPE} from "../types/dfs.credentials.type";
 import {ConfigComponent} from "../app/config/config.component";
 import {UrlKeeper} from "./url.keeper";
@@ -31,7 +31,7 @@ export class ConfigService {
         console.log("PUT dfs credentials FROM " + url + " " + JSON.stringify(dfsCredentials));
         this.httpClient.put<DFSCredentialsTYPE>(url, dfsCredentials, httpOptions).subscribe(
             data => this.doNothing(),
-            error => alert(JSON.stringify(error ) +
+            error => alert("ERROR " + JSON.stringify(error ) +
                 " YOU PROBABLY DID NOT PROVIDE CORRECT ACCESS AND SECRET KEY")
 
         );

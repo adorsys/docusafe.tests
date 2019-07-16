@@ -19,6 +19,7 @@ import {ConfigComponent} from "../config/config.component";
 import {ConfigService} from "../../service/config.service";
 import {UrlKeeper} from "../../service/url.keeper";
 import {SwaggerComponent} from "../../swagger/swagger.component";
+import {DfsSwitchService} from "../../service/dfs.switch.service";
 
 @NgModule({
     declarations: [
@@ -38,7 +39,7 @@ import {SwaggerComponent} from "../../swagger/swagger.component";
         FormsModule,
         RouterModule.forRoot(routes)
     ],
-    providers: [TestService, ConfigService, ClipboardService, UrlKeeper],
+    providers: [TestService, ConfigService, ClipboardService, UrlKeeper, DfsSwitchService],
     bootstrap: [MainComponent]
 })
 export class MainModule {

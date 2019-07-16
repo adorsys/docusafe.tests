@@ -1,0 +1,211 @@
+{
+  "name": "SimpleDatasafeAdapter",
+  "testrequests": [
+    {
+      "documentsPerDirectory": 1,
+      "documentsToRead": [],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 1,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "1",
+        "numberOfThreads": "1"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": "peter"
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "10",
+        "numberOfThreads": "10"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": "peter"
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "1"
+      },
+      "testAction": "LIST_DOCUMENTS",
+      "userid": "peter"
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [
+      ],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "100",
+        "numberOfThreads": "10"
+      },
+      "testAction": "READ_DOCUMENTS",
+      "userid": "peter"
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [
+      ],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "100",
+        "numberOfThreads": "10"
+      },
+      "testAction": "DOCUMENT_EXISTS",
+      "userid": "peter"
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [
+      ],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "100",
+        "numberOfThreads": "10"
+      },
+      "testAction": "DELETE_DOCUMENTS",
+      "userid": "peter"
+    },
+
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "10",
+        "numberOfThreads": "10"
+      },
+      "testAction": "CREATE_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "5",
+        "numberOfThreads": "1"
+      },
+      "testAction": "LIST_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [
+      ],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "100",
+        "numberOfThreads": "10"
+      },
+      "testAction": "READ_DOCUMENTS",
+      "userid": ""
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [
+      ],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "100",
+        "numberOfThreads": "10"
+      },
+      "testAction": "DOCUMENT_EXISTS",
+      "userid": ""
+    },
+    {
+      "documentsPerDirectory": 10,
+      "documentsToRead": [
+      ],
+      "docusafeLayer": "SIMPLE_DATASAFE_ADAPTER",
+      "dynamicClientInfo": {
+        "repetitionNumber": 0,
+        "testID": null,
+        "threadNumber": 0
+      },
+      "numberOfDocuments": 10,
+      "sizeOfDocument": "5000",
+      "staticClientInfo": {
+        "numberOfRepeats": "100",
+        "numberOfThreads": "10"
+      },
+      "testAction": "DELETE_DOCUMENTS",
+      "userid": ""
+    }
+
+  ]
+}
