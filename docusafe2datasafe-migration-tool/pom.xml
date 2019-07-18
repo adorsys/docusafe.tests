@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.adorsys</groupId>
+        <artifactId>docusafe.tests</artifactId>
+        <version>1.1.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>docusafe2datasafe-migration-tool</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>dfs-connection-impl-factory</artifactId>
+            <version>${dfs.connection.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>common-basetypes</artifactId>
+            <version>${common.basetypes.version}</version>
+        </dependency>
+
+        <!-- JCloud not compatible wit spring-boot 1.4
+        Dependency: encobject-jcloud->filesystem->jclouds-blobstore->jclouds->core->gson
+        see: https://github.com/spring-projects/spring-boot/issues/6761
+        -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.21</version>
+        </dependency>
+
+
+        <!-- DOCUSAFE -->
+
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>docusafe-business</artifactId>
+            <version>${docusafe.version}</version>
+        </dependency>
+
+        <!-- DATASAFE -->
+
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>datasafe-simple-adapter-spring</artifactId>
+            <version>${datasafe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>docusafe-spring</artifactId>
+            <version>1.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${amazon.aws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-core</artifactId>
+            <version>${amazon.aws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>${jsr-305.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger</artifactId>
+            <version>${dagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+-->
+
+
+    </dependencies>
+
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Version>${project.version}_${maven.build.timestamp}</Implementation-Version>
+                            <Project-buildArtifact>${project.artifactId}</Project-buildArtifact>
+                            <Project-buildVersion>${project.version}</Project-buildVersion>
+                            <Project-buildTimestamp>${maven.build.timestamp}</Project-buildTimestamp>
+                            <Project-buildNumber>${buildNumber}</Project-buildNumber>
+                            <Project-buildScmBranch>${scmBranch}</Project-buildScmBranch>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
