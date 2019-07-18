@@ -13,6 +13,7 @@ import {isUndefined} from "util";
 import {ClipboardService} from "../clipboard/clipboard.service";
 import {v4 as uuid} from 'uuid';
 import * as simpleDatasafeAdapter from "../testsuites/simpleDatasafeAdapter.json";
+import * as simpleDatasafeAdapterSingle from "../testsuites/simpleDatasafeAdapterSingle.json";
 import * as docusafeBase from "../testsuites/docusafeBase.json";
 import * as cachedTransactional from "../testsuites/cachedTransactional.json";
 import {SubsumedTestTYPE} from "../types/test.result.type";
@@ -70,7 +71,7 @@ export class AppComponent implements TestSuiteOwner, DndOwner, RequestSender, Sw
         "SIMPLE_DATASAFE_ADAPTER"
     ];
 
-    testSuites: TestSuiteTYPE[] = [<TestSuiteTYPE>simpleDatasafeAdapter.default, <TestSuiteTYPE>docusafeBase.default, <TestSuiteTYPE>cachedTransactional.default];
+    testSuites: TestSuiteTYPE[] = [<TestSuiteTYPE>simpleDatasafeAdapter.default, <TestSuiteTYPE>docusafeBase.default, <TestSuiteTYPE>cachedTransactional.default, <TestSuiteTYPE>simpleDatasafeAdapterSingle.default];
     currentTestSuiteIndex = 0;
     currentTestSuiteName: string = this.testSuites[this.currentTestSuiteIndex].name;
 
