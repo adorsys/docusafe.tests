@@ -3,7 +3,11 @@ package de.adorsys.docusafe;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import de.adorsys.datasafe.simple.adapter.api.types.AmazonS3DFSCredentials;
+import de.adorsys.datasafe.simple.adapter.api.types.DFSCredentials;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
+import de.adorsys.dfs.connection.impl.amazons3.AmazonS3ConnectionProperitesImpl;
+import de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection;
 import de.adorsys.docusafe.service.api.types.UserID;
 import de.adorsys.docusafe.spring.config.SpringAmazonS3ConnectionProperties;
 import de.adorsys.docusafe.spring.config.SpringDFSConnectionProperties;
@@ -46,8 +50,18 @@ public class MigrationExecutor {
         Thread.currentThread().setName("ID-" + migrationId);
         log.info("Start of Docusafe-2-Datasafe migration with id '{}'", migrationId);
 
-        Set<UserID> users = new UserIdExtractor().getUsers(connection);
+        Set<UserID> users = new DocusafeUsersFinder().getUsers(connection);
 
+        new UserMigratingService(
+                (AmazonS3DFSConnection) connection,
+                getDatasafeDFSCredentials(
+                        (AmazonS3ConnectionProperitesImpl) connection.getConnectionProperties(),
+                        datasafeBucketRoot + "/" + migrationId
+                )
+        ).migrate(
+                users,
+                genericPassword
+        );
     }
 
     private static SpringAmazonS3ConnectionProperties properties(String path) {
@@ -61,5 +75,15 @@ public class MigrationExecutor {
             System.err.printf("Failed to open: %s due to %s%n", path, ex.getMessage());
             throw new RuntimeException(ex);
         }
+    }
+
+    private static DFSCredentials getDatasafeDFSCredentials(AmazonS3ConnectionProperitesImpl props, String root) {
+        return AmazonS3DFSCredentials.builder()
+                .url(props.getUrl().toString())
+                .accessKey(props.getAmazonS3AccessKey().getValue())
+                .secretKey(props.getAmazonS3SecretKey().getValue())
+                .region(props.getAmazonS3Region().getValue())
+                .rootBucket(props.getAmazonS3RootBucketName().getValue() + "/" + root)
+                .build();
     }
 }

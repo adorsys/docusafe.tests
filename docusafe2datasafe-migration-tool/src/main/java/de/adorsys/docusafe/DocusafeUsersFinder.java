@@ -8,15 +8,15 @@ import de.adorsys.dfs.connection.api.complextypes.BucketDirectory;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection;
 import de.adorsys.docusafe.service.api.types.UserID;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static de.adorsys.docusafe.Reflectional.getReflectionally;
+
 @Slf4j
-public class UserIdExtractor {
+public class DocusafeUsersFinder {
 
     public Set<UserID> getUsers(DFSConnection connection) {
         log.info("Searching for users");
@@ -34,12 +34,5 @@ public class UserIdExtractor {
         log.info("Found {} Docusafe users to import", users.size());
 
         return users.stream().map(UserID::new).collect(Collectors.toSet());
-    }
-
-    @SneakyThrows
-    private <T> T getReflectionally(String fieldName, Object owner) {
-        Field field = owner.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return (T) field.get(owner);
     }
 }
