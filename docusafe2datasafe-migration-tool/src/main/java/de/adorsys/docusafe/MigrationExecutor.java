@@ -1,16 +1,14 @@
 package de.adorsys.docusafe;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
 import de.adorsys.docusafe.service.api.types.UserID;
 import de.adorsys.docusafe.spring.config.SpringAmazonS3ConnectionProperties;
 import de.adorsys.docusafe.spring.config.SpringDFSConnectionProperties;
 import de.adorsys.docusafe.spring.factory.SpringDFSConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.introspector.BeanAccess;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,13 +51,12 @@ public class MigrationExecutor {
     }
 
     private static SpringAmazonS3ConnectionProperties properties(String path) {
-        Representer representer = new Representer();
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-        representer.addClassTag(SpringAmazonS3ConnectionProperties.class, new Tag("docusafe.storeconnection.amazons3"));
-        Yaml properties = new Yaml(new Constructor(SpringAmazonS3ConnectionProperties.class), representer);
-        properties.setBeanAccess(BeanAccess.FIELD);
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try (InputStream is = Files.newInputStream(Paths.get(path), StandardOpenOption.READ)) {
-            return properties.load(is);
+            JsonNode node = mapper.readTree(is).get("docusafe").get("storeconnection").get("amazons3");
+            return mapper
+                    .readerFor(SpringAmazonS3ConnectionProperties.class)
+                    .readValue(node);
         } catch (IOException ex) {
             System.err.printf("Failed to open: %s due to %s%n", path, ex.getMessage());
             throw new RuntimeException(ex);

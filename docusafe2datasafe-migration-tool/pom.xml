@@ -26,14 +26,17 @@
             <version>${common.basetypes.version}</version>
         </dependency>
 
-        <!-- JCloud not compatible wit spring-boot 1.4
-        Dependency: encobject-jcloud->filesystem->jclouds-blobstore->jclouds->core->gson
-        see: https://github.com/spring-projects/spring-boot/issues/6761
-        -->
+
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.21</version>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.2</version>
         </dependency>
 
 

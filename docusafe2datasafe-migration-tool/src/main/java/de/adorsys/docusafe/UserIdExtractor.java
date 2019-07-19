@@ -27,7 +27,7 @@ public class UserIdExtractor {
         Set<String> users = Streams.stream(S3Objects.withPrefix(s3, dir.getContainer(), dir.getName()).iterator())
                 .map(S3ObjectSummary::getKey)
                 .filter(it -> it.contains("/bp-"))
-                .map(it -> it.split("bp-")[2])
+                .map(it -> it.split("/bp-")[1].split("/")[0])
                 .collect(Collectors.toSet());
 
         // TODO: validate user somehow?

@@ -5,4 +5,4 @@ docusafe:
       accesskey: simpleAccessKey
       secretkey: simpleSecretKey
       region: eu-central-1
-      rootbucket: docusafe
+      rootbucket: adorsys
