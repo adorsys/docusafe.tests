@@ -52,16 +52,19 @@ public class MigrationExecutor {
 
         Set<UserID> users = new DocusafeUsersFinder().getUsers(connection);
 
+        String datasafeRoot = datasafeBucketRoot + "/" + migrationId;
         new UserMigratingService(
                 (AmazonS3DFSConnection) connection,
                 getDatasafeDFSCredentials(
                         (AmazonS3ConnectionProperitesImpl) connection.getConnectionProperties(),
-                        datasafeBucketRoot + "/" + migrationId
+                        datasafeRoot + "/" + migrationId
                 )
         ).migrate(
                 users,
                 genericPassword
         );
+
+        log.info("Migrated {} users to Datasafe with path: '{}'", users.size(), datasafeRoot);
     }
 
     private static SpringAmazonS3ConnectionProperties properties(String path) {

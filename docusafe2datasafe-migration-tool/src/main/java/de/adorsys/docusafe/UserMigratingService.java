@@ -77,7 +77,7 @@ public class UserMigratingService {
             throw new IllegalStateException("Path mismatch");
         }
 
-        if (Arrays.equals(stored.getDocumentContent().getValue(), document.getDocumentContent().getValue())) {
+        if (!Arrays.equals(stored.getDocumentContent().getValue(), document.getDocumentContent().getValue())) {
             log.error("Content mismatch: '{}' for user '{}'", doc, auth.getUserID().getValue());
             throw new IllegalStateException("Content mismatch");
         }
