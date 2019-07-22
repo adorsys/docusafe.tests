@@ -1,0 +1,8 @@
+docusafe:
+  storeconnection:
+    amazons3:
+      url: http://0.0.0.0:9000
+      accesskey: simpleAccessKey
+      secretkey: simpleSecretKey
+      region: eu-central-1
+      rootbucket: adorsys/docusafe/plainfolder
