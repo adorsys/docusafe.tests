@@ -80,7 +80,7 @@
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/resources</directory>
                 <filtering>false</filtering>
             </resource>
         </resources>
@@ -108,8 +108,7 @@
                                         <exclude>META-INF/*.RSA</exclude>
                                     </excludes>
                                     <includes>
-                                        <include>de/framework/**</include>
-                                        <include>org/junit/**</include>
+                                        <include>**</include>
                                     </includes>
                                 </filter>
                             </filters>
