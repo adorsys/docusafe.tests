@@ -24,7 +24,10 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class MigrationExecutor {
@@ -34,10 +37,11 @@ public class MigrationExecutor {
                 "Usage: java -jar docusafe2datasafe-migration-tool.jar " +
                         "<PATH TO DOCUSAFE PROPERTIES FILE> " +
                         "<PATH TO DATASAFE ROOT> " +
-                        "<USERS' GENERIC PASSWORD>"
+                        "<USERS' GENERIC PASSWORD> " +
+                        "<OPTIONAL, FILE WITH LIST OF USERS TO SKIP>"
         );
 
-        if (args.length != 3) {
+        if (args.length < 3) {
             System.err.println("Wrong number of arguments supplied, aborting");
             System.exit(1);
         }
@@ -45,6 +49,8 @@ public class MigrationExecutor {
         SpringAmazonS3ConnectionProperties properties = properties(args[0]);
         String datasafeBucketRoot = args[1];
         String userGenericPassword = args[2];
+
+        Set<String> skipUsersPath = args.length == 4 ? readUsersToSkip(args[3]) : Collections.emptySet();
 
         SpringDFSConnectionProperties wired = new SpringDFSConnectionProperties();
         wired.setAmazons3(properties);
@@ -68,6 +74,7 @@ public class MigrationExecutor {
                 getDatasafeDFSCredentials(datasafe, "")
         ).migrate(
                 users,
+                skipUsersPath,
                 userGenericPassword
         );
 
@@ -102,5 +109,13 @@ public class MigrationExecutor {
         AmazonS3ConnectionProperitesImpl props = (AmazonS3ConnectionProperitesImpl) connection.getConnectionProperties();
         return new AmazonS3ConnectionProperitesImpl(props);
 
+    }
+
+    @SneakyThrows
+    private static Set<String> readUsersToSkip(String path) {
+        log.info("Reading skip-user list from '{}'", path);
+        try (Stream<String> is = Files.lines(Paths.get(path))) {
+            return is.collect(Collectors.toSet());
+        }
     }
 }

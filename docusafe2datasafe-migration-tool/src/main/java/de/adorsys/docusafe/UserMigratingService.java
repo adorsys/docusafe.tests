@@ -31,8 +31,13 @@ public class UserMigratingService {
         datasafeService = new SimpleDatasafeServiceImpl(credentials);
     }
 
-    void migrate(Set<UserID> usersToMigrate, String userGenericPassword) {
+    void migrate(Set<UserID> usersToMigrate, Set<String> usernamesToSkip, String userGenericPassword) {
         for (UserID user: usersToMigrate) {
+            if (usernamesToSkip.contains(user.getValue())) {
+                log.info("SKIPPING Migration of Docusafe user '{}'", user.getValue());
+                continue;
+            }
+
             log.info("Migrating Docusafe user '{}'", user.getValue());
             UserIDAuth authDocu = new UserIDAuth(user, new ReadKeyPassword(userGenericPassword));
             createDatasafeUser(authDocu);
