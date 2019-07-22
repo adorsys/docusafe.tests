@@ -8,6 +8,7 @@ users and files will be in `my_bucket` bucket, within `datasafe/201907221046` pa
 Usage:
 ### As JAR
 
+Download JAR from [here](https://github.com/adorsys/docusafe.tests/releases/download/v1.1.1/docusafe2datasafe-migration-tool.jar)
 ```
 java -jar docusafe2datasafe-migration-tool.jar \
     <PATH TO DOCUSAFE PROPERTIES FILE> \
