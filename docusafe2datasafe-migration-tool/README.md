@@ -28,6 +28,6 @@ Requires JDK-8 and maven:
 ```
 git clone https://github.com/adorsys/docusafe.tests --branch develop \
     && cd docusafe.tests/docusafe2datasafe-migration-tool \
-    && mvn exec:java -Dexec.args="<PATH TO DOCUSAFE PROPERTIES FILE> <PATH TO DATASAFE ROOT> <USERS' GENERIC PASSWORD> <OPTIONAL, FILE WITH LIST OF USERS TO SKIP>"
+    && mvn clean compile exec:java -Dexec.args="<PATH TO DOCUSAFE PROPERTIES FILE> <PATH TO DATASAFE ROOT> <USERS' GENERIC PASSWORD> <OPTIONAL, FILE WITH LIST OF USERS TO SKIP>"
 ```
 For options see above list.
