@@ -32,7 +32,9 @@ public class MigrationExecutor {
     public static void main(String[] args) {
         System.out.println(
                 "Usage: java -jar docusafe2datasafe-migration-tool.jar " +
-                        "<PATH TO DOCUSAFE PROPERTIES FILE> <PATH TO DATASAFE ROOT> <GENERIC PASSWORD>"
+                        "<PATH TO DOCUSAFE PROPERTIES FILE> " +
+                        "<PATH TO DATASAFE ROOT> " +
+                        "<USERS' GENERIC PASSWORD>"
         );
 
         if (args.length != 3) {
@@ -42,7 +44,7 @@ public class MigrationExecutor {
 
         SpringAmazonS3ConnectionProperties properties = properties(args[0]);
         String datasafeBucketRoot = args[1];
-        String genericPassword = args[2];
+        String userGenericPassword = args[2];
 
         SpringDFSConnectionProperties wired = new SpringDFSConnectionProperties();
         wired.setAmazons3(properties);
@@ -50,7 +52,8 @@ public class MigrationExecutor {
 
         String migrationId = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("YYYYMMddhhmm"));
         Thread.currentThread().setName("ID-" + migrationId);
-        log.info("Start of Docusafe-2-Datasafe migration with id '{}'", migrationId);
+        log.info("Start of Docusafe-2-Datasafe migration with id '{}' with root path bucket/path: '{}'",
+                migrationId, datasafeBucketRoot);
 
         Set<UserID> users = new DocusafeUsersFinder().getUsers(connection);
 
@@ -62,16 +65,13 @@ public class MigrationExecutor {
 
         new UserMigratingService(
                 (AmazonS3DFSConnection) connection,
-                getDatasafeDFSCredentials(
-                        (AmazonS3ConnectionProperitesImpl) connection.getConnectionProperties(),
-                        datasafeRoot + "/" + migrationId
-                )
+                getDatasafeDFSCredentials(datasafe, "")
         ).migrate(
                 users,
-                genericPassword
+                userGenericPassword
         );
 
-        log.info("Migrated {} users to Datasafe with path: '{}'", users.size(), datasafeRoot);
+        log.info("Migrated {} users to Datasafe with path: '{}/'", users.size(), datasafeRoot);
     }
 
     private static SpringAmazonS3ConnectionProperties properties(String path) {

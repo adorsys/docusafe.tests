@@ -31,10 +31,10 @@ public class UserMigratingService {
         datasafeService = new SimpleDatasafeServiceImpl(credentials);
     }
 
-    void migrate(Set<UserID> usersToMigrate, String genericPassword) {
+    void migrate(Set<UserID> usersToMigrate, String userGenericPassword) {
         for (UserID user: usersToMigrate) {
             log.info("Migrating Docusafe user '{}'", user.getValue());
-            UserIDAuth authDocu = new UserIDAuth(user, new ReadKeyPassword(genericPassword));
+            UserIDAuth authDocu = new UserIDAuth(user, new ReadKeyPassword(userGenericPassword));
             createDatasafeUser(authDocu);
             List<DocumentFQN> documents = documentSafeService.list(
                     authDocu,
