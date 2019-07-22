@@ -6,12 +6,14 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.adorsys.datasafe.simple.adapter.api.types.AmazonS3DFSCredentials;
 import de.adorsys.datasafe.simple.adapter.api.types.DFSCredentials;
 import de.adorsys.dfs.connection.api.service.api.DFSConnection;
+import de.adorsys.dfs.connection.api.types.connection.AmazonS3RootBucketName;
 import de.adorsys.dfs.connection.impl.amazons3.AmazonS3ConnectionProperitesImpl;
 import de.adorsys.dfs.connection.impl.amazons3.AmazonS3DFSConnection;
 import de.adorsys.docusafe.service.api.types.UserID;
 import de.adorsys.docusafe.spring.config.SpringAmazonS3ConnectionProperties;
 import de.adorsys.docusafe.spring.config.SpringDFSConnectionProperties;
 import de.adorsys.docusafe.spring.factory.SpringDFSConnectionFactory;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -53,6 +55,11 @@ public class MigrationExecutor {
         Set<UserID> users = new DocusafeUsersFinder().getUsers(connection);
 
         String datasafeRoot = datasafeBucketRoot + "/" + migrationId;
+
+        // point to correct Datasafe directory
+        AmazonS3ConnectionProperitesImpl datasafe = cloneProperties(connection);
+        datasafe.setAmazonS3RootBucketName(new AmazonS3RootBucketName(datasafeRoot));
+
         new UserMigratingService(
                 (AmazonS3DFSConnection) connection,
                 getDatasafeDFSCredentials(
@@ -88,5 +95,12 @@ public class MigrationExecutor {
                 .region(props.getAmazonS3Region().getValue())
                 .rootBucket(props.getAmazonS3RootBucketName().getValue() + "/" + root)
                 .build();
+    }
+
+    @SneakyThrows
+    private static AmazonS3ConnectionProperitesImpl cloneProperties(DFSConnection connection) {
+        AmazonS3ConnectionProperitesImpl props = (AmazonS3ConnectionProperitesImpl) connection.getConnectionProperties();
+        return new AmazonS3ConnectionProperitesImpl(props);
+
     }
 }
