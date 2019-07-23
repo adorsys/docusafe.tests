@@ -1,5 +1,5 @@
 // Import the core angular services.
-import { DOCUMENT } from "@angular/platform-browser";
+import { DOCUMENT } from "@angular/common";
 import { Inject } from "@angular/core";
 import { Injectable } from "@angular/core";
 
