@@ -5,7 +5,7 @@
 
     <groupId>de.adorsys</groupId>
     <artifactId>docusafe.tests</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>docusafe.tests</name>
@@ -20,7 +20,7 @@
         <deploy.disabled>false</deploy.disabled>
 
         <docusafe.version>1.1.0</docusafe.version>
-        <datasafe.version>0.3.0</datasafe.version>
+        <datasafe.version>0.4.2</datasafe.version>
 
         <swagger.version>1.5.5</swagger.version>
         <spring-boot.version>2.0.1.RELEASE</spring-boot.version>
@@ -72,6 +72,7 @@
         <module>docusafe-rest-server</module>
         <module>docusafe-rest-client-batch</module>
         <module>docusafe-batch-client</module>
+        <module>docusafe2datasafe-migration-tool</module>
     </modules>
 
     <dependencies>

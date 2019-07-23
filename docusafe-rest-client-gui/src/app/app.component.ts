@@ -17,7 +17,7 @@ import * as simpleDatasafeAdapterSingle from "../testsuites/simpleDatasafeAdapte
 import * as docusafeBase from "../testsuites/docusafeBase.json";
 import * as cachedTransactional from "../testsuites/cachedTransactional.json";
 import {SubsumedTestTYPE} from "../types/test.result.type";
-import { saveAs } from "file-saver/FileSaver";
+import saveAs from 'file-saver';
 
 import {DndOwner} from "../dnd/dnd.owner";
 import {UrlKeeper} from "../service/url.keeper";
