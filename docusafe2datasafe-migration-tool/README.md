@@ -14,24 +14,39 @@ java -jar docusafe2datasafe-migration-tool-pkg.jar \
     <PATH TO DOCUSAFE PROPERTIES FILE> \
     <PATH TO DATASAFE ROOT> \
     <USERS' GENERIC PASSWORD>\
-    -skip <OPTIONAL, FILE WITH LIST OF USERS TO SKIP>\
-    -only <OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found)>
+    -skip=<OPTIONAL, FILE WITH LIST OF USERS TO SKIP>\
+    -only=<OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found)>
 ```
 **Positional** arguments:
 
 1. `<PATH TO DOCUSAFE PROPERTIES FILE>` - Path to Docusafe YAML configuration file
 1. `<PATH TO DATASAFE ROOT>` - Desired Datasafe migrated files root location
 1. `<USERS' GENERIC PASSWORD>` - Docusafe/Datasafe user generic password
-1. Optional value,  `-skip <OPTIONAL, FILE WITH LIST OF USERS TO SKIP>` - File that contains username list to skip 
-(each username on new line)
-1. Optional value,  `-only <OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found)>` - File that limits set
-of users to migrate to those that are in file (each username on new line)
+1. Optional value,  `-skip=<OPTIONAL, FILE WITH LIST OF USERS TO SKIP>` - File that contains username list to skip 
+(each username on new line), i.e. `-skip=skip.list`
+1. Optional value,  `-only=<OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found)>` - File that limits set
+of users to migrate to those that are in file (each username on new line), i.e. `-only=allow.list`
 
+Examples:
+Migrate all users:
+```
+java -jar docusafe2datasafe-migration-tool-pkg.jar folder/properties.yaml bucket/plainfolder PASSWORD
+```
+
+Migrate only users in allowed.list:
+```
+java -jar docusafe2datasafe-migration-tool-pkg.jar folder/properties.yaml bucket/plainfolder PASSWORD -only=allowed.list
+```
+
+Migrate all users except those in skip.list:
+```
+java -jar docusafe2datasafe-migration-tool-pkg.jar folder/properties.yaml bucket/plainfolder PASSWORD -skip=skip.list
+```
 ### From github using maven:
 Requires JDK-8 and maven:
 ```
 git clone https://github.com/adorsys/docusafe.tests --branch develop \
     && cd docusafe.tests/docusafe2datasafe-migration-tool \
-    && mvn clean compile exec:java -Dexec.args="<PATH TO DOCUSAFE PROPERTIES FILE> <PATH TO DATASAFE ROOT> <USERS' GENERIC PASSWORD> <OPTIONAL, FILE WITH LIST OF USERS TO SKIP>  <OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found in bucket)>"
+    && mvn clean compile exec:java -Dexec.args="<PATH TO DOCUSAFE PROPERTIES FILE> <PATH TO DATASAFE ROOT> <USERS' GENERIC PASSWORD> -skip=<OPTIONAL, FILE WITH LIST OF USERS TO SKIP> -only=<OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found in bucket)>"
 ```
 For options see above list.

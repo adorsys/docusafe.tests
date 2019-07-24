@@ -39,8 +39,8 @@ public class MigrationExecutor {
                         "<PATH TO DOCUSAFE PROPERTIES FILE> " +
                         "<PATH TO DATASAFE ROOT> " +
                         "<USERS' GENERIC PASSWORD> " +
-                        "-skip <OPTIONAL, FILE WITH LIST OF USERS TO SKIP> " +
-                        "-only <OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found)>"
+                        "-skip=<OPTIONAL, FILE WITH LIST OF USERS TO SKIP> " +
+                        "-only=<OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found)>"
         );
 
         if (args.length < 3 || args.length > 5) {
@@ -57,8 +57,8 @@ public class MigrationExecutor {
 
         if (args.length > 3) {
             String[] extras = Arrays.copyOfRange(args, 3, args.length);
-            skipUsers = tryReadStringSetFromArgs(extras, "-skip", "skip user list");
-            migrateOnlyUsers= tryReadStringSetFromArgs(extras, "-only", "migrate only users");
+            skipUsers = tryReadStringSetFromArgs(extras, "-skip=", "skip user list");
+            migrateOnlyUsers= tryReadStringSetFromArgs(extras, "-only=", "migrate only users");
         }
 
         SpringDFSConnectionProperties wired = new SpringDFSConnectionProperties();
@@ -131,7 +131,7 @@ public class MigrationExecutor {
             String path = argument.split(key, 2)[1];
             log.info("Reading {} from '{}'", hint, path);
             try (Stream<String> is = Files.lines(Paths.get(path))) {
-                return is.collect(Collectors.toSet());
+                return is.filter(it -> !it.isEmpty()).collect(Collectors.toSet());
             }
         }
 
