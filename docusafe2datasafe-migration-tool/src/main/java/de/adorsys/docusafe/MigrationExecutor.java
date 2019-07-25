@@ -15,12 +15,14 @@ import de.adorsys.docusafe.spring.config.SpringDFSConnectionProperties;
 import de.adorsys.docusafe.spring.factory.SpringDFSConnectionFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.Security;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +36,7 @@ import java.util.stream.Stream;
 public class MigrationExecutor {
 
     public static void main(String[] args) {
+        Security.addProvider(new BouncyCastleProvider());
         System.out.println(
                 "Usage: java -jar docusafe2datasafe-migration-tool-pkg.jar " +
                         "<PATH TO DOCUSAFE PROPERTIES FILE> " +
