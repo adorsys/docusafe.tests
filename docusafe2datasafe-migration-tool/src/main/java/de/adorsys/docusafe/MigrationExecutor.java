@@ -15,15 +15,18 @@ import de.adorsys.docusafe.spring.config.SpringDFSConnectionProperties;
 import de.adorsys.docusafe.spring.factory.SpringDFSConnectionFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.Security;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,15 +36,17 @@ import java.util.stream.Stream;
 public class MigrationExecutor {
 
     public static void main(String[] args) {
+        Security.addProvider(new BouncyCastleProvider());
         System.out.println(
-                "Usage: java -jar docusafe2datasafe-migration-tool.jar " +
+                "Usage: java -jar docusafe2datasafe-migration-tool-pkg.jar " +
                         "<PATH TO DOCUSAFE PROPERTIES FILE> " +
                         "<PATH TO DATASAFE ROOT> " +
                         "<USERS' GENERIC PASSWORD> " +
-                        "<OPTIONAL, FILE WITH LIST OF USERS TO SKIP>"
+                        "-skip=<OPTIONAL, FILE WITH LIST OF USERS TO SKIP> " +
+                        "-only=<OPTIONAL, FILE WITH LIST OF USERS TO MIGRATE (if they are found)>"
         );
 
-        if (args.length < 3) {
+        if (args.length < 3 || args.length > 5) {
             System.err.println("Wrong number of arguments supplied, aborting");
             System.exit(1);
         }
@@ -50,7 +55,14 @@ public class MigrationExecutor {
         String datasafeBucketRoot = args[1];
         String userGenericPassword = args[2];
 
-        Set<String> skipUsersPath = args.length == 4 ? readUsersToSkip(args[3]) : Collections.emptySet();
+        Set<String> skipUsers = Collections.emptySet();
+        Set<String> migrateOnlyUsers = Collections.emptySet();
+
+        if (args.length > 3) {
+            String[] extras = Arrays.copyOfRange(args, 3, args.length);
+            skipUsers = tryReadStringSetFromArgs(extras, "-skip=", "skip user list");
+            migrateOnlyUsers= tryReadStringSetFromArgs(extras, "-only=", "migrate only users");
+        }
 
         SpringDFSConnectionProperties wired = new SpringDFSConnectionProperties();
         wired.setAmazons3(properties);
@@ -58,7 +70,7 @@ public class MigrationExecutor {
 
         String migrationId = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("YYYYMMddhhmm"));
         Thread.currentThread().setName("ID-" + migrationId);
-        log.info("Start of Docusafe-2-Datasafe migration with id '{}' with root path bucket/path: '{}'",
+        log.info("Start of Docusafe-2-Datasafe migration with id '{}' with root path bucket/path for Datasafe: '{}'",
                 migrationId, datasafeBucketRoot);
 
         Set<UserID> users = new DocusafeUsersFinder().getUsers(connection);
@@ -69,16 +81,17 @@ public class MigrationExecutor {
         AmazonS3ConnectionProperitesImpl datasafe = cloneProperties(connection);
         datasafe.setAmazonS3RootBucketName(new AmazonS3RootBucketName(datasafeRoot));
 
-        new UserMigratingService(
+        int cntMigrated = new UserMigratingService(
                 (AmazonS3DFSConnection) connection,
                 getDatasafeDFSCredentials(datasafe, "")
         ).migrate(
                 users,
-                skipUsersPath,
+                migrateOnlyUsers,
+                skipUsers,
                 userGenericPassword
         );
 
-        log.info("Migrated {} users to Datasafe with path: '{}/'", users.size(), datasafeRoot);
+        log.info("Migrated {} of {} total found users to Datasafe with path: '{}/'", cntMigrated, users.size(), datasafeRoot);
     }
 
     private static SpringAmazonS3ConnectionProperties properties(String path) {
@@ -112,10 +125,19 @@ public class MigrationExecutor {
     }
 
     @SneakyThrows
-    private static Set<String> readUsersToSkip(String path) {
-        log.info("Reading skip-user list from '{}'", path);
-        try (Stream<String> is = Files.lines(Paths.get(path))) {
-            return is.collect(Collectors.toSet());
+    private static Set<String> tryReadStringSetFromArgs(String[] arguments, String key, String hint) {
+        for (String argument : arguments) {
+            if (!argument.startsWith(key)) {
+                continue;
+            }
+
+            String path = argument.split(key, 2)[1];
+            log.info("Reading {} from '{}'", hint, path);
+            try (Stream<String> is = Files.lines(Paths.get(path))) {
+                return is.filter(it -> !it.isEmpty()).collect(Collectors.toSet());
+            }
         }
+
+        return Collections.emptySet();
     }
 }

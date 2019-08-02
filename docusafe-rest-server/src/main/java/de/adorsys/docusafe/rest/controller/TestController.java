@@ -35,6 +35,7 @@ import de.adorsys.docusafe.transactional.types.TxBucketContentFQN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -63,6 +64,12 @@ public class TestController {
 
     @Autowired
     SpringDFSConnectionFactory factory;
+
+    @Value("${GLOBAL_DATASAFE_NO_HTTPS:false}")
+    private boolean datasafeNoHttps;
+
+    @Value("${GLOBAL_DATASAFE_THREAD_COUNT:5}")
+    private int datasafeTreadCount;
 
 
     private DFSConnection docusafePlainDFSConnection = null;
@@ -512,13 +519,18 @@ public class TestController {
     private de.adorsys.datasafe.simple.adapter.api.types.DFSCredentials getDatasafeDFSCredentials(ConnectionProperties properties) {
         if (properties instanceof AmazonS3ConnectionProperitesImpl) {
             AmazonS3ConnectionProperitesImpl props = (AmazonS3ConnectionProperitesImpl) properties;
-            return AmazonS3DFSCredentials.builder()
+            AmazonS3DFSCredentials.AmazonS3DFSCredentialsBuilder builder = AmazonS3DFSCredentials.builder()
                     .url(props.getUrl().toString())
                     .accessKey(props.getAmazonS3AccessKey().getValue())
                     .secretKey(props.getAmazonS3SecretKey().getValue())
                     .region(props.getAmazonS3Region().getValue())
-                    .rootBucket(props.getAmazonS3RootBucketName().getValue())
-                    .build();
+                    .rootBucket(props.getAmazonS3RootBucketName().getValue());
+
+            LOGGER.info("Datasafe HTTPS disabled: {} / Thread pool: {}", datasafeNoHttps, datasafeTreadCount);
+            builder.noHttps(datasafeNoHttps);
+            builder.threadPoolSize(datasafeTreadCount);
+
+            return builder.build();
         }
         if (properties instanceof FilesystemConnectionPropertiesImpl) {
             FilesystemConnectionPropertiesImpl props = (FilesystemConnectionPropertiesImpl) properties;

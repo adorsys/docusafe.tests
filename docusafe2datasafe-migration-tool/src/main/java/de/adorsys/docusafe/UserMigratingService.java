@@ -31,9 +31,12 @@ public class UserMigratingService {
         datasafeService = new SimpleDatasafeServiceImpl(credentials);
     }
 
-    void migrate(Set<UserID> usersToMigrate, Set<String> usernamesToSkip, String userGenericPassword) {
+    int migrate(Set<UserID> usersToMigrate, Set<String> migrateOnlyUsernames, Set<String> usernamesToSkip,
+                 String userGenericPassword) {
+        int countMigrated = 0;
         for (UserID user: usersToMigrate) {
-            if (usernamesToSkip.contains(user.getValue())) {
+            if (usernamesToSkip.contains(user.getValue())
+                    || (!migrateOnlyUsernames.isEmpty() && !migrateOnlyUsernames.contains(user.getValue()))) {
                 log.info("SKIPPING Migration of Docusafe user '{}'", user.getValue());
                 continue;
             }
@@ -53,7 +56,10 @@ public class UserMigratingService {
 
             log.info("Copied {} users' files '{}'", documents.size(), user.getValue());
             log.info("Done migrating user '{}'", user.getValue());
+            ++countMigrated;
         }
+
+        return countMigrated;
     }
 
     private void createDatasafeUser(UserIDAuth auth) {
